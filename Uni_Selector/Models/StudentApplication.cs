@@ -1,0 +1,41 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Uni_Selector.Models.Enums;
+
+namespace Uni_Selector.Models
+{
+    public class StudentApplication
+    {
+        public int Id { get; set; }
+
+        [Required]
+        public int StudentId { get; set; }
+
+        [ForeignKey("StudentId")]
+        public Student Student { get; set; }
+
+        public int? UniversityProgramId { get; set; }
+
+        [ForeignKey("UniversityProgramId")]
+        public UniversityProgram? UniversityProgram { get; set; }
+
+        public int? BtecProgramId { get; set; }
+
+        [ForeignKey("BtecProgramId")]
+        public BtecProgram? BtecProgram { get; set; }
+
+        [Required]
+        public ApplicationStatus Status { get; set; } = ApplicationStatus.Pending;
+
+        public DateTime ApplicationDate { get; set; } = DateTime.UtcNow;
+        public DateTime? ApprovalDate { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+
+        [StringLength(1000)]
+        public string? Notes { get; set; }
+
+
+        public DiscountGrant? DiscountGrant { get; set; }
+        public Commission? Commission { get; set; }
+    }
+}
