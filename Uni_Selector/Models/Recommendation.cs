@@ -23,8 +23,7 @@ namespace Uni_Selector.Models
         [ForeignKey("BtecProgramId")]
         public BtecProgram? BtecProgram { get; set; }
 
-        [Required]
-        [Range(0, 100)]
+        [Required, Range(0, 100)]
         public double Score { get; set; }
 
         [StringLength(1000)]
@@ -36,7 +35,6 @@ namespace Uni_Selector.Models
         public decimal EstimatedTotalCost { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
         public bool IsViewed { get; set; } = false;
     }
 }

@@ -6,8 +6,7 @@ namespace Uni_Selector.Models
 
     public class ApplicationUser : IdentityUser
     {
-        [Required]
-        [StringLength(100)]
+        [Required, StringLength(100)]
         public string FullName { get; set; }
 
         public bool IsActive { get; set; } = true;

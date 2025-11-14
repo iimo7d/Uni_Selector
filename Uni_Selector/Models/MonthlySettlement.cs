@@ -13,16 +13,13 @@ namespace Uni_Selector.Models
         [ForeignKey("UniversityId")]
         public University University { get; set; }
 
-        [Required]
-        [Range(2020, 2100)]
+        [Required, Range(2020, 2100)]
         public int Year { get; set; }
 
-        [Required]
-        [Range(1, 12)]
+        [Required, Range(1, 12)]
         public int Month { get; set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
+        [Required, Column(TypeName = "decimal(18,2)")]
         public decimal TotalCommission { get; set; }
 
         [Required]
@@ -40,7 +37,6 @@ namespace Uni_Selector.Models
 
         [StringLength(1000)]
         public string? Notes { get; set; }
-
 
         public ICollection<Commission> Commissions { get; set; }
     }

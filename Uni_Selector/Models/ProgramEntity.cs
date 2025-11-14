@@ -8,19 +8,17 @@ namespace Uni_Selector.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(200)]
+        [Required, StringLength(200)]
         public string NameArabic { get; set; }
 
-        [Required]
-        [StringLength(200)]
+        [Required, StringLength(200)]
         public string NameEnglish { get; set; }
 
         [StringLength(1000)]
         public string? Description { get; set; }
 
         [Required]
-        public Uni_Selector.Models.Enums.Degree Degree { get; set; }
+        public Enums.Degree Degree { get; set; }
 
         [Required]
         public LanguageCode Language { get; set; }
@@ -28,10 +26,13 @@ namespace Uni_Selector.Models
         [StringLength(100)]
         public string? AcademicClassification { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        [Required, Range(30, 300)]
+        public int TotalCreditHours { get; set; }
 
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<UniversityProgram> UniversityPrograms { get; set; }
     }
+
 
 }

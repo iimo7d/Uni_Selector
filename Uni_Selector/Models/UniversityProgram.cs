@@ -23,20 +23,20 @@ namespace Uni_Selector.Models
         [Required]
         public StudySystem StudySystem { get; set; }
 
-        [Required]
-        [Range(1, 10)]
+        [Required, Range(1, 10)]
         public int DurationInYears { get; set; }
 
         [Required]
         public DateTime SemesterStartDate { get; set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal RegistrationFee { get; set; }
+        [Required, Column(TypeName = "decimal(18,2)")]
+        public decimal HourPriceBase { get; set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal TuitionPerSemester { get; set; }
+        [Required, Column(TypeName = "decimal(18,2)")]
+        public decimal RegistrationFeeFirstSemester { get; set; }
+
+        [Required, Column(TypeName = "decimal(18,2)")]
+        public decimal RegistrationFeeRegularSemester { get; set; }
 
         [Range(0, 10000)]
         public int Capacity { get; set; } = 0;
@@ -45,7 +45,6 @@ namespace Uni_Selector.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
-
 
         public ICollection<EntryRequirement> EntryRequirements { get; set; }
     }

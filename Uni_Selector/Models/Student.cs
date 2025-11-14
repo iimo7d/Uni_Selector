@@ -15,12 +15,10 @@ namespace Uni_Selector.Models
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required, StringLength(100)]
         public string Province { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required, StringLength(100)]
         public string City { get; set; }
 
         [StringLength(200)]
@@ -29,27 +27,26 @@ namespace Uni_Selector.Models
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
 
-        [Required]
-        [Range(0, 100)]
+        [Required, Range(0, 100)]
         public double GPA { get; set; }
 
         [Required]
         public Enums.PathType Path { get; set; }
 
         [StringLength(100)]
-        public string? Track { get; set; } 
+        public string? Track { get; set; }
+
         public bool BtecLevel2Completed { get; set; }
         public bool BtecLevel3Completed { get; set; }
 
         [StringLength(500)]
         public string? BtecCertificateUrl { get; set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
+        [Required, Column(TypeName = "decimal(18,2)")]
         public decimal RegistrationBudget { get; set; }
 
         [StringLength(500)]
-        public string? DesiredMajors { get; set; } 
+        public string? DesiredMajors { get; set; }
 
         [StringLength(100)]
         public string? PreferredCity { get; set; }
@@ -67,7 +64,6 @@ namespace Uni_Selector.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
-
 
         public ICollection<Recommendation> Recommendations { get; set; }
         public ICollection<StudentApplication> Applications { get; set; }

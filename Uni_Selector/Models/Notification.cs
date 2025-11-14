@@ -14,21 +14,28 @@ namespace Uni_Selector.Models
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
 
-        [Required]
-        [StringLength(200)]
+        [Required, StringLength(200)]
         public string Title { get; set; }
 
-        [Required]
-        [StringLength(1000)]
+        [Required, StringLength(1000)]
         public string Message { get; set; }
 
+        // Fixed: Separated category (what) from channel (how)
         [Required]
-        public NotificationType Type { get; set; }
+        public NotificationCategory Category { get; set; }
+
+        [Required]
+        public NotificationChannel Channel { get; set; }
 
         public bool IsRead { get; set; } = false;
         public bool EmailSent { get; set; } = false;
+        public bool SmsSent { get; set; } = false;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? ReadAt { get; set; }
+        public DateTime? SentAt { get; set; }
+
+        [StringLength(500)]
+        public string? ActionUrl { get; set; }
     }
 }

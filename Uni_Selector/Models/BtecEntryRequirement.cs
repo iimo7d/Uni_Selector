@@ -13,8 +13,7 @@ namespace Uni_Selector.Models
         [ForeignKey("BtecProgramId")]
         public BtecProgram BtecProgram { get; set; }
 
-        [Required]
-        [Range(0, 100)]
+        [Required, Range(0, 100)]
         public double MinGPA { get; set; }
 
         public bool RequiresBtecL2 { get; set; } = true;

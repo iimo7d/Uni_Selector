@@ -34,6 +34,21 @@ namespace Uni_Selector.Models
         [StringLength(1000)]
         public string? Notes { get; set; }
 
+        // University rep can set hour discount between 30-50%
+        [Range(30, 50)]
+        public decimal? HourDiscountPercent { get; set; }
+
+        // Fixed: Added proper FK attribute
+        public string? HourDiscountSetByUserId { get; set; }
+
+        [ForeignKey("HourDiscountSetByUserId")]
+        public ApplicationUser? HourDiscountSetByUser { get; set; }
+
+        public DateTime? HourDiscountSetAt { get; set; }
+
+        // For commission mode 3 calculation
+        [Range(0, 60)] // Increased max to 60 to accommodate heavier first semesters
+        public int? PlannedFirstSemesterHours { get; set; }
 
         public DiscountGrant? DiscountGrant { get; set; }
         public Commission? Commission { get; set; }

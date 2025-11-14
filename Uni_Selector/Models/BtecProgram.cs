@@ -14,12 +14,10 @@ namespace Uni_Selector.Models
         [ForeignKey("UniversityId")]
         public University University { get; set; }
 
-        [Required]
-        [StringLength(200)]
+        [Required, StringLength(200)]
         public string NameArabic { get; set; }
 
-        [Required]
-        [StringLength(200)]
+        [Required, StringLength(200)]
         public string NameEnglish { get; set; }
 
         [StringLength(1000)]
@@ -28,27 +26,29 @@ namespace Uni_Selector.Models
         [Required]
         public BtecLevel Level { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required, StringLength(100)]
         public string TechnicalField { get; set; }
 
         [Required]
         public LanguageCode Language { get; set; }
 
-        [Required]
-        [Range(1, 10)]
+        [Required, Range(1, 10)]
         public int DurationInYears { get; set; }
 
         [Required]
         public DateTime SemesterStartDate { get; set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal RegistrationFee { get; set; }
+        [Required, Range(30, 300)]
+        public int TotalCreditHours { get; set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal TuitionPerSemester { get; set; }
+        [Required, Column(TypeName = "decimal(18,2)")]
+        public decimal HourPriceBase { get; set; }
+
+        [Required, Column(TypeName = "decimal(18,2)")]
+        public decimal RegistrationFeeFirstSemester { get; set; }
+
+        [Required, Column(TypeName = "decimal(18,2)")]
+        public decimal RegistrationFeeRegularSemester { get; set; }
 
         [Range(0, 1000)]
         public int Capacity { get; set; } = 0;
@@ -65,8 +65,6 @@ namespace Uni_Selector.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
-
         public ICollection<BtecEntryRequirement> EntryRequirements { get; set; }
-
     }
 }
