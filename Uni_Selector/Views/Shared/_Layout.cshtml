@@ -1,50 +1,381 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Uni_Selector</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Uni_Selector.styles.css" asp-append-version="true" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>@ViewData["Title"] - Uni Selector</title>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/edua-icons.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/owl.carousel.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/owl.transitions.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/cubeportfolio.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/settings.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bootsnav.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/loader.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/custom.css">
+
+    <link rel="icon" href="~/assets/images/favicon.png">
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
+
 <body>
+    <a href="#" class="scrollToTop"><i class="fa fa-angle-up"></i></a>
+
+    <!--Loader-->
+    <div class="loader">
+        <div class="bouncybox">
+            <div class="bouncy"></div>
+        </div>
+    </div>
+
+    <!-- Top Bar -->
+    <div class="topbar">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="pull-left">
+                        <span class="info"><a href="#"> Have any question?</a></span>
+                        <span class="info"><i class="icon-phone2"></i>(962) 6-XXX-XXXX</span>
+                        <span class="info"><i class="icon-mail"></i>info@uniselector.jo</span>
+                    </div>
+                    <ul class="social_top pull-right">
+                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#"><i class="icon-twitter4"></i></a></li>
+                        <li><a href="#"><i class="icon-google"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Header-->
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Uni_Selector</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+        <nav class="navbar navbar-default navbar-fixed white no-background bootsnav">
+            <div class="container">
+                <div class="search_btn btn_common"><i class="icon-icons185"></i></div>
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="~/assets/images/logo-white.png" alt="logo" class="logo logo-display">
+                        <img src="~/assets/images/logo.png" class="logo logo-scrolled" alt="">
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="navbar-menu">
+                    <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOut">
+                        <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Universities</a>
+                            <ul class="dropdown-menu">
+                                <li><a asp-area="" asp-controller="University" asp-action="Index">Browse Universities</a></li>
+                                <li><a asp-area="" asp-controller="University" asp-action="Search">Search Universities</a></li>
+                                <li><a asp-area="" asp-controller="Program" asp-action="Index">Programs</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            @if (User.IsInRole("Student"))
+                            {
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Dashboard</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a asp-area="" asp-controller="Student" asp-action="Dashboard">Dashboard</a></li>
+                                        <li><a asp-area="" asp-controller="Student" asp-action="Recommendations">My Recommendations</a></li>
+                                        <li><a asp-area="" asp-controller="Student" asp-action="Applications">My Applications</a></li>
+                                        <li><a asp-area="" asp-controller="Student" asp-action="Profile">Profile</a></li>
+                                    </ul>
+                                </li>
+                            }
+                            else if (User.IsInRole("UniversityRepresentative"))
+                            {
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">University Panel</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a asp-area="" asp-controller="UniversityRep" asp-action="Dashboard">Dashboard</a></li>
+                                        <li><a asp-area="" asp-controller="UniversityRep" asp-action="ManagePrograms">Manage Programs</a></li>
+                                        <li><a asp-area="" asp-controller="UniversityRep" asp-action="Applications">Applications</a></li>
+                                        <li><a asp-area="" asp-controller="UniversityRep" asp-action="Statistics">Statistics</a></li>
+                                    </ul>
+                                </li>
+                            }
+                            else if (User.IsInRole("PlatformAdmin"))
+                            {
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin Panel</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a asp-area="" asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+                                        <li><a asp-area="" asp-controller="Admin" asp-action="ManageUniversities">Universities</a></li>
+                                        <li><a asp-area="" asp-controller="Admin" asp-action="ManageUsers">Users</a></li>
+                                        <li><a asp-area="" asp-controller="Admin" asp-action="Reports">Reports</a></li>
+                                    </ul>
+                                </li>
+                            }
+                            else if (User.IsInRole("BTECAuthority"))
+                            {
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">BTEC Panel</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a asp-area="" asp-controller="BTEC" asp-action="Dashboard">Dashboard</a></li>
+                                        <li><a asp-area="" asp-controller="BTEC" asp-action="ValidateCredentials">Validate Credentials</a></li>
+                                        <li><a asp-area="" asp-controller="BTEC" asp-action="Reports">Reports</a></li>
+                                    </ul>
+                                </li>
+                            }
+
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-bell"></i> Notifications
+                                    <span class="badge notification-count" id="notificationCount">0</span>
+                                </a>
+                                <ul class="dropdown-menu notification-dropdown">
+                                    <li class="dropdown-header">Recent Notifications</li>
+                                    <li id="notificationList">
+                                        <a href="#" class="text-center">No new notifications</a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li><a asp-area="" asp-controller="Notification" asp-action="Index" class="text-center">View All</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-user"></i> @User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a asp-area="" asp-controller="Account" asp-action="Profile">Profile</a></li>
+                                    <li><a asp-area="" asp-controller="Account" asp-action="Settings">Settings</a></li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                                            <button type="submit" class="btn-link" style="border:none; background:none; padding:3px 20px; display:block; width:100%; text-align:left;">
+                                                <i class="fa fa-sign-out"></i> Logout
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li><a asp-area="" asp-controller="Account" asp-action="Login"><i class="fa fa-sign-in"></i> Login</a></li>
+                            <li><a asp-area="" asp-controller="Account" asp-action="Register"><i class="fa fa-user-plus"></i> Register</a></li>
+                        }
+
+                        <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <!--Search-->
+    <div id="search">
+        <button type="button" class="close">×</button>
+        <form asp-area="" asp-controller="University" asp-action="Search" method="get">
+            <input type="search" name="query" value="" placeholder="Search universities, programs...." required />
+            <button type="submit" class="btn btn_common blue">Search</button>
+        </form>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <!-- Main Content -->
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <!--FOOTER-->
+    <footer class="padding-top">
         <div class="container">
-            &copy; 2025 - Uni_Selector - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row">
+                <div class="col-md-4 col-sm-4 footer_panel bottom25">
+                    <h3 class="heading bottom25">About Uni Selector<span class="divider-left"></span></h3>
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="footer_logo bottom25">
+                        <img src="~/assets/images/logo-white.png" alt="Uni Selector">
+                    </a>
+                    <p>The Smart University Selection Platform for Jordan - helping students find their perfect university match based on their academic profile, preferences, and budget.</p>
+                    <ul class="social_icon top25">
+                        <li><a href="#" class="facebook"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#" class="twitter"><i class="icon-twitter4"></i></a></li>
+                        <li><a href="#" class="instagram"><i class="icon-instagram"></i></a></li>
+                        <li><a href="#" class="linkedin"><i class="fa fa-linkedin"></i></a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 col-sm-4 footer_panel bottom25">
+                    <h3 class="heading bottom25">Quick Links<span class="divider-left"></span></h3>
+                    <ul class="links">
+                        <li><a asp-area="" asp-controller="Home" asp-action="Index"><i class="icon-chevron-small-right"></i>Home</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="About"><i class="icon-chevron-small-right"></i>About Us</a></li>
+                        <li><a asp-area="" asp-controller="University" asp-action="Index"><i class="icon-chevron-small-right"></i>Universities</a></li>
+                        <li><a asp-area="" asp-controller="Program" asp-action="Index"><i class="icon-chevron-small-right"></i>Programs</a></li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            @if (User.IsInRole("Student"))
+                            {
+                                <li><a asp-area="" asp-controller="Student" asp-action="Dashboard"><i class="icon-chevron-small-right"></i>My Dashboard</a></li>
+                                <li><a asp-area="" asp-controller="Student" asp-action="Recommendations"><i class="icon-chevron-small-right"></i>Recommendations</a></li>
+                            }
+                        }
+                        else
+                        {
+                            <li><a asp-area="" asp-controller="Account" asp-action="Register"><i class="icon-chevron-small-right"></i>Student Registration</a></li>
+                            <li><a asp-area="" asp-controller="Account" asp-action="UniversityRegister"><i class="icon-chevron-small-right"></i>University Registration</a></li>
+                        }
+                        <li><a asp-area="" asp-controller="Home" asp-action="FAQ"><i class="icon-chevron-small-right"></i>FAQ</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Privacy"><i class="icon-chevron-small-right"></i>Privacy Policy</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Contact"><i class="icon-chevron-small-right"></i>Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 col-sm-4 footer_panel bottom25">
+                    <h3 class="heading bottom25">Keep in Touch <span class="divider-left"></span></h3>
+                    <p class="address"><i class="icon-map-pin"></i>Amman, Jordan</p>
+                    <p class="address"><i class="icon-phone"></i>(962) 6-XXX-XXXX</p>
+                    <p class="address"><i class="icon-mail"></i><a href="mailto:info@uniselector.jo">info@uniselector.jo</a></p>
+                    <div class="top25">
+                        <h5>Working Hours</h5>
+                        <p>
+                            Sunday - Thursday: 9:00 AM - 5:00 PM<br>
+                            Friday - Saturday: Closed
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <div class="copyright">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <p>Copyright &copy; @DateTime.Now.Year <a asp-area="" asp-controller="Home" asp-action="Index">Uni Selector</a>. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--FOOTER ends-->
+    <!-- JavaScript Files -->
+    <script src="~/assets/js/jquery-2.2.3.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/bootsnav.js"></script>
+    <script src="~/assets/js/jquery.appear.js"></script>
+    <script src="~/assets/js/jquery-countTo.js"></script>
+    <script src="~/assets/js/jquery.parallax-1.1.3.js"></script>
+    <script src="~/assets/js/owl.carousel.min.js"></script>
+    <script src="~/assets/js/jquery.cubeportfolio.min.js"></script>
+    <script src="~/assets/js/wow.min.js"></script>
+    <script src="~/assets/js/functions.js"></script>
+    <script src="~/assets/js/app.js"></script>
+
+    <!-- SignalR for Real-time Notifications -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <script>
+            // SignalR Notification Hub Connection
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/notificationHub")
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on("ReceiveNotification", function (notification) {
+                updateNotificationBadge();
+                showNotificationToast(notification);
+            });
+
+            connection.start().then(function () {
+                console.log("SignalR Connected");
+                updateNotificationBadge();
+            }).catch(function (err) {
+                console.error("SignalR Connection Error: ", err);
+            });
+
+            function updateNotificationBadge() {
+                fetch('/api/notification/unread-count')
+                    .then(response => response.json())
+                    .then(data => {
+                        const badge = document.getElementById('notificationCount');
+                        if (data.count > 0) {
+                            badge.textContent = data.count > 99 ? '99+' : data.count;
+                            badge.style.display = 'inline-block';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    })
+                    .catch(err => console.error('Error fetching notification count:', err));
+            }
+
+            function showNotificationToast(notification) {
+                // Simple toast notification
+                const toast = document.createElement('div');
+                toast.className = 'notification-toast';
+                toast.innerHTML = `
+                    <div class="notification-toast-content">
+                        <strong>${notification.title}</strong>
+                        <p>${notification.message}</p>
+                    </div>
+                `;
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.classList.add('show');
+                }, 100);
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 5000);
+            }
+
+            // Load recent notifications in dropdown
+            document.addEventListener('DOMContentLoaded', function() {
+                loadRecentNotifications();
+            });
+
+            function loadRecentNotifications() {
+                fetch('/api/notification/recent?count=5')
+                    .then(response => response.json())
+                    .then(data => {
+                        const list = document.getElementById('notificationList');
+                        if (data.notifications && data.notifications.length > 0) {
+                            list.innerHTML = data.notifications.map(n => `
+                                <li>
+                                    <a href="${n.actionUrl || '#'}">
+                                        <strong>${n.title}</strong><br>
+                                        <small>${n.message}</small><br>
+                                        <small class="text-muted">${formatDate(n.createdAt)}</small>
+                                    </a>
+                                </li>
+                            `).join('');
+                        } else {
+                            list.innerHTML = '<li><a href="#" class="text-center">No new notifications</a></li>';
+                        }
+                    })
+                    .catch(err => console.error('Error loading notifications:', err));
+            }
+
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diff = Math.floor((now - date) / 1000); // seconds
+
+                if (diff < 60) return 'Just now';
+                if (diff < 3600) return Math.floor(diff / 60) + ' minutes ago';
+                if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
+                if (diff < 604800) return Math.floor(diff / 86400) + ' days ago';
+                return date.toLocaleDateString();
+            }
+        </script>
+    }
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

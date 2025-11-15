@@ -223,6 +223,8 @@ namespace Uni_Selector.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedAt");
+
                     b.HasIndex("Email");
 
                     b.HasIndex("IsActive");
@@ -249,22 +251,35 @@ namespace Uni_Selector.Migrations
                     b.Property<int>("BtecProgramId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("EffectiveFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EffectiveTo")
+                        .HasColumnType("datetime2");
+
                     b.Property<double>("MinGPA")
-                        .HasColumnType("float");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("float(5)");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("RequiresBtecL2")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("RequiresBtecL3")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.HasKey("Id");
 
                     b.HasIndex("BtecProgramId");
+
+                    b.HasIndex("MinGPA");
 
                     b.ToTable("BtecEntryRequirements");
                 });
@@ -285,7 +300,9 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("Capacity")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -297,11 +314,18 @@ namespace Uni_Selector.Migrations
                     b.Property<int>("DurationInYears")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("HourPriceBase")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsApprovedByBtecAuthority")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<int>("Language")
                         .HasColumnType("int");
@@ -319,7 +343,10 @@ namespace Uni_Selector.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<decimal>("RegistrationFee")
+                    b.Property<decimal>("RegistrationFeeFirstSemester")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("RegistrationFeeRegularSemester")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("SemesterStartDate")
@@ -330,8 +357,10 @@ namespace Uni_Selector.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<decimal>("TuitionPerSemester")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("TotalCreditHours")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(120);
 
                     b.Property<int>("UniversityId")
                         .HasColumnType("int");
@@ -341,7 +370,13 @@ namespace Uni_Selector.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IsActive");
+
                     b.HasIndex("IsApprovedByBtecAuthority");
+
+                    b.HasIndex("Level");
+
+                    b.HasIndex("TechnicalField");
 
                     b.HasIndex("UniversityId");
 
@@ -362,8 +397,26 @@ namespace Uni_Selector.Migrations
                     b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("BaseAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("CalculatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("DiscountPercentApplied")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal?>("HourPriceUsed")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("HoursCountUsed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Mode")
+                        .HasColumnType("int");
 
                     b.Property<int?>("MonthlySettlementId")
                         .HasColumnType("int");
@@ -371,8 +424,14 @@ namespace Uni_Selector.Migrations
                     b.Property<decimal>("Percentage")
                         .HasColumnType("decimal(5,2)");
 
+                    b.Property<decimal?>("RegistrationFeeUsed")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<bool>("Settled")
                         .HasColumnType("bit");
+
+                    b.Property<int>("UniversityId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -381,9 +440,15 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("CreatedAt");
 
+                    b.HasIndex("Mode");
+
                     b.HasIndex("MonthlySettlementId");
 
                     b.HasIndex("Settled");
+
+                    b.HasIndex("UniversityId", "CreatedAt");
+
+                    b.HasIndex("UniversityId", "Settled");
 
                     b.ToTable("Commissions");
                 });
@@ -433,7 +498,11 @@ namespace Uni_Selector.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
+                    b.HasIndex("GrantedAt");
+
                     b.HasIndex("RedeemedByUserId");
+
+                    b.HasIndex("Status");
 
                     b.HasIndex("UniversityId", "Status");
 
@@ -448,11 +517,23 @@ namespace Uni_Selector.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("AcademicTrack")
+                        .HasColumnType("int");
+
                     b.Property<bool>("AllowNoTawjihi")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("EffectiveFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EffectiveTo")
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("MinGPA")
-                        .HasColumnType("float");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("float(5)");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
@@ -461,16 +542,23 @@ namespace Uni_Selector.Migrations
                     b.Property<int>("Path")
                         .HasColumnType("int");
 
-                    b.Property<string>("Track")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<int>("UniversityProgramId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VocationalBranch")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AcademicTrack");
+
+                    b.HasIndex("MinGPA");
+
+                    b.HasIndex("Path");
+
                     b.HasIndex("UniversityProgramId");
+
+                    b.HasIndex("VocationalBranch");
 
                     b.ToTable("EntryRequirements");
                 });
@@ -484,7 +572,9 @@ namespace Uni_Selector.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Closed")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime?>("ClosedAt")
                         .HasColumnType("datetime2");
@@ -520,6 +610,10 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("ClosedByUserId");
 
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("UniversityId", "Closed");
+
                     b.HasIndex("UniversityId", "Year", "Month")
                         .IsUnique();
 
@@ -534,14 +628,28 @@ namespace Uni_Selector.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ActionUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Channel")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("EmailSent")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -551,13 +659,18 @@ namespace Uni_Selector.Migrations
                     b.Property<DateTime?>("ReadAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("SmsSent")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -565,9 +678,13 @@ namespace Uni_Selector.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Category");
+
                     b.HasIndex("CreatedAt");
 
                     b.HasIndex("UserId", "IsRead");
+
+                    b.HasIndex("UserId", "Category", "IsRead");
 
                     b.ToTable("Notifications");
                 });
@@ -607,13 +724,22 @@ namespace Uni_Selector.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int>("TotalCreditHours")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(120);
+
                     b.HasKey("Id");
 
                     b.HasIndex("Degree");
 
+                    b.HasIndex("Language");
+
                     b.HasIndex("NameArabic");
 
                     b.HasIndex("NameEnglish");
+
+                    b.HasIndex("Degree", "Language");
 
                     b.ToTable("Programs");
                 });
@@ -639,14 +765,17 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsViewed")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("ReasonsJson")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<double>("Score")
-                        .HasColumnType("float");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("float(5)");
 
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
@@ -660,7 +789,11 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("CreatedAt");
 
+                    b.HasIndex("IsViewed");
+
                     b.HasIndex("UniversityProgramId");
+
+                    b.HasIndex("StudentId", "CreatedAt");
 
                     b.HasIndex("StudentId", "Score");
 
@@ -677,6 +810,9 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AcademicTrack")
+                        .HasColumnType("int");
 
                     b.Property<string>("Area")
                         .HasMaxLength(200)
@@ -708,7 +844,8 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("GPA")
-                        .HasColumnType("float");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("float(5)");
 
                     b.Property<bool>("HasFamilyConnection")
                         .HasColumnType("bit");
@@ -740,10 +877,6 @@ namespace Uni_Selector.Migrations
                     b.Property<decimal>("RegistrationBudget")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Track")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -751,12 +884,23 @@ namespace Uni_Selector.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("VocationalBranch")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
 
                     b.HasIndex("FamilyConnectionUniversityId");
 
+                    b.HasIndex("GPA");
+
+                    b.HasIndex("Path");
+
                     b.HasIndex("UserId")
                         .IsUnique();
+
+                    b.HasIndex("Province", "City");
 
                     b.ToTable("Students");
                 });
@@ -778,9 +922,21 @@ namespace Uni_Selector.Migrations
                     b.Property<int?>("BtecProgramId")
                         .HasColumnType("int");
 
+                    b.Property<decimal?>("HourDiscountPercent")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime?>("HourDiscountSetAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("HourDiscountSetByUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("PlannedFirstSemesterHours")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -798,9 +954,13 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("BtecProgramId");
 
+                    b.HasIndex("HourDiscountSetByUserId");
+
                     b.HasIndex("Status");
 
                     b.HasIndex("UniversityProgramId");
+
+                    b.HasIndex("Status", "ApplicationDate");
 
                     b.HasIndex("StudentId", "ApplicationDate");
 
@@ -827,6 +987,9 @@ namespace Uni_Selector.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("CommissionMode")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -845,7 +1008,9 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<double?>("Latitude")
                         .HasColumnType("float");
@@ -889,11 +1054,17 @@ namespace Uni_Selector.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CommissionMode");
+
+                    b.HasIndex("IsActive");
+
                     b.HasIndex("NameArabic");
 
                     b.HasIndex("NameEnglish");
 
-                    b.HasIndex("City", "Province");
+                    b.HasIndex("Type");
+
+                    b.HasIndex("Province", "City");
 
                     b.ToTable("Universities");
                 });
@@ -907,7 +1078,9 @@ namespace Uni_Selector.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Capacity")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -915,13 +1088,21 @@ namespace Uni_Selector.Migrations
                     b.Property<int>("DurationInYears")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("HourPriceBase")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("ProgramId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("RegistrationFee")
+                    b.Property<decimal>("RegistrationFeeFirstSemester")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("RegistrationFeeRegularSemester")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("SemesterStartDate")
@@ -929,9 +1110,6 @@ namespace Uni_Selector.Migrations
 
                     b.Property<int>("StudySystem")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("TuitionPerSemester")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("UniversityId")
                         .HasColumnType("int");
@@ -941,7 +1119,13 @@ namespace Uni_Selector.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IsActive");
+
                     b.HasIndex("ProgramId");
+
+                    b.HasIndex("SemesterStartDate");
+
+                    b.HasIndex("StudySystem");
 
                     b.HasIndex("UniversityId", "ProgramId");
 
@@ -983,6 +1167,8 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IsActive");
 
                     b.HasIndex("UniversityId");
 
@@ -1078,9 +1264,17 @@ namespace Uni_Selector.Migrations
                         .HasForeignKey("MonthlySettlementId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("Uni_Selector.Models.University", "University")
+                        .WithMany()
+                        .HasForeignKey("UniversityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Application");
 
                     b.Navigation("MonthlySettlement");
+
+                    b.Navigation("University");
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.DiscountGrant", b =>
@@ -1096,9 +1290,17 @@ namespace Uni_Selector.Migrations
                         .HasForeignKey("RedeemedByUserId")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("Uni_Selector.Models.University", "University")
+                        .WithMany()
+                        .HasForeignKey("UniversityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Application");
 
                     b.Navigation("RedeemedByUser");
+
+                    b.Navigation("University");
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.EntryRequirement", b =>
@@ -1191,6 +1393,11 @@ namespace Uni_Selector.Migrations
                         .HasForeignKey("BtecProgramId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Uni_Selector.Models.ApplicationUser", "HourDiscountSetByUser")
+                        .WithMany()
+                        .HasForeignKey("HourDiscountSetByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Uni_Selector.Models.Student", "Student")
                         .WithMany("Applications")
                         .HasForeignKey("StudentId")
@@ -1203,6 +1410,8 @@ namespace Uni_Selector.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("BtecProgram");
+
+                    b.Navigation("HourDiscountSetByUser");
 
                     b.Navigation("Student");
 

@@ -1,8 +1,195 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
+﻿
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<!--Slider Section - You can customize this-->
+<section class="rev_slider_wrapper text-center" style="min-height: 600px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div style="color: white; padding: 50px 0;">
+                    <h1 style="font-size: 48px; margin-bottom: 20px; font-weight: bold;">Welcome to Uni Selector</h1>
+                    <p style="font-size: 20px; margin-bottom: 30px;">Your Smart University Selection Platform for Jordan</p>
+                    <p style="font-size: 16px; margin-bottom: 40px; max-width: 800px; margin-left: auto; margin-right: auto;">
+                        Find the perfect university match based on your academic profile, preferences, and budget.
+                        Get intelligent recommendations and exclusive discounts from partnered universities.
+                    </p>
+                    <div>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            @if (User.IsInRole("Student"))
+                            {
+                                <a asp-area="" asp-controller="Student" asp-action="Recommendations" class="btn btn_common blue" style="margin: 10px;">
+                                    Get My Recommendations
+                                </a>
+                            }
+                            <a asp-area="" asp-controller="University" asp-action="Index" class="btn btn_common" style="background: white; color: #667eea; margin: 10px;">
+                                Browse Universities
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-area="" asp-controller="Account" asp-action="Register" class="btn btn_common blue" style="margin: 10px;">
+                                Get Started
+                            </a>
+                            <a asp-area="" asp-controller="University" asp-action="Index" class="btn btn_common" style="background: white; color: #667eea; margin: 10px;">
+                                Browse Universities
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--Features Section-->
+<section class="padding" style="background: #f8f9fa;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center bottom40">
+                <h2 class="heading">Why Choose Uni Selector? <span class="divider-center"></span></h2>
+                <p>The most comprehensive university selection platform in Jordan</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-sm-6 bottom30">
+                <div class="feature_box text-center" style="background: white; padding: 40px 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: 100%;">
+                    <div class="icon" style="font-size: 48px; color: #667eea; margin-bottom: 20px;">
+                        <i class="fa fa-lightbulb-o"></i>
+                    </div>
+                    <h4 style="margin-bottom: 15px;">Smart Recommendations</h4>
+                    <p>Get personalized university recommendations based on your GPA, location, budget, and preferred programs.</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 bottom30">
+                <div class="feature_box text-center" style="background: white; padding: 40px 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: 100%;">
+                    <div class="icon" style="font-size: 48px; color: #667eea; margin-bottom: 20px;">
+                        <i class="fa fa-money"></i>
+                    </div>
+                    <h4 style="margin-bottom: 15px;">Exclusive Discounts</h4>
+                    <p>Receive university-funded discounts on tuition fees when you apply through our platform.</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 bottom30">
+                <div class="feature_box text-center" style="background: white; padding: 40px 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: 100%;">
+                    <div class="icon" style="font-size: 48px; color: #667eea; margin-bottom: 20px;">
+                        <i class="fa fa-graduation-cap"></i>
+                    </div>
+                    <h4 style="margin-bottom: 15px;">All Jordan Universities</h4>
+                    <p>Access comprehensive information about all private universities in Jordan in one place.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row top30">
+            <div class="col-md-4 col-sm-6 bottom30">
+                <div class="feature_box text-center" style="background: white; padding: 40px 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: 100%;">
+                    <div class="icon" style="font-size: 48px; color: #667eea; margin-bottom: 20px;">
+                        <i class="fa fa-check-circle"></i>
+                    </div>
+                    <h4 style="margin-bottom: 15px;">Academic Track Support</h4>
+                    <p>Supports all academic tracks: Scientific, Literary, Sharia, Vocational, and BTEC programs.</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 bottom30">
+                <div class="feature_box text-center" style="background: white; padding: 40px 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: 100%;">
+                    <div class="icon" style="font-size: 48px; color: #667eea; margin-bottom: 20px;">
+                        <i class="fa fa-bell"></i>
+                    </div>
+                    <h4 style="margin-bottom: 15px;">Real-time Updates</h4>
+                    <p>Get instant notifications about application status, new programs, and important deadlines.</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 bottom30">
+                <div class="feature_box text-center" style="background: white; padding: 40px 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: 100%;">
+                    <div class="icon" style="font-size: 48px; color: #667eea; margin-bottom: 20px;">
+                        <i class="fa fa-shield"></i>
+                    </div>
+                    <h4 style="margin-bottom: 15px;">Verified Information</h4>
+                    <p>All university information is verified and kept up-to-date by official representatives.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--How It Works Section-->
+<section class="padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center bottom40">
+                <h2 class="heading">How It Works <span class="divider-center"></span></h2>
+                <p>Simple steps to find your perfect university match</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-sm-6 text-center bottom30">
+                <div class="step-box">
+                    <div class="step-number" style="width: 80px; height: 80px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; margin: 0 auto 20px;">1</div>
+                    <h4>Create Account</h4>
+                    <p>Sign up and complete your academic profile with your GPA and preferences</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 text-center bottom30">
+                <div class="step-box">
+                    <div class="step-number" style="width: 80px; height: 80px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; margin: 0 auto 20px;">2</div>
+                    <h4>Get Recommendations</h4>
+                    <p>Our smart algorithm matches you with suitable universities and programs</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 text-center bottom30">
+                <div class="step-box">
+                    <div class="step-number" style="width: 80px; height: 80px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; margin: 0 auto 20px;">3</div>
+                    <h4>Review Options</h4>
+                    <p>Compare universities, programs, and available discounts</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 text-center bottom30">
+                <div class="step-box">
+                    <div class="step-number" style="width: 80px; height: 80px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; margin: 0 auto 20px;">4</div>
+                    <h4>Apply & Save</h4>
+                    <p>Submit your application and receive your exclusive discount</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--CTA Section-->
+<section class="padding" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2 text-center">
+                <h2 style="color: white; margin-bottom: 20px;">Ready to Find Your Perfect University?</h2>
+                <p style="font-size: 18px; margin-bottom: 30px;">Join thousands of students who have found their ideal university through Uni Selector</p>
+                @if (!User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-area="" asp-controller="Account" asp-action="Register" class="btn btn_common" style="background: white; color: #667eea; margin: 10px;">
+                        Sign Up Now - It's Free!
+                    </a>
+                }
+                else
+                {
+                    <a asp-area="" asp-controller="Student" asp-action="Dashboard" class="btn btn_common" style="background: white; color: #667eea; margin: 10px;">
+                        Go to Dashboard
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Add any page-specific JavaScript here
+            console.log('Home page loaded');
+        });
+    </script>
+}
