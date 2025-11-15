@@ -6,4 +6,5 @@
         Arabic = 2,
         Both = 3
     }
+
 }

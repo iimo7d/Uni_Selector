@@ -11,4 +11,5 @@
         CommissionGenerated = 7,
         DiscountApplied = 8
     }
+
 }

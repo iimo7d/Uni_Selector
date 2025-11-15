@@ -6,4 +6,5 @@
         Evening = 2,
         Weekend = 3
     }
+
 }

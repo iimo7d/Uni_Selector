@@ -6,4 +6,5 @@
         ProgramTotalHours2Percent = 2,
         FirstSemesterRegPlusHours2Percent = 3
     }
+
 }
