@@ -10,6 +10,7 @@
         SystemAlert = 6,
         CommissionGenerated = 7,
         DiscountApplied = 8
+
     }
 
 }

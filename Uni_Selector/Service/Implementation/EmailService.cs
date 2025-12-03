@@ -47,6 +47,7 @@ namespace Uni_Selector.Service.Implementation
                 {
                     bodyBuilder.TextBody = body;
                 }
+
                 message.Body = bodyBuilder.ToMessageBody();
 
                 await client.SendAsync(message);
@@ -76,6 +77,322 @@ namespace Uni_Selector.Service.Implementation
                 }
             }
         }
+
+        #region Authentication Email Templates
+
+        public async Task SendEmailConfirmationAsync(string email, string fullName, string confirmationUrl)
+        {
+            var subject = "Confirm Your Email Address";
+            var body = GetEmailConfirmationTemplate(fullName, confirmationUrl);
+
+            await SendEmailAsync(email, subject, body, isHtml: true);
+        }
+
+        public async Task SendPasswordResetAsync(string email, string fullName, string resetUrl)
+        {
+            var subject = "Reset Your Password";
+            var body = GetPasswordResetTemplate(fullName, resetUrl);
+
+            await SendEmailAsync(email, subject, body, isHtml: true);
+        }
+
+        public async Task SendWelcomeEmailAsync(string email, string fullName)
+        {
+            var subject = "Welcome to Our Platform!";
+            var body = GetWelcomeEmailTemplate(fullName);
+
+            await SendEmailAsync(email, subject, body, isHtml: true);
+        }
+
+        public async Task SendAccountLockedNotificationAsync(string email, string fullName, DateTime unlockTime)
+        {
+            var subject = "Account Security Alert - Account Locked";
+            var body = GetAccountLockedTemplate(fullName, unlockTime);
+
+            await SendEmailAsync(email, subject, body, isHtml: true);
+        }
+
+        public async Task SendPasswordChangedNotificationAsync(string email, string fullName)
+        {
+            var subject = "Password Changed Successfully";
+            var body = GetPasswordChangedTemplate(fullName);
+
+            await SendEmailAsync(email, subject, body, isHtml: true);
+        }
+
+        #endregion
+
+        #region Email Template Builders
+
+        private string GetEmailConfirmationTemplate(string fullName, string confirmationUrl)
+        {
+            return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }}
+        .container {{ max-width: 600px; margin: 20px auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
+        .header {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 20px; text-align: center; }}
+        .header h1 {{ margin: 0; font-size: 28px; }}
+        .content {{ padding: 40px 30px; }}
+        .content h2 {{ color: #667eea; margin-top: 0; }}
+        .button {{ display: inline-block; padding: 14px 40px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }}
+        .button:hover {{ background: #5568d3; }}
+        .footer {{ background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #6c757d; border-top: 1px solid #e9ecef; }}
+        .warning {{ background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>🎉 Welcome Aboard!</h1>
+        </div>
+        <div class='content'>
+            <h2>Hi {fullName},</h2>
+            <p>Thank you for creating an account with us! We're excited to have you on board.</p>
+            <p>To get started, please confirm your email address by clicking the button below:</p>
+            
+            <div style='text-align: center;'>
+                <a href='{confirmationUrl}' class='button'>Confirm Email Address</a>
+            </div>
+
+            <div class='warning'>
+                <strong>⏰ Quick Reminder:</strong> This link will expire in 24 hours for security purposes.
+            </div>
+
+            <p>If the button doesn't work, copy and paste this link into your browser:</p>
+            <p style='word-break: break-all; color: #667eea; font-size: 14px;'>{confirmationUrl}</p>
+
+            <p>If you didn't create this account, you can safely ignore this email.</p>
+        </div>
+        <div class='footer'>
+            <p>&copy; {DateTime.Now.Year} Your Platform Name. All rights reserved.</p>
+            <p>This is an automated message, please do not reply.</p>
+        </div>
+    </div>
+</body>
+</html>";
+        }
+
+        private string GetPasswordResetTemplate(string fullName, string resetUrl)
+        {
+            return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }}
+        .container {{ max-width: 600px; margin: 20px auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
+        .header {{ background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 40px 20px; text-align: center; }}
+        .header h1 {{ margin: 0; font-size: 28px; }}
+        .content {{ padding: 40px 30px; }}
+        .content h2 {{ color: #f5576c; margin-top: 0; }}
+        .button {{ display: inline-block; padding: 14px 40px; background: #f5576c; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }}
+        .button:hover {{ background: #e04558; }}
+        .footer {{ background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #6c757d; border-top: 1px solid #e9ecef; }}
+        .alert {{ background: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; color: #721c24; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>🔐 Password Reset Request</h1>
+        </div>
+        <div class='content'>
+            <h2>Hi {fullName},</h2>
+            <p>We received a request to reset your password. No worries, we've got you covered!</p>
+            <p>Click the button below to create a new password:</p>
+            
+            <div style='text-align: center;'>
+                <a href='{resetUrl}' class='button'>Reset Password</a>
+            </div>
+
+            <div class='alert'>
+                <strong>⚠️ Security Notice:</strong> This link will expire in 1 hour. If you didn't request this reset, please ignore this email and your password will remain unchanged.
+            </div>
+
+            <p>If the button doesn't work, copy and paste this link into your browser:</p>
+            <p style='word-break: break-all; color: #f5576c; font-size: 14px;'>{resetUrl}</p>
+
+            <p><strong>For your security:</strong></p>
+            <ul>
+                <li>Never share this link with anyone</li>
+                <li>We will never ask for your password via email</li>
+                <li>If you suspect unauthorized access, contact support immediately</li>
+            </ul>
+        </div>
+        <div class='footer'>
+            <p>&copy; {DateTime.Now.Year} Your Platform Name. All rights reserved.</p>
+            <p>This is an automated message, please do not reply.</p>
+        </div>
+    </div>
+</body>
+</html>";
+        }
+
+        private string GetWelcomeEmailTemplate(string fullName)
+        {
+            return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }}
+        .container {{ max-width: 600px; margin: 20px auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
+        .header {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 20px; text-align: center; }}
+        .header h1 {{ margin: 0; font-size: 28px; }}
+        .content {{ padding: 40px 30px; }}
+        .feature-box {{ background: #f8f9fa; padding: 20px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #667eea; }}
+        .button {{ display: inline-block; padding: 14px 40px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }}
+        .footer {{ background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #6c757d; border-top: 1px solid #e9ecef; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>🎊 Welcome to the Platform!</h1>
+        </div>
+        <div class='content'>
+            <h2>Hi {fullName},</h2>
+            <p>Your email has been confirmed successfully! You're all set to explore everything we have to offer.</p>
+            
+            <div class='feature-box'>
+                <h3 style='margin-top: 0; color: #667eea;'>🚀 Quick Start Guide</h3>
+                <ul style='padding-left: 20px;'>
+                    <li>Complete your profile</li>
+                    <li>Explore available features</li>
+                    <li>Connect with the community</li>
+                    <li>Check out our tutorials</li>
+                </ul>
+            </div>
+
+            <div style='text-align: center;'>
+                <a href='#' class='button'>Get Started Now</a>
+            </div>
+
+            <p>Need help? Our support team is here for you 24/7. Just reply to this email or visit our help center.</p>
+            
+            <p>Best regards,<br><strong>The Team</strong></p>
+        </div>
+        <div class='footer'>
+            <p>&copy; {DateTime.Now.Year} Your Platform Name. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>";
+        }
+
+        private string GetAccountLockedTemplate(string fullName, DateTime unlockTime)
+        {
+            var unlockTimeStr = unlockTime.ToString("MMM dd, yyyy hh:mm tt");
+
+            return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }}
+        .container {{ max-width: 600px; margin: 20px auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
+        .header {{ background: linear-gradient(135deg, #f5576c 0%, #d63447 100%); color: white; padding: 40px 20px; text-align: center; }}
+        .header h1 {{ margin: 0; font-size: 28px; }}
+        .content {{ padding: 40px 30px; }}
+        .alert {{ background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }}
+        .footer {{ background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #6c757d; border-top: 1px solid #e9ecef; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>🔒 Account Temporarily Locked</h1>
+        </div>
+        <div class='content'>
+            <h2>Hi {fullName},</h2>
+            <p>Your account has been temporarily locked due to multiple failed login attempts.</p>
+            
+            <div class='alert'>
+                <strong>🕐 Unlock Time:</strong> {unlockTimeStr}
+            </div>
+
+            <p><strong>What happened?</strong></p>
+            <p>We detected 5 consecutive failed login attempts. As a security measure, we've temporarily locked your account for 15 minutes.</p>
+
+            <p><strong>What should you do?</strong></p>
+            <ul>
+                <li>Wait until {unlockTimeStr} to try again</li>
+                <li>Make sure you're using the correct password</li>
+                <li>If you forgot your password, use the 'Forgot Password' option</li>
+                <li>If you didn't attempt to log in, contact support immediately</li>
+            </ul>
+
+            <p>If you believe this was a mistake or need immediate assistance, please contact our support team.</p>
+        </div>
+        <div class='footer'>
+            <p>&copy; {DateTime.Now.Year} Your Platform Name. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>";
+        }
+
+        private string GetPasswordChangedTemplate(string fullName)
+        {
+            return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }}
+        .container {{ max-width: 600px; margin: 20px auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
+        .header {{ background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 40px 20px; text-align: center; }}
+        .header h1 {{ margin: 0; font-size: 28px; }}
+        .content {{ padding: 40px 30px; }}
+        .success {{ background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; color: #155724; }}
+        .footer {{ background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #6c757d; border-top: 1px solid #e9ecef; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>✅ Password Changed Successfully</h1>
+        </div>
+        <div class='content'>
+            <h2>Hi {fullName},</h2>
+            
+            <div class='success'>
+                <strong>✓ Success!</strong> Your password has been changed successfully on {DateTime.Now:MMM dd, yyyy} at {DateTime.Now:hh:mm tt}.
+            </div>
+
+            <p><strong>⚠️ Didn't make this change?</strong></p>
+            <p>If you didn't change your password, please contact our support team immediately. Your account security is our top priority.</p>
+
+            <p><strong>Security Reminders:</strong></p>
+            <ul>
+                <li>Never share your password with anyone</li>
+                <li>Use a unique password for this account</li>
+                <li>Change your password regularly</li>
+                <li>Enable two-factor authentication if available</li>
+            </ul>
+        </div>
+        <div class='footer'>
+            <p>&copy; {DateTime.Now.Year} Your Platform Name. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>";
+        }
+
+        #endregion
     }
 
 }

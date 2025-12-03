@@ -1,283 +1,364 @@
-﻿<!doctype html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"] - Uni Selector</title>
+    <link rel="shortcut icon" type="image/x-icon" href="~/assets/images/favicon.ico">
 
     <!-- CSS Files -->
-    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/edua-icons.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/animate.min.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/owl.carousel.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/owl.transitions.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/cubeportfolio.min.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/settings.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/bootsnav.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/loader.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/custom.css">
-
-    <link rel="icon" href="~/assets/images/favicon.png">
-
-    @await RenderSectionAsync("Styles", required: false)
+    <link rel="stylesheet" href="~/assets/css/icofont.min.css">
+    <link rel="stylesheet" href="~/assets/css/site.css">
+    <link rel="stylesheet" href="~/assets/css/popup.css">
+    <link rel="stylesheet" href="~/assets/css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="~/assets/css/video-modal.css">
+    <link rel="stylesheet" href="~/assets/css/aos.css">
+    <link rel="stylesheet" href="~/assets/css/style.css">
 </head>
+<body class="relative font-inter font-normal text-base leading-[1.8] bg-bodyBg dark:bg-bodyBg-dark z-0">
 
-<body>
-    <a href="#" class="scrollToTop"><i class="fa fa-angle-up"></i></a>
-
-    <!--Loader-->
-    <div class="loader">
-        <div class="bouncybox">
-            <div class="bouncy"></div>
+    <!-- Preloader -->
+    <div class="preloader flex fixed top-0 left-0 h-screen w-full items-center justify-center z-xxl bg-whiteColor opacity-100 visible transition-all duration-700">
+        <div class="w-90px h-90px border-5px border-t-blue border-r-blue border-b-blue-light border-l-blue-light rounded-full animate-spin-infinit"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
+            <img src="~/assets/images/pre.png" alt="Preloader" class="h-10 w-10 block">
         </div>
     </div>
 
-    <!-- Top Bar -->
-    <div class="topbar">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="pull-left">
-                        <span class="info"><a href="#"> Have any question?</a></span>
-                        <span class="info"><i class="icon-phone2"></i>(962) 6-XXX-XXXX</span>
-                        <span class="info"><i class="icon-mail"></i>info@uniselector.jo</span>
+    <!-- Theme Fixed Shadow -->
+    <div>
+        <div class="fixed-shadow left-[-250px]"></div>
+        <div class="fixed-shadow right-[-250px]"></div>
+    </div>
+
+    <!-- Theme Controller -->
+    <div class="fixed top-[100px] 2xl:top-[300px] transition-all duration-300 right-[-50px] hover:right-0 z-xl">
+        <button class="theme-controller w-90px h-10 bg-primaryColor dark:bg-whiteColor-dark rounded-l-lg2 text-whiteColor px-10px flex items-center dark:shadow-theme-controller">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mr-10px w-5 block dark:hidden" viewBox="0 0 512 512">
+                <path d="M160 136c0-30.62 4.51-61.61 16-88C99.57 81.27 48 159.32 48 248c0 119.29 96.71 216 216 216 88.68 0 166.73-51.57 200-128-26.39 11.49-57.38 16-88 16-119.29 0-216-96.71-216-216z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"></path>
+            </svg>
+            <span class="text-base block dark:hidden">Dark</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="hidden mr-10px w-5 dark:block" viewBox="0 0 512 512">
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M256 48v48M256 416v48M403.08 108.92l-33.94 33.94M142.86 369.14l-33.94 33.94M464 256h-48M96 256H48M403.08 403.08l-33.94-33.94M142.86 142.86l-33.94-33.94"></path>
+                <circle cx="256" cy="256" r="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32"></circle>
+            </svg>
+            <span class="text-base hidden dark:block">Light</span>
+        </button>
+    </div>
+
+    <!-- Scroll Up Button -->
+    <div>
+        <button class="scroll-up w-50px h-50px leading-50px text-center text-primaryColor bg-white hover:text-whiteColor hover:bg-primaryColor rounded-full fixed right-5 bottom-[60px] shadow-scroll-up z-medium text-xl dark:text-whiteColor dark:bg-primaryColor dark:hover:text-whiteColor-dark hidden">
+            <i class="icofont-rounded-up"></i>
+        </button>
+    </div>
+
+    <!-- Header Area Start -->
+    <header>
+        <!-- Header Top -->
+        <div class="bg-blackColor2 dark:bg-lightGrey10-dark hidden lg:block">
+            <div class="container 3xl:container-secondary-lg 4xl:container mx-auto text-whiteColor text-size-12 xl:text-sm py-5px xl:py-9px">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p>Call Us: +962 6 123 4567 - Mail Us: info@uniselector.jo</p>
                     </div>
-                    <ul class="social_top pull-right">
-                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                        <li><a href="#"><i class="icon-twitter4"></i></a></li>
-                        <li><a href="#"><i class="icon-google"></i></a></li>
-                    </ul>
+                    <div class="flex gap-37px items-center">
+                        <div>
+                            <p>
+                                <i class="icofont-location-pin text-primaryColor text-size-15 mr-5px"></i>
+                                <span>Amman, Jordan</span>
+                            </p>
+                        </div>
+                        <div>
+                            <ul class="flex gap-13px text-size-15">
+                                <li><a class="hover:text-primaryColor" href="#"><i class="icofont-facebook"></i></a></li>
+                                <li><a class="hover:text-primaryColor" href="#"><i class="icofont-twitter"></i></a></li>
+                                <li><a class="hover:text-primaryColor" href="#"><i class="icofont-instagram"></i></a></li>
+                                <li><a class="hover:text-primaryColor" href="#"><i class="icofont-youtube-play"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!--Header-->
-    <header>
-        <nav class="navbar navbar-default navbar-fixed white no-background bootsnav">
-            <div class="container">
-                <div class="search_btn btn_common"><i class="icon-icons185"></i></div>
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                        <img src="~/assets/images/logo-white.png" alt="logo" class="logo logo-display">
-                        <img src="~/assets/images/logo.png" class="logo logo-scrolled" alt="">
-                    </a>
-                </div>
-                <div class="collapse navbar-collapse" id="navbar-menu">
-                    <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOut">
-                        <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+        <!-- Navbar -->
+        <div class="transition-all duration-500 sticky-header z-medium dark:bg-whiteColor-dark">
+            <nav>
+                <div class="py-15px lg:py-0 px-15px lg:container 3xl:container-secondary-lg 4xl:container mx-auto relative">
+                    <div class="grid grid-cols-2 lg:grid-cols-12 items-center gap-15px">
+                        <!-- Logo -->
+                        <div class="lg:col-start-1 lg:col-span-2">
+                            <a asp-area="" asp-controller="Home" asp-action="Index" class="block">
+                                <img src="~/assets/images/logo/logo_1.png" alt="Uni Selector" class="w-logo-sm lg:w-auto py-2">
+                            </a>
+                        </div>
 
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Universities</a>
-                            <ul class="dropdown-menu">
-                                <li><a asp-area="" asp-controller="University" asp-action="Index">Browse Universities</a></li>
-                                <li><a asp-area="" asp-controller="University" asp-action="Search">Search Universities</a></li>
-                                <li><a asp-area="" asp-controller="Program" asp-action="Index">Programs</a></li>
+                        <!-- Main Menu -->
+                        <div class="hidden lg:block lg:col-start-3 lg:col-span-7">
+                            <ul class="nav-list flex justify-center">
+                                <li class="nav-item group">
+                                    <a asp-area="" asp-controller="Home" asp-action="Index" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
+                                        Home
+                                    </a>
+                                </li>
+                                <li class="nav-item group">
+                                    <a asp-area="" asp-controller="University" asp-action="Index" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
+                                        Universities
+                                    </a>
+                                </li>
+                                <li class="nav-item group">
+                                    <a asp-area="" asp-controller="Program" asp-action="Index" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
+                                        Programs
+                                    </a>
+                                </li>
+                                @if (SignInManager.IsSignedIn(User))
+                                {
+                                    @if (User.IsInRole("Student"))
+                                    {
+                                        <li class="nav-item group">
+                                            <a asp-area="" asp-controller="Student" asp-action="Dashboard" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
+                                                Dashboard
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (User.IsInRole("UniversityRepresentative"))
+                                    {
+                                        <li class="nav-item group">
+                                            <a asp-area="" asp-controller="UniversityRep" asp-action="Dashboard" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
+                                                Dashboard
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (User.IsInRole("Administrator"))
+                                    {
+                                        <li class="nav-item group">
+                                            <a asp-area="" asp-controller="Admin" asp-action="Dashboard" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
+                                                Admin
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (User.IsInRole("BTECAuthority"))
+                                    {
+                                        <li class="nav-item group">
+                                            <a asp-area="" asp-controller="BTEC" asp-action="Dashboard" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
+                                                BTEC
+                                            </a>
+                                        </li>
+                                    }
+                                }
+                                <li class="nav-item group">
+                                    <a asp-area="" asp-controller="Home" asp-action="About" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
+                                        About
+                                    </a>
+                                </li>
+                                <li class="nav-item group">
+                                    <a asp-area="" asp-controller="Home" asp-action="Contact" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
+                                        Contact
+                                    </a>
+                                </li>
                             </ul>
-                        </li>
+                        </div>
 
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            @if (User.IsInRole("Student"))
-                            {
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Dashboard</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a asp-area="" asp-controller="Student" asp-action="Dashboard">Dashboard</a></li>
-                                        <li><a asp-area="" asp-controller="Student" asp-action="Recommendations">My Recommendations</a></li>
-                                        <li><a asp-area="" asp-controller="Student" asp-action="Applications">My Applications</a></li>
-                                        <li><a asp-area="" asp-controller="Student" asp-action="Profile">Profile</a></li>
-                                    </ul>
-                                </li>
-                            }
-                            else if (User.IsInRole("UniversityRepresentative"))
-                            {
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">University Panel</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a asp-area="" asp-controller="UniversityRep" asp-action="Dashboard">Dashboard</a></li>
-                                        <li><a asp-area="" asp-controller="UniversityRep" asp-action="ManagePrograms">Manage Programs</a></li>
-                                        <li><a asp-area="" asp-controller="UniversityRep" asp-action="Applications">Applications</a></li>
-                                        <li><a asp-area="" asp-controller="UniversityRep" asp-action="Statistics">Statistics</a></li>
-                                    </ul>
-                                </li>
-                            }
-                            else if (User.IsInRole("PlatformAdmin"))
-                            {
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin Panel</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a asp-area="" asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
-                                        <li><a asp-area="" asp-controller="Admin" asp-action="ManageUniversities">Universities</a></li>
-                                        <li><a asp-area="" asp-controller="Admin" asp-action="ManageUsers">Users</a></li>
-                                        <li><a asp-area="" asp-controller="Admin" asp-action="Reports">Reports</a></li>
-                                    </ul>
-                                </li>
-                            }
-                            else if (User.IsInRole("BTECAuthority"))
-                            {
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">BTEC Panel</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a asp-area="" asp-controller="BTEC" asp-action="Dashboard">Dashboard</a></li>
-                                        <li><a asp-area="" asp-controller="BTEC" asp-action="ValidateCredentials">Validate Credentials</a></li>
-                                        <li><a asp-area="" asp-controller="BTEC" asp-action="Reports">Reports</a></li>
-                                    </ul>
-                                </li>
-                            }
-
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-bell"></i> Notifications
-                                    <span class="badge notification-count" id="notificationCount">0</span>
-                                </a>
-                                <ul class="dropdown-menu notification-dropdown">
-                                    <li class="dropdown-header">Recent Notifications</li>
-                                    <li id="notificationList">
-                                        <a href="#" class="text-center">No new notifications</a>
+                        <!-- Navbar Right -->
+                        <div class="lg:col-start-10 lg:col-span-3">
+                            <ul class="relative nav-list flex justify-end items-center">
+                                @if (SignInManager.IsSignedIn(User))
+                                {
+                                    <!-- Notifications -->
+                                    <li class="px-5 lg:px-10px 2xl:px-5 lg:py-4 2xl:py-26px 3xl:py-9 group">
+                                        <a href="#" class="relative block" id="notificationBell">
+                                            <i class="icofont-notification text-2xl text-blackColor group-hover:text-secondaryColor transition-all duration-300 dark:text-blackColor-dark"></i>
+                                            <span class="absolute -top-1 2xl:-top-[5px] -right-[10px] lg:right-3/4 2xl:-right-[10px] text-[10px] font-medium text-white dark:text-whiteColor-dark bg-secondaryColor px-1 py-[2px] leading-1 rounded-full z-50 block" id="notificationCount">0</span>
+                                        </a>
                                     </li>
-                                    <li class="divider"></li>
-                                    <li><a asp-area="" asp-controller="Notification" asp-action="Index" class="text-center">View All</a></li>
-                                </ul>
-                            </li>
 
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-user"></i> @User.Identity.Name
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a asp-area="" asp-controller="Account" asp-action="Profile">Profile</a></li>
-                                    <li><a asp-area="" asp-controller="Account" asp-action="Settings">Settings</a></li>
-                                    <li class="divider"></li>
-                                    <li>
-                                        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
-                                            <button type="submit" class="btn-link" style="border:none; background:none; padding:3px 20px; display:block; width:100%; text-align:left;">
-                                                <i class="fa fa-sign-out"></i> Logout
+                                    <!-- User Profile -->
+                                    <li class="hidden lg:block">
+                                        <a asp-area="" asp-controller="Account" asp-action="Profile" class="text-size-12 2xl:text-size-15 px-15px py-2 text-blackColor hover:text-whiteColor bg-whiteColor block hover:bg-primaryColor border border-borderColor1 rounded-standard font-semibold mr-[7px] 2xl:mr-15px dark:text-blackColor-dark dark:bg-whiteColor-dark dark:hover:bg-primaryColor dark:hover:text-whiteColor dark:hover:border-primaryColor">
+                                            <i class="icofont-user-alt-5"></i>
+                                        </a>
+                                    </li>
+
+                                    <!-- Logout -->
+                                    <li class="hidden lg:block">
+                                        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="inline">
+                                            <button type="submit" class="text-size-12 2xl:text-size-15 text-whiteColor bg-primaryColor block border-primaryColor border hover:text-primaryColor hover:bg-white px-15px py-2 rounded-standard dark:hover:bg-whiteColor-dark dark:hover:text-whiteColor">
+                                                Logout
                                             </button>
                                         </form>
                                     </li>
-                                </ul>
-                            </li>
-                        }
-                        else
-                        {
-                            <li><a asp-area="" asp-controller="Account" asp-action="Login"><i class="fa fa-sign-in"></i> Login</a></li>
-                            <li><a asp-area="" asp-controller="Account" asp-action="Register"><i class="fa fa-user-plus"></i> Register</a></li>
-                        }
-
-                        <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
-                    </ul>
+                                }
+                                else
+                                {
+                                    <li class="hidden lg:block">
+                                        <a asp-area="" asp-controller="Account" asp-action="Login" class="text-size-12 2xl:text-size-15 px-15px py-2 text-blackColor hover:text-whiteColor bg-whiteColor block hover:bg-primaryColor border border-borderColor1 rounded-standard font-semibold mr-[7px] 2xl:mr-15px dark:text-blackColor-dark dark:bg-whiteColor-dark dark:hover:bg-primaryColor dark:hover:text-whiteColor dark:hover:border-primaryColor">
+                                            <i class="icofont-user-alt-5"></i> Login
+                                        </a>
+                                    </li>
+                                    <li class="hidden lg:block">
+                                        <a asp-area="" asp-controller="Account" asp-action="Login" class="text-size-12 2xl:text-size-15 text-whiteColor bg-primaryColor block border-primaryColor border hover:text-primaryColor hover:bg-white px-15px py-2 rounded-standard dark:hover:bg-whiteColor-dark dark:hover:text-whiteColor">
+                                            Register
+                                        </a>
+                                    </li>
+                                }
+                                <li class="block lg:hidden">
+                                    <button class="open-mobile-menu text-3xl text-darkdeep1 hover:text-secondaryColor dark:text-whiteColor dark:hover:text-secondaryColor">
+                                        <i class="icofont-navigation-menu"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
+        </div>
     </header>
 
-    <!--Search-->
-    <div id="search">
-        <button type="button" class="close">×</button>
-        <form asp-area="" asp-controller="University" asp-action="Search" method="get">
-            <input type="search" name="query" value="" placeholder="Search universities, programs...." required />
-            <button type="submit" class="btn btn_common blue">Search</button>
-        </form>
-    </div>
-
     <!-- Main Content -->
-    <main role="main">
+    <main class="bg-transparent">
         @RenderBody()
     </main>
 
-    <!--FOOTER-->
-    <footer class="padding-top">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 col-sm-4 footer_panel bottom25">
-                    <h3 class="heading bottom25">About Uni Selector<span class="divider-left"></span></h3>
-                    <a asp-area="" asp-controller="Home" asp-action="Index" class="footer_logo bottom25">
-                        <img src="~/assets/images/logo-white.png" alt="Uni Selector">
-                    </a>
-                    <p>The Smart University Selection Platform for Jordan - helping students find their perfect university match based on their academic profile, preferences, and budget.</p>
-                    <ul class="social_icon top25">
-                        <li><a href="#" class="facebook"><i class="fa fa-facebook"></i></a></li>
-                        <li><a href="#" class="twitter"><i class="icon-twitter4"></i></a></li>
-                        <li><a href="#" class="instagram"><i class="icon-instagram"></i></a></li>
-                        <li><a href="#" class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-                    </ul>
+    <!-- Footer -->
+    <footer class="bg-darkblack">
+        <div class="container-fluid-2 pt-65px pb-5 lg:pb-10">
+            <!-- Footer Subscription -->
+            <section>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-30px md:gap-y-0 items-center pb-45px border-b border-darkcolor">
+                    <div data-aos="fade-up">
+                        <h4 class="text-4xl md:text-size-25 lg:text-size-40 font-bold text-whiteColor leading-50px md:leading-10 lg:leading-16">
+                            Still You Need Our <span class="text-primaryColor">Support</span>?
+                        </h4>
+                        <p class="text-whiteColor text-opacity-65">Don't wait make a smart & logical quote here. It's pretty easy.</p>
+                    </div>
+                    <div data-aos="fade-up">
+                        <form class="max-w-form-xl md:max-w-form-md lg:max-w-form-lg xl:max-w-form-xl 2xl:max-w-form-2xl bg-deepgray ml-auto rounded relative" asp-area="" asp-controller="Home" asp-action="Subscribe" method="post">
+                            <input type="email" name="email" placeholder="Enter your email here" class="text-whiteColor h-62px pl-15px focus:outline-none border border-deepgray focus:border-whitegrey bg-transparent rounded w-full" required>
+                            <button type="submit" class="px-3 md:px-10px lg:px-5 bg-primaryColor hover:bg-deepgray text-xs lg:text-size-15 text-whiteColor border border-primaryColor block rounded absolute right-0 top-0 h-full">
+                                Subscribe Now
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div class="col-md-4 col-sm-4 footer_panel bottom25">
-                    <h3 class="heading bottom25">Quick Links<span class="divider-left"></span></h3>
-                    <ul class="links">
-                        <li><a asp-area="" asp-controller="Home" asp-action="Index"><i class="icon-chevron-small-right"></i>Home</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="About"><i class="icon-chevron-small-right"></i>About Us</a></li>
-                        <li><a asp-area="" asp-controller="University" asp-action="Index"><i class="icon-chevron-small-right"></i>Universities</a></li>
-                        <li><a asp-area="" asp-controller="Program" asp-action="Index"><i class="icon-chevron-small-right"></i>Programs</a></li>
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            @if (User.IsInRole("Student"))
-                            {
-                                <li><a asp-area="" asp-controller="Student" asp-action="Dashboard"><i class="icon-chevron-small-right"></i>My Dashboard</a></li>
-                                <li><a asp-area="" asp-controller="Student" asp-action="Recommendations"><i class="icon-chevron-small-right"></i>Recommendations</a></li>
-                            }
-                        }
-                        else
-                        {
-                            <li><a asp-area="" asp-controller="Account" asp-action="Register"><i class="icon-chevron-small-right"></i>Student Registration</a></li>
-                            <li><a asp-area="" asp-controller="Account" asp-action="UniversityRegister"><i class="icon-chevron-small-right"></i>University Registration</a></li>
-                        }
-                        <li><a asp-area="" asp-controller="Home" asp-action="FAQ"><i class="icon-chevron-small-right"></i>FAQ</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Privacy"><i class="icon-chevron-small-right"></i>Privacy Policy</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Contact"><i class="icon-chevron-small-right"></i>Contact Us</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4 col-sm-4 footer_panel bottom25">
-                    <h3 class="heading bottom25">Keep in Touch <span class="divider-left"></span></h3>
-                    <p class="address"><i class="icon-map-pin"></i>Amman, Jordan</p>
-                    <p class="address"><i class="icon-phone"></i>(962) 6-XXX-XXXX</p>
-                    <p class="address"><i class="icon-mail"></i><a href="mailto:info@uniselector.jo">info@uniselector.jo</a></p>
-                    <div class="top25">
-                        <h5>Working Hours</h5>
-                        <p>
-                            Sunday - Thursday: 9:00 AM - 5:00 PM<br>
-                            Friday - Saturday: Closed
+            </section>
+
+            <!-- Footer Main -->
+            <section>
+                <div class="grid grid-cols-12 gap-30px md:gap-y-5 lg:gap-y-0 pt-60px pb-50px md:pt-30px md:pb-30px lg:pt-110px lg:pb-20">
+                    <!-- About -->
+                    <div class="col-start-1 col-span-12 md:col-span-6 lg:col-span-4 mr-30px" data-aos="fade-up">
+                        <h4 class="text-size-22 font-bold text-whiteColor mb-3">About Uni Selector</h4>
+                        <p class="text-base lg:text-sm 2xl:text-base text-darkgray mb-30px leading-1.8 2xl:leading-1.8">
+                            Your Smart University Selection Platform for Jordan - helping students find their perfect university match based on academic profile, preferences, and budget.
                         </p>
+                        <div class="flex items-center">
+                            <div>
+                                <i class="icofont-phone text-3xl text-whiteColor h-78px w-78px bg-primaryColor leading-78px mr-22px block text-center"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-lg text-whiteColor font-medium leading-29px">CONTACT US</h6>
+                                <p class="text-sm text-whiteColor text-opacity-60 mb-1">+962 6 123 4567</p>
+                                <p class="text-sm text-whiteColor text-opacity-60">info@uniselector.jo</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="col-start-1 col-span-12 md:col-start-7 lg:col-start-5 md:col-span-6 lg:col-span-2" data-aos="fade-up">
+                        <h4 class="text-size-22 font-bold text-whiteColor mb-3">Quick Links</h4>
+                        <ul class="flex flex-col gap-y-3">
+                            <li><a asp-area="" asp-controller="Home" asp-action="Index" class="text-darkgray relative hover:text-primaryColor after:transition-all after:duration-300 after:w-0 after:h-2px after:absolute after:bg-primaryColor hover:after:w-full after:bottom-0 after:left-0">Home</a></li>
+                            <li><a asp-area="" asp-controller="University" asp-action="Index" class="text-darkgray relative hover:text-primaryColor after:transition-all after:duration-300 after:w-0 after:h-2px after:absolute after:bg-primaryColor hover:after:w-full after:bottom-0 after:left-0">Universities</a></li>
+                            <li><a asp-area="" asp-controller="Program" asp-action="Index" class="text-darkgray relative hover:text-primaryColor after:transition-all after:duration-300 after:w-0 after:h-2px after:absolute after:bg-primaryColor hover:after:w-full after:bottom-0 after:left-0">Programs</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="About" class="text-darkgray relative hover:text-primaryColor after:transition-all after:duration-300 after:w-0 after:h-2px after:absolute after:bg-primaryColor hover:after:w-full after:bottom-0 after:left-0">About</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Contact" class="text-darkgray relative hover:text-primaryColor after:transition-all after:duration-300 after:w-0 after:h-2px after:absolute after:bg-primaryColor hover:after:w-full after:bottom-0 after:left-0">Contact</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="col-start-1 col-span-12 md:col-start-1 lg:col-start-7 md:col-span-6 lg:col-span-3 pl-0 2xl:pl-60px" data-aos="fade-up">
+                        <h4 class="text-size-22 font-bold text-whiteColor mb-3">Categories</h4>
+                        <ul class="flex flex-col gap-y-3">
+                            <li><a href="#" class="text-darkgray relative hover:text-primaryColor after:transition-all after:duration-300 after:w-0 after:h-2px after:absolute after:bg-primaryColor hover:after:w-full after:bottom-0 after:left-0">Academic Track</a></li>
+                            <li><a href="#" class="text-darkgray relative hover:text-primaryColor after:transition-all after:duration-300 after:w-0 after:h-2px after:absolute after:bg-primaryColor hover:after:w-full after:bottom-0 after:left-0">Vocational Track</a></li>
+                            <li><a href="#" class="text-darkgray relative hover:text-primaryColor after:transition-all after:duration-300 after:w-0 after:h-2px after:absolute after:bg-primaryColor hover:after:w-full after:bottom-0 after:left-0">BTEC Programs</a></li>
+                            <li><a href="#" class="text-darkgray relative hover:text-primaryColor after:transition-all after:duration-300 after:w-0 after:h-2px after:absolute after:bg-primaryColor hover:after:w-full after:bottom-0 after:left-0">Scholarships</a></li>
+                            <li><a href="#" class="text-darkgray relative hover:text-primaryColor after:transition-all after:duration-300 after:w-0 after:h-2px after:absolute after:bg-primaryColor hover:after:w-full after:bottom-0 after:left-0">Student Resources</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Newsletter -->
+                    <div class="col-start-1 col-span-12 md:col-start-7 lg:col-start-10 md:col-span-6 lg:col-span-3 pl-0 2xl:pl-50px" data-aos="fade-up">
+                        <h4 class="text-size-22 font-bold text-whiteColor mb-3">Stay Connected</h4>
+                        <p class="text-darkgray mb-4">Get updates on new universities, programs, and exclusive offers.</p>
+                        <ul class="flex gap-3 lg:gap-2 2xl:gap-3">
+                            <li><a href="#" class="w-40.19px lg:w-35px 2xl:w-40.19px h-37px lg:h-35px 2xl:h-37px leading-37px lg:leading-35px 2xl:leading-37px text-whiteColor bg-whiteColor bg-opacity-10 hover:bg-primaryColor text-center"><i class="icofont-facebook"></i></a></li>
+                            <li><a href="#" class="w-40.19px lg:w-35px 2xl:w-40.19px h-37px lg:h-35px 2xl:h-37px leading-37px lg:leading-35px 2xl:leading-37px text-whiteColor bg-whiteColor bg-opacity-10 hover:bg-primaryColor text-center"><i class="icofont-twitter"></i></a></li>
+                            <li><a href="#" class="w-40.19px lg:w-35px 2xl:w-40.19px h-37px lg:h-35px 2xl:h-37px leading-37px lg:leading-35px 2xl:leading-37px text-whiteColor bg-whiteColor bg-opacity-10 hover:bg-primaryColor text-center"><i class="icofont-instagram"></i></a></li>
+                            <li><a href="#" class="w-40.19px lg:w-35px 2xl:w-40.19px h-37px lg:h-35px 2xl:h-37px leading-37px lg:leading-35px 2xl:leading-37px text-whiteColor bg-whiteColor bg-opacity-10 hover:bg-primaryColor text-center"><i class="icofont-linkedin"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer Copyright -->
+            <div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-30px pt-10 items-center">
+                    <div class="lg:col-start-1 lg:col-span-3">
+                        <a asp-area="" asp-controller="Home" asp-action="Index">
+                            <img src="~/assets/images/logo/logo_2.png" alt="Uni Selector">
+                        </a>
+                    </div>
+                    <div class="lg:col-start-4 lg:col-span-6">
+                        <p class="text-whiteColor">
+                            Copyright © <span class="text-primaryColor">@DateTime.Now.Year </span> by Uni Selector. All Rights Reserved.
+                        </p>
+                    </div>
+                    <div class="lg:col-start-10 lg:col-span-3">
+                        <ul class="flex gap-3 lg:gap-2 2xl:gap-3 lg:justify-end">
+                            <li><a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-darkgray hover:text-primaryColor">Privacy</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Terms" class="text-darkgray hover:text-primaryColor">Terms</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
-    <div class="copyright">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <p>Copyright &copy; @DateTime.Now.Year <a asp-area="" asp-controller="Home" asp-action="Index">Uni Selector</a>. All rights reserved.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--FOOTER ends-->
-    <!-- JavaScript Files -->
-    <script src="~/assets/js/jquery-2.2.3.js"></script>
-    <script src="~/assets/js/bootstrap.min.js"></script>
-    <script src="~/assets/js/bootsnav.js"></script>
-    <script src="~/assets/js/jquery.appear.js"></script>
-    <script src="~/assets/js/jquery-countTo.js"></script>
-    <script src="~/assets/js/jquery.parallax-1.1.3.js"></script>
-    <script src="~/assets/js/owl.carousel.min.js"></script>
-    <script src="~/assets/js/jquery.cubeportfolio.min.js"></script>
-    <script src="~/assets/js/wow.min.js"></script>
-    <script src="~/assets/js/functions.js"></script>
-    <script src="~/assets/js/app.js"></script>
+
+    <!-- Scripts -->
+    <script src="~/assets/js/swiper-bundle.min.js"></script>
+    <script src="~/assets/js/isotope.pkgd.min.js"></script>
+    <script src="~/assets/js/accordion.js"></script>
+    <script src="~/assets/js/chart.js"></script>
+    <script src="~/assets/js/count.js"></script>
+    <script src="~/assets/js/countdown.js"></script>
+    <script src="~/assets/js/counterup.js"></script>
+    <script src="~/assets/js/dropdown.js"></script>
+    <script src="~/assets/js/filter.js"></script>
+    <script src="~/assets/js/mobileMenu.js"></script>
+    <script src="~/assets/js/modal.js"></script>
+    <script src="~/assets/js/popup.js"></script>
+    <script src="~/assets/js/preloader.js"></script>
+    <script src="~/assets/js/scrollUp.js"></script>
+    <script src="~/assets/js/slider.js"></script>
+    <script src="~/assets/js/smoothScroll.js"></script>
+    <script src="~/assets/js/stickyHeader.js"></script>
+    <script src="~/assets/js/tabs.js"></script>
+    <script src="~/assets/js/theme.js"></script>
+    <script src="~/assets/js/videoModal.js"></script>
+    <script src="~/assets/js/vanilla-tilt.js"></script>
+    <script src="~/assets/js/aos.js"></script>
+    <script src="~/assets/js/main.js"></script>
 
     <!-- SignalR for Real-time Notifications -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
 
-    @if (User.Identity?.IsAuthenticated == true)
+    @if (SignInManager.IsSignedIn(User))
     {
         <script>
             // SignalR Notification Hub Connection
@@ -375,6 +456,7 @@
             }
         </script>
     }
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
