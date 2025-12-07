@@ -2,8 +2,7 @@
 {
     public enum UniversityType
     {
-        Public = 1,
-        Private = 2
+        Private = 1
     }
 
 }
