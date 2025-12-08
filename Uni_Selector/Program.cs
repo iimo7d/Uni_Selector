@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using Uni_Selector.Data;
 using Uni_Selector.Hubs;
+using Uni_Selector.Middleware;
 using Uni_Selector.Models;
+using Uni_Selector.Service.BackgorundService;
 using Uni_Selector.Service.Implementation;
 using Uni_Selector.Service.Interface;
 
@@ -70,8 +72,9 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddMemoryCache();
 
-
 builder.Services.AddSignalR();
+
+builder.Services.AddHostedService<CpuMonitoringService>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddControllersWithViews()
@@ -102,6 +105,8 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseMiddleware<ResponseTimeMiddleware>();
 
 app.UseRouting();
 

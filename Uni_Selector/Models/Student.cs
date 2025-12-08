@@ -34,6 +34,22 @@ namespace Uni_Selector.Models
         public University? FamilyConnectionUniversity { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+
+        public string NationalId { get; set; }  
+        public string SeatNumber { get; set; }  
+        public Gender Gender { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public string Nationality { get; set; } = "Jordanian";
+
+        public string GuardianName { get; set; }
+        public string GuardianPhone { get; set; }
+        public string GuardianRelation { get; set; }
+
+        public bool HasDisability { get; set; }
+        public string? DisabilityType { get; set; }
+        public bool IsOrphan { get; set; }
+        public bool IsEmployeeChild { get; set; }
+
         public ICollection<Recommendation> Recommendations { get; set; }
         public ICollection<StudentApplication> Applications { get; set; }
     }

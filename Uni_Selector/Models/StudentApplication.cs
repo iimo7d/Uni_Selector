@@ -29,5 +29,10 @@ namespace Uni_Selector.Models
         [Range(0, 60)] public int? PlannedFirstSemesterHours { get; set; }
         public DiscountGrant? DiscountGrant { get; set; }
         public Commission? Commission { get; set; }
+
+        public string? ApplicationNumber { get; set; }  // رقم الطلب
+        public string? AdmissionNumber { get; set; }  // رقم القبول
+        public string? RejectionReason { get; set; }
+
     }
 }

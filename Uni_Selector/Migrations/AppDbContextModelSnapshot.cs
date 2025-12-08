@@ -836,9 +836,15 @@ namespace Uni_Selector.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("DesiredMajors")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("DisabilityType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("FamilyConnectionUniversityId")
                         .HasColumnType("int");
@@ -847,7 +853,31 @@ namespace Uni_Selector.Migrations
                         .HasPrecision(5, 2)
                         .HasColumnType("float(5)");
 
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GuardianName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GuardianPhone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GuardianRelation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasDisability")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("HasFamilyConnection")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEmployeeChild")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsOrphan")
                         .HasColumnType("bit");
 
                     b.Property<double?>("Latitude")
@@ -858,6 +888,14 @@ namespace Uni_Selector.Migrations
 
                     b.Property<int>("MaxDistanceKm")
                         .HasColumnType("int");
+
+                    b.Property<string>("NationalId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nationality")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Path")
                         .HasColumnType("int");
@@ -876,6 +914,10 @@ namespace Uni_Selector.Migrations
 
                     b.Property<decimal>("RegistrationBudget")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("SeatNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -913,8 +955,14 @@ namespace Uni_Selector.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AdmissionNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("ApplicationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ApplicationNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ApprovalDate")
                         .HasColumnType("datetime2");
@@ -937,6 +985,9 @@ namespace Uni_Selector.Migrations
 
                     b.Property<int?>("PlannedFirstSemesterHours")
                         .HasColumnType("int");
+
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
