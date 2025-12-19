@@ -1,0 +1,311 @@
+﻿@using Uni_Selector.ViewModels.Student
+@model StudentDetailsViewModel
+@{
+    ViewData["Title"] = "تفاصيل الملف الشخصي";
+    Layout = "_StudentLayout";
+}
+
+<!-- Banner Section -->
+<section>
+    <div class="container-fluid-2">
+        <div class="bg-primaryColor p-5 md:p-10 rounded-5 flex justify-center md:justify-between items-center flex-wrap gap-2">
+            <div class="flex items-center flex-wrap justify-center sm:justify-start">
+                <div class="mr-5">
+                    <div class="w-27 h-27 md:w-22 md:h-22 lg:w-27 lg:h-27 rounded-full p-1 border-2 border-white box-content bg-white/20 flex items-center justify-center">
+                        <i class="icofont-user-alt-3 text-4xl text-white"></i>
+                    </div>
+                </div>
+                <div class="text-whiteColor font-bold text-center sm:text-start">
+                    <h5 class="text-2xl leading-1.24 mb-5px">@Model.FullName</h5>
+                    <ul class="flex items-center gap-15px flex-wrap">
+                        <li class="text-sm font-normal flex items-center gap-0.5">
+                            <i class="icofont-envelope"></i>
+                            @Model.Email
+                        </li>
+                        @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                        {
+                            <li class="text-sm font-normal flex items-center gap-0.5">
+                                <i class="icofont-phone"></i>
+                                @Model.PhoneNumber
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <a asp-action="EditProfile" class="text-size-15 text-primaryColor bg-whiteColor px-25px py-10px border border-whiteColor hover:bg-transparent hover:text-whiteColor rounded group text-nowrap flex gap-1 items-center">
+                    <i class="icofont-edit"></i>
+                    تعديل الملف الشخصي
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dashboard Content Section -->
+<section>
+    <div class="container-fluid-2">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-30px pt-30px pb-100px">
+
+            <!-- Sidebar Navigation -->
+            <div class="lg:col-start-1 lg:col-span-3">
+                @await Html.PartialAsync("_StudentSidebar", "Profile")
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:col-start-4 lg:col-span-9">
+                <!-- Profile Details Card -->
+                <div class="p-10px md:px-10 md:py-50px mb-30px bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark rounded-5">
+                    <div class="mb-6 pb-5 border-b-2 border-borderColor dark:border-borderColor-dark">
+                        <h2 class="text-2xl font-bold text-blackColor dark:text-blackColor-dark">
+                            <i class="icofont-user text-primaryColor ml-2"></i>
+                            ملفي الشخصي
+                        </h2>
+                    </div>
+
+                    <!-- Personal Information Section -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-blackColor dark:text-blackColor-dark mb-4 pb-2 border-b border-borderColor dark:border-borderColor-dark">
+                            <i class="icofont-id-card text-primaryColor ml-2"></i>
+                            المعلومات الشخصية
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">تاريخ التسجيل</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.MemberSince.ToString("dd/MM/yyyy hh:mm tt")</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">آخر تسجيل دخول</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@(Model.LastLogin?.ToString("dd/MM/yyyy hh:mm tt") ?? "لم يسجل الدخول بعد")</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">الرقم الوطني</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.NationalId</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">رقم الجلوس</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.SeatNumber</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">الجنس</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.Gender</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">تاريخ الميلاد</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.DateOfBirth.ToString("dd/MM/yyyy")</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">الجنسية</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.Nationality</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">البريد الإلكتروني</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.Email</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Section -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-blackColor dark:text-blackColor-dark mb-4 pb-2 border-b border-borderColor dark:border-borderColor-dark">
+                            <i class="icofont-location-pin text-primaryColor ml-2"></i>
+                            العنوان
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">المحافظة</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.Province</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">المدينة</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.City</span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Area))
+                            {
+                                <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg md:col-span-2">
+                                    <span class="text-contentColor dark:text-contentColor-dark">المنطقة</span>
+                                    <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.Area</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Academic Information Section -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-blackColor dark:text-blackColor-dark mb-4 pb-2 border-b border-borderColor dark:border-borderColor-dark">
+                            <i class="icofont-graduate text-primaryColor ml-2"></i>
+                            المعلومات الأكاديمية
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">المعدل</span>
+                                <span class="font-bold text-primaryColor text-lg">@Model.GPA%</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">المسار التعليمي</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.Path</span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.AcademicTrack))
+                            {
+                                <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                    <span class="text-contentColor dark:text-contentColor-dark">الفرع الأكاديمي</span>
+                                    <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.AcademicTrack</span>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.VocationalBranch))
+                            {
+                                <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                    <span class="text-contentColor dark:text-contentColor-dark">الفرع المهني</span>
+                                    <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.VocationalBranch</span>
+                                </div>
+                            }
+                            @if (Model.BtecLevel2Completed || Model.BtecLevel3Completed)
+                            {
+                                <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg md:col-span-2">
+                                    <span class="text-contentColor dark:text-contentColor-dark">شهادات BTEC</span>
+                                    <div class="flex gap-2">
+                                        @if (Model.BtecLevel2Completed)
+                                        {
+                                            <span class="px-2 py-1 bg-greenColor/10 text-greenColor rounded text-xs">Level 2</span>
+                                        }
+                                        @if (Model.BtecLevel3Completed)
+                                        {
+                                            <span class="px-2 py-1 bg-greenColor/10 text-greenColor rounded text-xs">Level 3</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.BtecCertificateUrl))
+                            {
+                                <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg md:col-span-2">
+                                    <span class="text-contentColor dark:text-contentColor-dark">شهادة BTEC</span>
+                                    <a href="@Model.BtecCertificateUrl" target="_blank" class="text-primaryColor hover:text-secondaryColor">
+                                        <i class="icofont-download"></i> عرض الشهادة
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Preferences Section -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-blackColor dark:text-blackColor-dark mb-4 pb-2 border-b border-borderColor dark:border-borderColor-dark">
+                            <i class="icofont-settings text-primaryColor ml-2"></i>
+                            التفضيلات
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">ميزانية التسجيل</span>
+                                <span class="font-bold text-secondaryColor">@Model.RegistrationBudget.ToString("N0") د.أ</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">المسافة القصوى</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.MaxDistanceKm كم</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">لغة الدراسة المفضلة</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.PreferredLanguage</span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.PreferredCity))
+                            {
+                                <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                    <span class="text-contentColor dark:text-contentColor-dark">المدينة المفضلة</span>
+                                    <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.PreferredCity</span>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.DesiredMajors))
+                            {
+                                <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg md:col-span-2">
+                                    <span class="text-contentColor dark:text-contentColor-dark">التخصصات المرغوبة</span>
+                                    <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.DesiredMajors</span>
+                                </div>
+                            }
+                            @if (Model.HasFamilyConnection)
+                            {
+                                <div class="flex justify-between p-3 bg-primaryColor/5 rounded-lg md:col-span-2">
+                                    <span class="text-contentColor dark:text-contentColor-dark">صلة قرابة بجامعة</span>
+                                    <span class="font-medium text-primaryColor">@Model.FamilyConnectionUniversityName</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Guardian Section -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-blackColor dark:text-blackColor-dark mb-4 pb-2 border-b border-borderColor dark:border-borderColor-dark">
+                            <i class="icofont-users text-primaryColor ml-2"></i>
+                            معلومات ولي الأمر
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">اسم ولي الأمر</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.GuardianName</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">رقم الهاتف</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.GuardianPhone</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                <span class="text-contentColor dark:text-contentColor-dark">صلة القرابة</span>
+                                <span class="font-medium text-blackColor dark:text-blackColor-dark">@Model.GuardianRelation</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Special Circumstances Section -->
+                    @if (Model.HasDisability || Model.IsOrphan || Model.IsEmployeeChild)
+                    {
+                        <div class="mb-8">
+                            <h3 class="text-lg font-semibold text-blackColor dark:text-blackColor-dark mb-4 pb-2 border-b border-borderColor dark:border-borderColor-dark">
+                                <i class="icofont-heart text-primaryColor ml-2"></i>
+                                الظروف الخاصة
+                            </h3>
+                            <div class="flex flex-wrap gap-3">
+                                @if (Model.HasDisability)
+                                {
+                                    <span class="px-4 py-2 bg-warning/10 text-warning rounded-lg text-sm">
+                                        <i class="icofont-wheelchair ml-1"></i>
+                                        ذوي الاحتياجات الخاصة @(Model.DisabilityType != null ? $"({Model.DisabilityType})" : "")
+                                    </span>
+                                }
+                                @if (Model.IsOrphan)
+                                {
+                                    <span class="px-4 py-2 bg-info/10 text-info rounded-lg text-sm">
+                                        <i class="icofont-heart ml-1"></i>
+                                        يتيم
+                                    </span>
+                                }
+                                @if (Model.IsEmployeeChild)
+                                {
+                                    <span class="px-4 py-2 bg-success/10 text-success rounded-lg text-sm">
+                                        <i class="icofont-briefcase ml-1"></i>
+                                        ابن موظف
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Statistics Section -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-blackColor dark:text-blackColor-dark mb-4 pb-2 border-b border-borderColor dark:border-borderColor-dark">
+                            <i class="icofont-chart-bar-graph text-primaryColor ml-2"></i>
+                            الإحصائيات
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center p-6 bg-primaryColor/5 rounded-lg">
+                                <div class="text-3xl font-bold text-primaryColor mb-2">@Model.TotalRecommendations</div>
+                                <div class="text-contentColor dark:text-contentColor-dark">التوصيات</div>
+                            </div>
+                            <div class="text-center p-6 bg-secondaryColor/5 rounded-lg">
+                                <div class="text-3xl font-bold text-secondaryColor mb-2">@Model.TotalApplications</div>
+                                <div class="text-contentColor dark:text-contentColor-dark">الطلبات</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

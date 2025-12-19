@@ -51,26 +51,34 @@ namespace Uni_Selector.Controllers
             returnUrl ??= Url.Content("~/");
 
             if (!ModelState.IsValid)
+                return View(model);
+
+            // Load user once (more efficient)
+            var user = await _userManager.FindByEmailAsync(model.Email);
+
+            if (user == null)
             {
+                ModelState.AddModelError(string.Empty, "Invalid email or password.");
                 return View(model);
             }
 
             var result = await _signInManager.PasswordSignInAsync(
-                model.Email,
+                user,
                 model.Password,
                 model.RememberMe,
                 lockoutOnFailure: true);
 
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                user.LastLoginAt = DateTime.Now;
+                await _userManager.UpdateAsync(user);      
                 _logger.LogInformation($"User {user.Email} logged in.");
+
                 return LocalRedirect(returnUrl);
             }
 
             if (result.IsLockedOut)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
                 var lockoutEnd = await _userManager.GetLockoutEndDateAsync(user);
 
                 if (lockoutEnd.HasValue)
@@ -81,7 +89,9 @@ namespace Uni_Selector.Controllers
                         lockoutEnd.Value.LocalDateTime);
                 }
 
-                TempData["ErrorMessage"] = "Account locked due to multiple failed login attempts. Check your email for details.";
+                TempData["ErrorMessage"] =
+                    "Account locked due to multiple failed login attempts. Check your email for details.";
+
                 return View(model);
             }
 

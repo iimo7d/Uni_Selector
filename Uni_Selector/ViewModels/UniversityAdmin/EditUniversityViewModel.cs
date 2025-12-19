@@ -3,27 +3,28 @@ using Uni_Selector.Models.Enums;
 
 namespace Uni_Selector.ViewModels.UniversityAdmin
 {
-    public class UniversityFormViewModel
+    public class EditUniversityViewModel
     {
+        [Required]
         public int Id { get; set; }
-
-        [Required(ErrorMessage = "Arabic name is required")]
-        [StringLength(200, ErrorMessage = "Arabic name cannot exceed 200 characters")]
-        [Display(Name = "University Name (Arabic)")]
-        public string NameArabic { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "English name is required")]
         [StringLength(200, ErrorMessage = "English name cannot exceed 200 characters")]
-        [Display(Name = "University Name (English)")]
+        [Display(Name = "English Name")]
         public string NameEnglish { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Arabic name is required")]
+        [StringLength(200, ErrorMessage = "Arabic name cannot exceed 200 characters")]
+        [Display(Name = "Arabic Name")]
+        public string NameArabic { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "University type is required")]
         [Display(Name = "University Type")]
-        public UniversityType Type { get; set; } = UniversityType.Private;
+        public UniversityType Type { get; set; }
 
         [Required(ErrorMessage = "Province is required")]
         [StringLength(100, ErrorMessage = "Province cannot exceed 100 characters")]
-        [Display(Name = "Province / Governorate")]
+        [Display(Name = "Province")]
         public string Province { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "City is required")]
@@ -32,7 +33,7 @@ namespace Uni_Selector.ViewModels.UniversityAdmin
         public string City { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Full address is required")]
-        [StringLength(500, ErrorMessage = "Full address cannot exceed 500 characters")]
+        [StringLength(500, ErrorMessage = "Address cannot exceed 500 characters")]
         [Display(Name = "Full Address")]
         public string FullAddress { get; set; } = string.Empty;
 
@@ -57,7 +58,7 @@ namespace Uni_Selector.ViewModels.UniversityAdmin
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email format")]
         [StringLength(100, ErrorMessage = "Email cannot exceed 100 characters")]
-        [Display(Name = "Email Address")]
+        [Display(Name = "Email")]
         public string Email { get; set; } = string.Empty;
 
         [Url(ErrorMessage = "Invalid URL format")]
@@ -65,23 +66,19 @@ namespace Uni_Selector.ViewModels.UniversityAdmin
         [Display(Name = "Official Website")]
         public string? OfficialWebsite { get; set; }
 
-        [Display(Name = "Logo")]
+        [Required(ErrorMessage = "Commission mode is required")]
+        [Display(Name = "Commission Mode")]
+        public CommissionMode CommissionMode { get; set; }
+
+        // Current images (for display)
+        public string? CurrentLogoPath { get; set; }
+        public string? CurrentImagePath { get; set; }
+
+        // New images (if uploaded)
+        [Display(Name = "University Logo")]
         public IFormFile? Logo { get; set; }
 
         [Display(Name = "Cover Image")]
         public IFormFile? CoverImage { get; set; }
-
-        [Display(Name = "Current Logo Path")]
-        public string? CurrentLogoPath { get; set; }
-
-        [Display(Name = "Current Image Path")]
-        public string? CurrentImagePath { get; set; }
-
-        [Required(ErrorMessage = "Commission mode is required")]
-        [Display(Name = "Commission Mode")]
-        public CommissionMode CommissionMode { get; set; } = CommissionMode.FirstSemesterRegistration2Percent;
-
-        [Display(Name = "Is Active")]
-        public bool IsActive { get; set; } = true;
     }
 }

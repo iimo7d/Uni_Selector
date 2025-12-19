@@ -3,40 +3,18 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Uni_Selector.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDb : Migration
+    public partial class Seeding : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureSchema(
-                name: "sec");
-
             migrationBuilder.CreateTable(
-                name: "Programs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    NameArabic = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    NameEnglish = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    Degree = table.Column<int>(type: "int", nullable: false),
-                    Language = table.Column<int>(type: "int", nullable: false),
-                    AcademicClassification = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    TotalCreditHours = table.Column<int>(type: "int", nullable: false, defaultValue: 120),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Programs", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Roles",
-                schema: "sec",
+                name: "AspNetRoles",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -46,42 +24,11 @@ namespace Uni_Selector.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Universities",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    NameArabic = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    NameEnglish = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Province = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    FullAddress = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Latitude = table.Column<double>(type: "float", nullable: true),
-                    Longitude = table.Column<double>(type: "float", nullable: true),
-                    AcademicAccreditation = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    OfficialWebsite = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    LogoPath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    ImagePath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    CommissionMode = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Universities", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                schema: "sec",
+                name: "AspNetUsers",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -106,12 +53,61 @@ namespace Uni_Selector.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RoleClaims",
-                schema: "sec",
+                name: "Programs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameArabic = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    NameEnglish = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Degree = table.Column<int>(type: "int", nullable: false),
+                    Language = table.Column<int>(type: "int", nullable: false),
+                    AcademicClassification = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    TotalCreditHours = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Programs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Universities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameArabic = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    NameEnglish = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Province = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    FullAddress = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Latitude = table.Column<double>(type: "float", nullable: true),
+                    Longitude = table.Column<double>(type: "float", nullable: true),
+                    AcademicAccreditation = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    OfficialWebsite = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    LogoPath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    ImagePath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CommissionMode = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Universities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -122,12 +118,126 @@ namespace Uni_Selector.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RoleClaims", x => x.Id);
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RoleClaims_Roles_RoleId",
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
-                        principalSchema: "sec",
-                        principalTable: "Roles",
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Category = table.Column<int>(type: "int", nullable: false),
+                    Channel = table.Column<int>(type: "int", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false),
+                    EmailSent = table.Column<bool>(type: "bit", nullable: false),
+                    SmsSent = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ReadAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActionUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notifications_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -147,13 +257,13 @@ namespace Uni_Selector.Migrations
                     Language = table.Column<int>(type: "int", nullable: false),
                     DurationInYears = table.Column<int>(type: "int", nullable: false),
                     SemesterStartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalCreditHours = table.Column<int>(type: "int", nullable: false, defaultValue: 120),
+                    TotalCreditHours = table.Column<int>(type: "int", nullable: false),
                     HourPriceBase = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     RegistrationFeeFirstSemester = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     RegistrationFeeRegularSemester = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Capacity = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    IsApprovedByBtecAuthority = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsApprovedByBtecAuthority = table.Column<bool>(type: "bit", nullable: false),
                     ApprovalDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ApprovalNotes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -171,6 +281,98 @@ namespace Uni_Selector.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MonthlySettlements",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UniversityId = table.Column<int>(type: "int", nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: false),
+                    Month = table.Column<int>(type: "int", nullable: false),
+                    TotalCommission = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    StudentCount = table.Column<int>(type: "int", nullable: false),
+                    Closed = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ClosedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ClosedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MonthlySettlements", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MonthlySettlements_AspNetUsers_ClosedByUserId",
+                        column: x => x.ClosedByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MonthlySettlements_Universities_UniversityId",
+                        column: x => x.UniversityId,
+                        principalTable: "Universities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Students",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Province = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Area = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Latitude = table.Column<double>(type: "float", nullable: true),
+                    Longitude = table.Column<double>(type: "float", nullable: true),
+                    GPA = table.Column<double>(type: "float", nullable: false),
+                    Path = table.Column<int>(type: "int", nullable: false),
+                    AcademicTrack = table.Column<int>(type: "int", nullable: true),
+                    VocationalBranch = table.Column<int>(type: "int", nullable: true),
+                    BtecLevel2Completed = table.Column<bool>(type: "bit", nullable: false),
+                    BtecLevel3Completed = table.Column<bool>(type: "bit", nullable: false),
+                    BtecCertificateUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    RegistrationBudget = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DesiredMajors = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    PreferredCity = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    MaxDistanceKm = table.Column<int>(type: "int", nullable: false),
+                    PreferredLanguage = table.Column<int>(type: "int", nullable: false),
+                    HasFamilyConnection = table.Column<bool>(type: "bit", nullable: false),
+                    FamilyConnectionUniversityId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    NationalId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SeatNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GuardianName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GuardianPhone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GuardianRelation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    HasDisability = table.Column<bool>(type: "bit", nullable: false),
+                    DisabilityType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsOrphan = table.Column<bool>(type: "bit", nullable: false),
+                    IsEmployeeChild = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Students", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Students_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Students_Universities_FamilyConnectionUniversityId",
+                        column: x => x.FamilyConnectionUniversityId,
+                        principalTable: "Universities",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UniversityPrograms",
                 columns: table => new
                 {
@@ -184,8 +386,8 @@ namespace Uni_Selector.Migrations
                     HourPriceBase = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     RegistrationFeeFirstSemester = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     RegistrationFeeRegularSemester = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Capacity = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -207,118 +409,6 @@ namespace Uni_Selector.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MonthlySettlements",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UniversityId = table.Column<int>(type: "int", nullable: false),
-                    Year = table.Column<int>(type: "int", nullable: false),
-                    Month = table.Column<int>(type: "int", nullable: false),
-                    TotalCommission = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    StudentCount = table.Column<int>(type: "int", nullable: false),
-                    Closed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ClosedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ClosedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Notes = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MonthlySettlements", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MonthlySettlements_Universities_UniversityId",
-                        column: x => x.UniversityId,
-                        principalTable: "Universities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_MonthlySettlements_Users_ClosedByUserId",
-                        column: x => x.ClosedByUserId,
-                        principalSchema: "sec",
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Notifications",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    Category = table.Column<int>(type: "int", nullable: false),
-                    Channel = table.Column<int>(type: "int", nullable: false),
-                    IsRead = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    EmailSent = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    SmsSent = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ReadAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ActionUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Notifications_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "sec",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Students",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Province = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Area = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    Latitude = table.Column<double>(type: "float", nullable: true),
-                    Longitude = table.Column<double>(type: "float", nullable: true),
-                    GPA = table.Column<double>(type: "float(5)", precision: 5, scale: 2, nullable: false),
-                    Path = table.Column<int>(type: "int", nullable: false),
-                    AcademicTrack = table.Column<int>(type: "int", nullable: true),
-                    VocationalBranch = table.Column<int>(type: "int", nullable: true),
-                    BtecLevel2Completed = table.Column<bool>(type: "bit", nullable: false),
-                    BtecLevel3Completed = table.Column<bool>(type: "bit", nullable: false),
-                    BtecCertificateUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    RegistrationBudget = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    DesiredMajors = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    PreferredCity = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    MaxDistanceKm = table.Column<int>(type: "int", nullable: false),
-                    PreferredLanguage = table.Column<int>(type: "int", nullable: false),
-                    HasFamilyConnection = table.Column<bool>(type: "bit", nullable: false),
-                    FamilyConnectionUniversityId = table.Column<int>(type: "int", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Students", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Students_Universities_FamilyConnectionUniversityId",
-                        column: x => x.FamilyConnectionUniversityId,
-                        principalTable: "Universities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "FK_Students_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "sec",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UniversityRepresentatives",
                 columns: table => new
                 {
@@ -337,110 +427,15 @@ namespace Uni_Selector.Migrations
                 {
                     table.PrimaryKey("PK_UniversityRepresentatives", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_UniversityRepresentatives_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_UniversityRepresentatives_Universities_UniversityId",
                         column: x => x.UniversityId,
                         principalTable: "Universities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UniversityRepresentatives_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "sec",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserClaims",
-                schema: "sec",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserClaims_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "sec",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserLogins",
-                schema: "sec",
-                columns: table => new
-                {
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserLogins", x => new { x.LoginProvider, x.ProviderKey });
-                    table.ForeignKey(
-                        name: "FK_UserLogins_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "sec",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserRoles",
-                schema: "sec",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_UserRoles_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalSchema: "sec",
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserRoles_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "sec",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserTokens",
-                schema: "sec",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
-                    table.ForeignKey(
-                        name: "FK_UserTokens_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "sec",
-                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -452,9 +447,9 @@ namespace Uni_Selector.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BtecProgramId = table.Column<int>(type: "int", nullable: false),
-                    MinGPA = table.Column<double>(type: "float(5)", precision: 5, scale: 2, nullable: false),
-                    RequiresBtecL2 = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    RequiresBtecL3 = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    MinGPA = table.Column<double>(type: "float", nullable: false),
+                    RequiresBtecL2 = table.Column<bool>(type: "bit", nullable: false),
+                    RequiresBtecL3 = table.Column<bool>(type: "bit", nullable: false),
                     Notes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     EffectiveFrom = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EffectiveTo = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -477,11 +472,11 @@ namespace Uni_Selector.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UniversityProgramId = table.Column<int>(type: "int", nullable: false),
-                    MinGPA = table.Column<double>(type: "float(5)", precision: 5, scale: 2, nullable: false),
+                    MinGPA = table.Column<double>(type: "float", nullable: false),
                     Path = table.Column<int>(type: "int", nullable: false),
                     AcademicTrack = table.Column<int>(type: "int", nullable: true),
                     VocationalBranch = table.Column<int>(type: "int", nullable: true),
-                    AllowNoTawjihi = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    AllowNoTawjihi = table.Column<bool>(type: "bit", nullable: false),
                     Notes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     EffectiveFrom = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EffectiveTo = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -506,17 +501,16 @@ namespace Uni_Selector.Migrations
                     StudentId = table.Column<int>(type: "int", nullable: false),
                     UniversityProgramId = table.Column<int>(type: "int", nullable: true),
                     BtecProgramId = table.Column<int>(type: "int", nullable: true),
-                    Score = table.Column<double>(type: "float(5)", precision: 5, scale: 2, nullable: false),
+                    Score = table.Column<double>(type: "float", nullable: false),
                     ReasonsJson = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     DistanceInKm = table.Column<double>(type: "float", nullable: true),
                     EstimatedTotalCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsViewed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    IsViewed = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Recommendations", x => x.Id);
-                    table.CheckConstraint("CK_Recommendation_OneProgram", "(UniversityProgramId IS NOT NULL AND BtecProgramId IS NULL) OR (UniversityProgramId IS NULL AND BtecProgramId IS NOT NULL)");
                     table.ForeignKey(
                         name: "FK_Recommendations_BtecPrograms_BtecProgramId",
                         column: x => x.BtecProgramId,
@@ -551,15 +545,23 @@ namespace Uni_Selector.Migrations
                     ApprovalDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    HourDiscountPercent = table.Column<decimal>(type: "decimal(5,2)", nullable: true),
+                    HourDiscountPercent = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     HourDiscountSetByUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     HourDiscountSetAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    PlannedFirstSemesterHours = table.Column<int>(type: "int", nullable: true)
+                    PlannedFirstSemesterHours = table.Column<int>(type: "int", nullable: true),
+                    ApplicationNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AdmissionNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RejectionReason = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StudentApplications", x => x.Id);
-                    table.CheckConstraint("CK_Application_OneProgram", "(UniversityProgramId IS NOT NULL AND BtecProgramId IS NULL) OR (UniversityProgramId IS NULL AND BtecProgramId IS NOT NULL)");
+                    table.ForeignKey(
+                        name: "FK_StudentApplications_AspNetUsers_HourDiscountSetByUserId",
+                        column: x => x.HourDiscountSetByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_StudentApplications_BtecPrograms_BtecProgramId",
                         column: x => x.BtecProgramId,
@@ -571,19 +573,13 @@ namespace Uni_Selector.Migrations
                         column: x => x.StudentId,
                         principalTable: "Students",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_StudentApplications_UniversityPrograms_UniversityProgramId",
                         column: x => x.UniversityProgramId,
                         principalTable: "UniversityPrograms",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_StudentApplications_Users_HourDiscountSetByUserId",
-                        column: x => x.HourDiscountSetByUserId,
-                        principalSchema: "sec",
-                        principalTable: "Users",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -615,13 +611,13 @@ namespace Uni_Selector.Migrations
                         column: x => x.MonthlySettlementId,
                         principalTable: "MonthlySettlements",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Commissions_StudentApplications_ApplicationId",
                         column: x => x.ApplicationId,
                         principalTable: "StudentApplications",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Commissions_Universities_UniversityId",
                         column: x => x.UniversityId,
@@ -650,24 +646,149 @@ namespace Uni_Selector.Migrations
                 {
                     table.PrimaryKey("PK_DiscountGrants", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_DiscountGrants_AspNetUsers_RedeemedByUserId",
+                        column: x => x.RedeemedByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_DiscountGrants_StudentApplications_ApplicationId",
                         column: x => x.ApplicationId,
                         principalTable: "StudentApplications",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_DiscountGrants_Universities_UniversityId",
                         column: x => x.UniversityId,
                         principalTable: "Universities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DiscountGrants_Users_RedeemedByUserId",
-                        column: x => x.RedeemedByUserId,
-                        principalSchema: "sec",
-                        principalTable: "Users",
-                        principalColumn: "Id");
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "247845c3-87f8-46f1-a455-555c330c3c41", "d72e20f4-8245-4a69-ad2b-358a14cd4ce7", "Student", "STUDENT" },
+                    { "80f3af8c-17c5-456e-a4cc-15bb694e863b", "5b6cd610-3ead-4ec8-8d9d-2d4daf456312", "UniversityRep", "UNIVERSITYREP" },
+                    { "912202c3-2b0f-4a73-94e5-6d85d64fa4db", "bf10b102-86d0-4caa-8e36-3434a5bb91c4", "BtecAuthority", "BTECAUTHORITY" },
+                    { "dd348c1a-172c-41ce-81e7-d096a7596f93", "afa21429-070e-41b0-ad52-91e817a3beb2", "PlatformAdmin", "PLATFORMADMIN" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedAt", "Email", "EmailConfirmed", "FullName", "IsActive", "LastLoginAt", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "bc7c5647-7196-414a-b94a-5c1a51ff492c", 0, "4d33e595-96f6-48db-a638-33e59adba91b", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@uniselector.com", true, "Platform Administrator", true, null, false, null, "ADMIN@UNISELECTOR.COM", "ADMIN@UNISELECTOR.COM", "AQAAAAIAAYagAAAAEPFUaq3Y9kfJmwtE4V8iv3DpjWSDEPZV/zgI8eRG5DA/AI4lc65U32nkR5GAysqXmA==", null, false, "19cfcb40-6c5b-4e83-8796-ab1abf7741f9", false, "admin@uniselector.com" });
+
+            migrationBuilder.InsertData(
+                table: "Programs",
+                columns: new[] { "Id", "AcademicClassification", "CreatedAt", "Degree", "Description", "Language", "NameArabic", "NameEnglish", "TotalCreditHours" },
+                values: new object[,]
+                {
+                    { 1, "Engineering", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Bachelor's degree in Software Engineering", 1, "هندسة البرمجيات", "Software Engineering", 132 },
+                    { 2, "Engineering", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Bachelor's degree in Computer Science", 1, "علوم الحاسوب", "Computer Science", 132 },
+                    { 3, "Business", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Bachelor's degree in Business Administration", 3, "إدارة الأعمال", "Business Administration", 126 },
+                    { 4, "Medical", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Medical Doctor degree", 1, "الطب البشري", "Medicine", 240 },
+                    { 5, "Law", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Bachelor's degree in Law", 2, "القانون", "Law", 132 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Universities",
+                columns: new[] { "Id", "AcademicAccreditation", "City", "CommissionMode", "CreatedAt", "Email", "FullAddress", "ImagePath", "IsActive", "Latitude", "LogoPath", "Longitude", "NameArabic", "NameEnglish", "OfficialWebsite", "PhoneNumber", "Province", "Type", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, null, "Amman", 1, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "info@ju.edu.jo", "Queen Rania Street, Amman 11942, Jordan", null, true, 31.953900000000001, null, 35.910600000000002, "الجامعة الأردنية", "University of Jordan", "https://www.ju.edu.jo", "+96265355000", "Amman", 1, null },
+                    { 2, null, "Zarqa", 2, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "info@hu.edu.jo", "P.O. Box 330127, Zarqa 13133, Jordan", null, true, 32.136499999999998, null, 36.002200000000002, "الجامعة الهاشمية", "The Hashemite University", "https://www.hu.edu.jo", "+96253903333", "Zarqa", 1, null },
+                    { 3, null, "Amman", 3, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "info@asu.edu.jo", "Al-Arab Street, Shafa Badran, Amman 11931, Jordan", null, true, 32.0182, null, 35.8767, "جامعة العلوم التطبيقية", "Applied Science Private University", "https://www.asu.edu.jo", "+96264609999", "Amman", 1, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "dd348c1a-172c-41ce-81e7-d096a7596f93", "bc7c5647-7196-414a-b94a-5c1a51ff492c" });
+
+            migrationBuilder.InsertData(
+                table: "UniversityPrograms",
+                columns: new[] { "Id", "Capacity", "CreatedAt", "DurationInYears", "HourPriceBase", "IsActive", "ProgramId", "RegistrationFeeFirstSemester", "RegistrationFeeRegularSemester", "SemesterStartDate", "StudySystem", "UniversityId", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, 100, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 85m, true, 1, 500m, 300m, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 1, null },
+                    { 2, 120, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 80m, true, 2, 500m, 300m, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 1, null },
+                    { 3, 150, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 70m, true, 3, 400m, 250m, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 2, null },
+                    { 4, 80, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 90m, true, 1, 600m, 350m, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 3, null },
+                    { 5, 100, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 75m, true, 5, 450m, 275m, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 3, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "EntryRequirements",
+                columns: new[] { "Id", "AcademicTrack", "AllowNoTawjihi", "EffectiveFrom", "EffectiveTo", "MinGPA", "Notes", "Path", "UniversityProgramId", "VocationalBranch" },
+                values: new object[,]
+                {
+                    { 1, 1, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 80.0, null, 1, 1, null },
+                    { 2, 1, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 75.0, null, 1, 2, null },
+                    { 3, 2, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 70.0, null, 1, 3, null },
+                    { 4, 1, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 68.0, null, 1, 3, null },
+                    { 5, 1, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 75.0, null, 1, 4, null },
+                    { 6, 2, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 72.0, null, 1, 5, null },
+                    { 7, 3, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 70.0, null, 1, 5, null }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoleClaims_RoleId",
+                table: "AspNetRoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserClaims_UserId",
+                table: "AspNetUserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserLogins_UserId",
+                table: "AspNetUserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_RoleId",
+                table: "AspNetUserRoles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_CreatedAt",
+                table: "AspNetUsers",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_Email",
+                table: "AspNetUsers",
+                column: "Email",
+                unique: true,
+                filter: "[Email] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_IsActive",
+                table: "AspNetUsers",
+                column: "IsActive");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BtecEntryRequirements_BtecProgramId",
@@ -716,11 +837,6 @@ namespace Uni_Selector.Migrations
                 column: "CreatedAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Commissions_Mode",
-                table: "Commissions",
-                column: "Mode");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Commissions_MonthlySettlementId",
                 table: "Commissions",
                 column: "MonthlySettlementId");
@@ -731,14 +847,9 @@ namespace Uni_Selector.Migrations
                 column: "Settled");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Commissions_UniversityId_CreatedAt",
+                name: "IX_Commissions_UniversityId",
                 table: "Commissions",
-                columns: new[] { "UniversityId", "CreatedAt" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Commissions_UniversityId_Settled",
-                table: "Commissions",
-                columns: new[] { "UniversityId", "Settled" });
+                column: "UniversityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DiscountGrants_ApplicationId",
@@ -768,14 +879,9 @@ namespace Uni_Selector.Migrations
                 column: "Status");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DiscountGrants_UniversityId_Status",
+                name: "IX_DiscountGrants_UniversityId",
                 table: "DiscountGrants",
-                columns: new[] { "UniversityId", "Status" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EntryRequirements_AcademicTrack",
-                table: "EntryRequirements",
-                column: "AcademicTrack");
+                column: "UniversityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EntryRequirements_MinGPA",
@@ -793,11 +899,6 @@ namespace Uni_Selector.Migrations
                 column: "UniversityProgramId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EntryRequirements_VocationalBranch",
-                table: "EntryRequirements",
-                column: "VocationalBranch");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_MonthlySettlements_Closed",
                 table: "MonthlySettlements",
                 column: "Closed");
@@ -811,11 +912,6 @@ namespace Uni_Selector.Migrations
                 name: "IX_MonthlySettlements_CreatedAt",
                 table: "MonthlySettlements",
                 column: "CreatedAt");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MonthlySettlements_UniversityId_Closed",
-                table: "MonthlySettlements",
-                columns: new[] { "UniversityId", "Closed" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_MonthlySettlements_UniversityId_Year_Month",
@@ -834,24 +930,19 @@ namespace Uni_Selector.Migrations
                 column: "CreatedAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_UserId_Category_IsRead",
+                name: "IX_Notifications_IsRead",
                 table: "Notifications",
-                columns: new[] { "UserId", "Category", "IsRead" });
+                column: "IsRead");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_UserId_IsRead",
+                name: "IX_Notifications_UserId",
                 table: "Notifications",
-                columns: new[] { "UserId", "IsRead" });
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Programs_Degree",
                 table: "Programs",
                 column: "Degree");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Programs_Degree_Language",
-                table: "Programs",
-                columns: new[] { "Degree", "Language" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Programs_Language",
@@ -879,19 +970,14 @@ namespace Uni_Selector.Migrations
                 column: "CreatedAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Recommendations_IsViewed",
+                name: "IX_Recommendations_Score",
                 table: "Recommendations",
-                column: "IsViewed");
+                column: "Score");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Recommendations_StudentId_CreatedAt",
+                name: "IX_Recommendations_StudentId",
                 table: "Recommendations",
-                columns: new[] { "StudentId", "CreatedAt" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Recommendations_StudentId_Score",
-                table: "Recommendations",
-                columns: new[] { "StudentId", "Score" });
+                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Recommendations_UniversityProgramId",
@@ -899,18 +985,16 @@ namespace Uni_Selector.Migrations
                 column: "UniversityProgramId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoleClaims_RoleId",
-                schema: "sec",
-                table: "RoleClaims",
-                column: "RoleId");
+                name: "IX_StudentApplications_ApplicationDate",
+                table: "StudentApplications",
+                column: "ApplicationDate");
 
             migrationBuilder.CreateIndex(
-                name: "RoleNameIndex",
-                schema: "sec",
-                table: "Roles",
-                column: "NormalizedName",
+                name: "IX_StudentApplications_ApplicationNumber",
+                table: "StudentApplications",
+                column: "ApplicationNumber",
                 unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
+                filter: "[ApplicationNumber] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StudentApplications_BtecProgramId",
@@ -928,24 +1012,14 @@ namespace Uni_Selector.Migrations
                 column: "Status");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentApplications_Status_ApplicationDate",
+                name: "IX_StudentApplications_StudentId",
                 table: "StudentApplications",
-                columns: new[] { "Status", "ApplicationDate" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StudentApplications_StudentId_ApplicationDate",
-                table: "StudentApplications",
-                columns: new[] { "StudentId", "ApplicationDate" });
+                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StudentApplications_UniversityProgramId",
                 table: "StudentApplications",
                 column: "UniversityProgramId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Students_CreatedAt",
-                table: "Students",
-                column: "CreatedAt");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Students_FamilyConnectionUniversityId",
@@ -956,6 +1030,11 @@ namespace Uni_Selector.Migrations
                 name: "IX_Students_GPA",
                 table: "Students",
                 column: "GPA");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Students_IsActive",
+                table: "Students",
+                column: "IsActive");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Students_Path",
@@ -972,11 +1051,6 @@ namespace Uni_Selector.Migrations
                 table: "Students",
                 column: "UserId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Universities_CommissionMode",
-                table: "Universities",
-                column: "CommissionMode");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Universities_IsActive",
@@ -1014,19 +1088,14 @@ namespace Uni_Selector.Migrations
                 column: "ProgramId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UniversityPrograms_SemesterStartDate",
+                name: "IX_UniversityPrograms_UniversityId",
                 table: "UniversityPrograms",
-                column: "SemesterStartDate");
+                column: "UniversityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UniversityPrograms_StudySystem",
+                name: "IX_UniversityPrograms_UniversityId_ProgramId_StudySystem",
                 table: "UniversityPrograms",
-                column: "StudySystem");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UniversityPrograms_UniversityId_ProgramId",
-                table: "UniversityPrograms",
-                columns: new[] { "UniversityId", "ProgramId" });
+                columns: new[] { "UniversityId", "ProgramId", "StudySystem" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UniversityRepresentatives_IsActive",
@@ -1041,63 +1110,27 @@ namespace Uni_Selector.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_UniversityRepresentatives_UserId",
                 table: "UniversityRepresentatives",
-                column: "UserId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserClaims_UserId",
-                schema: "sec",
-                table: "UserClaims",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserLogins_UserId",
-                schema: "sec",
-                table: "UserLogins",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserRoles_RoleId",
-                schema: "sec",
-                table: "UserRoles",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "EmailIndex",
-                schema: "sec",
-                table: "Users",
-                column: "NormalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_CreatedAt",
-                schema: "sec",
-                table: "Users",
-                column: "CreatedAt");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
-                schema: "sec",
-                table: "Users",
-                column: "Email");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_IsActive",
-                schema: "sec",
-                table: "Users",
-                column: "IsActive");
-
-            migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
-                schema: "sec",
-                table: "Users",
-                column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
+
             migrationBuilder.DropTable(
                 name: "BtecEntryRequirements");
 
@@ -1117,37 +1150,16 @@ namespace Uni_Selector.Migrations
                 name: "Recommendations");
 
             migrationBuilder.DropTable(
-                name: "RoleClaims",
-                schema: "sec");
-
-            migrationBuilder.DropTable(
                 name: "UniversityRepresentatives");
 
             migrationBuilder.DropTable(
-                name: "UserClaims",
-                schema: "sec");
-
-            migrationBuilder.DropTable(
-                name: "UserLogins",
-                schema: "sec");
-
-            migrationBuilder.DropTable(
-                name: "UserRoles",
-                schema: "sec");
-
-            migrationBuilder.DropTable(
-                name: "UserTokens",
-                schema: "sec");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "MonthlySettlements");
 
             migrationBuilder.DropTable(
                 name: "StudentApplications");
-
-            migrationBuilder.DropTable(
-                name: "Roles",
-                schema: "sec");
 
             migrationBuilder.DropTable(
                 name: "BtecPrograms");
@@ -1159,8 +1171,7 @@ namespace Uni_Selector.Migrations
                 name: "UniversityPrograms");
 
             migrationBuilder.DropTable(
-                name: "Users",
-                schema: "sec");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Programs");

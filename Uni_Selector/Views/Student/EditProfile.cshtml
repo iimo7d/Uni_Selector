@@ -1,0 +1,259 @@
+﻿@using Uni_Selector.ViewModels.Student
+@model EditProfileViewModel
+@{
+    ViewData["Title"] = "تعديل الملف الشخصي";
+    Layout = "_StudentLayout";
+}
+
+<!-- Banner Section -->
+<section>
+    <div class="container-fluid-2">
+        <div class="bg-primaryColor p-5 md:p-10 rounded-5 flex justify-center md:justify-between items-center flex-wrap gap-2">
+            <div class="flex items-center flex-wrap justify-center sm:justify-start">
+                <div class="mr-5">
+                    <div class="w-27 h-27 md:w-22 md:h-22 lg:w-27 lg:h-27 rounded-full p-1 border-2 border-white box-content bg-white/20 flex items-center justify-center">
+                        <i class="icofont-edit text-4xl text-white"></i>
+                    </div>
+                </div>
+                <div class="text-whiteColor font-bold text-center sm:text-start">
+                    <h5 class="text-2xl leading-1.24 mb-5px">تعديل الملف الشخصي</h5>
+                    <p class="text-sm font-normal opacity-80">قم بتحديث معلوماتك الشخصية وتفضيلاتك</p>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <a asp-action="Dashboard" class="text-size-15 text-primaryColor bg-whiteColor px-25px py-10px border border-whiteColor hover:bg-transparent hover:text-whiteColor rounded group text-nowrap flex gap-1 items-center">
+                    <i class="icofont-arrow-right"></i>
+                    العودة للوحة التحكم
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dashboard Content Section -->
+<section>
+    <div class="container-fluid-2">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-30px pt-30px pb-100px">
+
+            <!-- Sidebar Navigation -->
+            <div class="lg:col-start-1 lg:col-span-3">
+                @await Html.PartialAsync("_StudentSidebar", "Settings")
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:col-start-4 lg:col-span-9">
+                <!-- Settings Card -->
+                <div class="p-10px md:px-10 md:py-50px mb-30px bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark rounded-5">
+                    <!-- Heading -->
+                    <div class="mb-6 pb-5 border-b-2 border-borderColor dark:border-borderColor-dark">
+                        <h2 class="text-2xl font-bold text-blackColor dark:text-blackColor-dark">
+                            <i class="icofont-ui-settings text-primaryColor ml-2"></i>
+                            تعديل الملف الشخصي
+                        </h2>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="tab">
+                        <div class="tab-links flex flex-wrap mb-10px lg:mb-50px rounded gap-10px">
+                            <button type="button" class="tab-btn is-checked relative py-10px px-5 md:py-15px lg:px-10 font-bold uppercase text-sm lg:text-base text-blackColor bg-whiteColor shadow-overview-button dark:bg-whiteColor-dark dark:text-blackColor-dark before:w-0 before:h-0.5 before:absolute before:-bottom-0.5 lg:before:bottom-0 before:left-0 before:bg-primaryColor hover:before:w-full before:transition-all before:duration-300 whitespace-nowrap active" data-tab="profile">
+                                المعلومات الأساسية
+                            </button>
+                            <button type="button" class="tab-btn relative py-10px px-5 md:py-15px lg:px-10 font-bold uppercase text-sm lg:text-base text-blackColor bg-whiteColor shadow-overview-button dark:bg-whiteColor-dark dark:text-blackColor-dark before:w-0 before:h-0.5 before:absolute before:-bottom-0.5 lg:before:bottom-0 before:left-0 before:bg-primaryColor hover:before:w-full before:transition-all before:duration-300 whitespace-nowrap" data-tab="preferences">
+                                التفضيلات
+                            </button>
+                            <button type="button" class="tab-btn relative py-10px px-5 md:py-15px lg:px-10 font-bold uppercase text-sm lg:text-base text-blackColor bg-whiteColor shadow-overview-button dark:bg-whiteColor-dark dark:text-blackColor-dark before:w-0 before:h-0.5 before:absolute before:-bottom-0.5 lg:before:bottom-0 before:left-0 before:bg-primaryColor hover:before:w-full before:transition-all before:duration-300 whitespace-nowrap" data-tab="guardian">
+                                ولي الأمر
+                            </button>
+                        </div>
+
+                        <form asp-action="EditProfile" method="post" class="text-sm text-blackColor dark:text-blackColor-dark leading-1.8">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" asp-for="StudentId" />
+
+                            <div class="tab-contents">
+                                <!-- Profile Tab -->
+                                <div id="profile-tab" class="tab-content transition-all duration-300">
+                                    <div class="grid grid-cols-1 xl:grid-cols-2 mb-15px gap-y-15px gap-x-30px">
+                                        <div>
+                                            <label asp-for="FullName" class="mb-3 block font-semibold"></label>
+                                            <input asp-for="FullName" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="أدخل الاسم الكامل" />
+                                            <span asp-validation-for="FullName" class="text-danger text-xs"></span>
+                                        </div>
+                                        <div>
+                                            <label asp-for="Email" class="mb-3 block font-semibold"></label>
+                                            <input asp-for="Email" type="email" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="example@email.com" />
+                                            <span asp-validation-for="Email" class="text-danger text-xs"></span>
+                                        </div>
+                                        <div>
+                                            <label asp-for="PhoneNumber" class="mb-3 block font-semibold"></label>
+                                            <input asp-for="PhoneNumber" type="tel" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="07XXXXXXXX" />
+                                            <span asp-validation-for="PhoneNumber" class="text-danger text-xs"></span>
+                                        </div>
+                                        <div>
+                                            <label asp-for="Province" class="mb-3 block font-semibold"></label>
+                                            <select asp-for="Province" asp-items="Model.Provinces" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md" id="provinceSelect">
+                                            </select>
+                                            <span asp-validation-for="Province" class="text-danger text-xs"></span>
+                                        </div>
+                                        <div>
+                                            <label asp-for="City" class="mb-3 block font-semibold"></label>
+                                            <select asp-for="City" asp-items="Model.Cities" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md" id="citySelect">
+                                            </select>
+                                            <span asp-validation-for="City" class="text-danger text-xs"></span>
+                                        </div>
+                                        <div>
+                                            <label asp-for="Area" class="mb-3 block font-semibold"></label>
+                                            <input asp-for="Area" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="اسم المنطقة أو الحي" />
+                                            <span asp-validation-for="Area" class="text-danger text-xs"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Preferences Tab -->
+                                <div id="preferences-tab" class="tab-content hidden transition-all duration-300">
+                                    <div class="grid grid-cols-1 xl:grid-cols-2 mb-15px gap-y-15px gap-x-30px">
+                                        <div>
+                                            <label asp-for="RegistrationBudget" class="mb-3 block font-semibold"></label>
+                                            <div class="relative">
+                                                <input asp-for="RegistrationBudget" type="number" step="100" min="0" class="w-full py-10px px-5 pr-16 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="0" />
+                                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-contentColor dark:text-contentColor-dark">د.أ</span>
+                                            </div>
+                                            <span asp-validation-for="RegistrationBudget" class="text-danger text-xs"></span>
+                                        </div>
+                                        <div>
+                                            <label asp-for="MaxDistanceKm" class="mb-3 block font-semibold"></label>
+                                            <div class="relative">
+                                                <input asp-for="MaxDistanceKm" type="number" min="1" max="500" class="w-full py-10px px-5 pr-12 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="50" />
+                                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-contentColor dark:text-contentColor-dark">كم</span>
+                                            </div>
+                                            <span asp-validation-for="MaxDistanceKm" class="text-danger text-xs"></span>
+                                        </div>
+                                        <div>
+                                            <label asp-for="PreferredLanguage" class="mb-3 block font-semibold"></label>
+                                            <select asp-for="PreferredLanguage" asp-items="Model.Languages" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md">
+                                            </select>
+                                            <span asp-validation-for="PreferredLanguage" class="text-danger text-xs"></span>
+                                        </div>
+                                        <div>
+                                            <label asp-for="PreferredCity" class="mb-3 block font-semibold"></label>
+                                            <input asp-for="PreferredCity" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="المدينة المفضلة للدراسة" />
+                                            <span asp-validation-for="PreferredCity" class="text-danger text-xs"></span>
+                                        </div>
+                                        <div class="xl:col-span-2">
+                                            <label asp-for="DesiredMajors" class="mb-3 block font-semibold"></label>
+                                            <textarea asp-for="DesiredMajors" rows="3" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="أدخل التخصصات التي تهتم بها، مفصولة بفواصل"></textarea>
+                                            <span asp-validation-for="DesiredMajors" class="text-danger text-xs"></span>
+                                        </div>
+
+                                        <!-- Family Connection -->
+                                        <div class="xl:col-span-2">
+                                            <div class="p-4 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
+                                                <div class="flex items-center gap-3 mb-3">
+                                                    <input asp-for="HasFamilyConnection" type="checkbox" id="hasFamilyConnection" class="w-5 h-5 text-primaryColor border-borderColor rounded focus:ring-primaryColor" />
+                                                    <label asp-for="HasFamilyConnection" class="font-semibold cursor-pointer"></label>
+                                                </div>
+                                                <div id="familyConnectionUniversity" class="@(Model.HasFamilyConnection ? "" : "hidden")">
+                                                    <label asp-for="FamilyConnectionUniversityId" class="mb-2 block text-sm"></label>
+                                                    <select asp-for="FamilyConnectionUniversityId" asp-items="Model.Universities" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Guardian Tab -->
+                                <div id="guardian-tab" class="tab-content hidden transition-all duration-300">
+                                    <div class="grid grid-cols-1 xl:grid-cols-2 mb-15px gap-y-15px gap-x-30px">
+                                        <div>
+                                            <label asp-for="GuardianName" class="mb-3 block font-semibold"></label>
+                                            <input asp-for="GuardianName" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="اسم ولي الأمر" />
+                                            <span asp-validation-for="GuardianName" class="text-danger text-xs"></span>
+                                        </div>
+                                        <div>
+                                            <label asp-for="GuardianPhone" class="mb-3 block font-semibold"></label>
+                                            <input asp-for="GuardianPhone" type="tel" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="07XXXXXXXX" />
+                                            <span asp-validation-for="GuardianPhone" class="text-danger text-xs"></span>
+                                        </div>
+                                        <div>
+                                            <label asp-for="GuardianRelation" class="mb-3 block font-semibold"></label>
+                                            <select asp-for="GuardianRelation" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md">
+                                                <option value="">-- اختر صلة القرابة --</option>
+                                                <option value="الأب">الأب</option>
+                                                <option value="الأم">الأم</option>
+                                                <option value="الأخ">الأخ</option>
+                                                <option value="الأخت">الأخت</option>
+                                                <option value="العم">العم</option>
+                                                <option value="الخال">الخال</option>
+                                                <option value="الجد">الجد</option>
+                                                <option value="الجدة">الجدة</option>
+                                                <option value="أخرى">أخرى</option>
+                                            </select>
+                                            <span asp-validation-for="GuardianRelation" class="text-danger text-xs"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="mt-30px pt-4 border-t border-borderColor dark:border-borderColor-dark">
+                                <button type="submit" class="text-size-15 text-whiteColor bg-primaryColor px-25px py-10px border border-primaryColor hover:text-primaryColor hover:bg-whiteColor inline-block rounded group dark:hover:text-whiteColor dark:hover:bg-whiteColor-dark">
+                                    <i class="icofont-check-circled ml-1"></i>
+                                    حفظ التغييرات
+                                </button>
+                                <a asp-action="Dashboard" class="text-size-15 text-contentColor dark:text-contentColor-dark px-25px py-10px border border-borderColor dark:border-borderColor-dark hover:text-primaryColor inline-block rounded mr-3">
+                                    إلغاء
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.classList.remove('before:w-full');
+                });
+
+                // Add active class to clicked button
+                this.classList.add('active');
+                this.classList.add('before:w-full');
+
+                // Hide all tab contents
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+
+                // Show selected tab content
+                const tabId = this.dataset.tab + '-tab';
+                document.getElementById(tabId).classList.remove('hidden');
+            });
+        });
+
+        // Family connection toggle
+        document.getElementById('hasFamilyConnection').addEventListener('change', function() {
+            const universitySelect = document.getElementById('familyConnectionUniversity');
+            if (this.checked) {
+                universitySelect.classList.remove('hidden');
+            } else {
+                universitySelect.classList.add('hidden');
+            }
+        });
+
+        // Province/City cascade (if needed)
+        document.getElementById('provinceSelect')?.addEventListener('change', function() {
+            // You can add AJAX call here to load cities based on province
+        });
+    </script>
+}

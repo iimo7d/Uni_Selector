@@ -8,31 +8,36 @@ using Uni_Selector.Data;
 using Uni_Selector.Hubs;
 using Uni_Selector.Models;
 using Uni_Selector.Models.Enums;
+using Uni_Selector.ViewModels.UniversityAdmin;
 
 namespace Uni_Selector.Controllers
 {
-    [Authorize(Roles = UserRoles.PlatformAdmin)]
+    //[Authorize(Roles = UserRoles.PlatformAdmin)]
     public class UniversityAdminController : Controller
     {
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly ILogger<UniversityAdminController> _logger;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public UniversityAdminController(
             AppDbContext context,
             UserManager<ApplicationUser> userManager,
             IHubContext<NotificationHub> hubContext,
-            ILogger<UniversityAdminController> logger)
+            ILogger<UniversityAdminController> logger,
+            IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userManager = userManager;
             _hubContext = hubContext;
             _logger = logger;
+            _webHostEnvironment = webHostEnvironment;
         }
 
+        #region Index & List
         [HttpGet]
-        public async Task<IActionResult> Index(string? searchTerm, string? province, bool? isActive, int page = 1, int pageSize = 20)
+        public async Task<IActionResult> Index(string? searchTerm, string? province, bool? isActive, int page = 1, int pageSize = 10)
         {
             try
             {
@@ -40,12 +45,14 @@ namespace Uni_Selector.Controllers
                     .Include(u => u.Representatives)
                     .AsQueryable();
 
+                // Apply filters
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
                     query = query.Where(u =>
                         u.NameEnglish.Contains(searchTerm) ||
                         u.NameArabic.Contains(searchTerm) ||
-                        u.City.Contains(searchTerm));
+                        u.City.Contains(searchTerm) ||
+                        u.Email.Contains(searchTerm));
                 }
 
                 if (!string.IsNullOrWhiteSpace(province))
@@ -64,42 +71,152 @@ namespace Uni_Selector.Controllers
                     .OrderByDescending(u => u.CreatedAt)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
+                    .Select(u => new UniversityListItemDto
+                    {
+                        Id = u.Id,
+                        NameEnglish = u.NameEnglish,
+                        NameArabic = u.NameArabic,
+                        LogoPath = u.LogoPath,
+                        City = u.City,
+                        Province = u.Province,
+                        Email = u.Email,
+                        PhoneNumber = u.PhoneNumber,
+                        Type = u.Type.ToString(),
+                        IsActive = u.IsActive,
+                        RepresentativesCount = u.Representatives.Count,
+                        CreatedAt = u.CreatedAt
+                    })
                     .ToListAsync();
 
-                ViewBag.SearchTerm = searchTerm;
-                ViewBag.Province = province;
-                ViewBag.IsActive = isActive;
-                ViewBag.CurrentPage = page;
-                ViewBag.PageSize = pageSize;
-                ViewBag.TotalPages = (int)Math.Ceiling(totalUniversities / (double)pageSize);
-                ViewBag.TotalUniversities = totalUniversities;
-
-                ViewBag.Provinces = await _context.Universities
+                var provinces = await _context.Universities
                     .Select(u => u.Province)
                     .Distinct()
                     .OrderBy(p => p)
                     .ToListAsync();
 
-                return View(universities);
+                var viewModel = new UniversityListViewModel
+                {
+                    Universities = universities,
+                    SearchTerm = searchTerm,
+                    Province = province,
+                    IsActive = isActive,
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalPages = (int)Math.Ceiling(totalUniversities / (double)pageSize),
+                    TotalUniversities = totalUniversities,
+                    Provinces = provinces
+                };
+
+                return View(viewModel);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading universities list");
                 TempData["Error"] = "An error occurred while loading universities.";
-                return View(new List<University>());
+                return View(new UniversityListViewModel());
             }
         }
+        #endregion
 
+        #region Details
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            try
+            {
+                var university = await _context.Universities
+                    .Include(u => u.Representatives)
+                        .ThenInclude(r => r.User)
+                    .Include(u => u.UniversityPrograms)
+                        .ThenInclude(up => up.Program)
+                    .Include(u => u.BtecPrograms)
+                    .FirstOrDefaultAsync(u => u.Id == id);
+
+                if (university == null)
+                {
+                    TempData["Error"] = "University not found.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var applicationStats = await _context.StudentApplications
+                    .Where(sa => (sa.UniversityProgram != null && sa.UniversityProgram.UniversityId == id) ||
+                                 (sa.BtecProgram != null && sa.BtecProgram.UniversityId == id))
+                    .GroupBy(sa => sa.Status)
+                    .Select(g => new ApplicationStatusDto
+                    {
+                        Status = g.Key.ToString(),
+                        Count = g.Count()
+                    })
+                    .ToListAsync();
+
+                var viewModel = new UniversityDetailsViewModel
+                {
+                    Id = university.Id,
+                    NameEnglish = university.NameEnglish,
+                    NameArabic = university.NameArabic,
+                    Type = university.Type.ToString(),
+                    Province = university.Province,
+                    City = university.City,
+                    FullAddress = university.FullAddress,
+                    Latitude = university.Latitude,
+                    Longitude = university.Longitude,
+                    AcademicAccreditation = university.AcademicAccreditation,
+                    PhoneNumber = university.PhoneNumber,
+                    Email = university.Email,
+                    OfficialWebsite = university.OfficialWebsite,
+                    LogoPath = university.LogoPath,
+                    ImagePath = university.ImagePath,
+                    IsActive = university.IsActive,
+                    CommissionMode = university.CommissionMode.ToString(),
+                    CreatedAt = university.CreatedAt,
+                    UpdatedAt = university.UpdatedAt,
+                    TotalPrograms = university.UniversityPrograms.Count + university.BtecPrograms.Count,
+                    ActivePrograms = university.UniversityPrograms.Count(up => up.IsActive) +
+                                    university.BtecPrograms.Count(bp => bp.IsActive),
+                    TotalRepresentatives = university.Representatives.Count,
+                    ActiveRepresentatives = university.Representatives.Count(r => r.IsActive),
+                    UniversityPrograms = university.UniversityPrograms.Select(up => new UniversityProgramDto
+                    {
+                        Id = up.Id,
+                        ProgramNameEnglish = up.Program.NameEnglish,
+                        ProgramNameArabic = up.Program.NameArabic,
+                        Degree = up.Program.Degree.ToString(),
+                        DurationInYears = up.DurationInYears,
+                        IsActive = up.IsActive
+                    }).ToList(),
+                    Representatives = university.Representatives.Select(r => new UniversityRepresentativeDto
+                    {
+                        Id = r.Id,
+                        UserFullName = r.User.FullName,
+                        UserEmail = r.User.Email,
+                        Position = r.Position,
+                        IsActive = r.IsActive,
+                        AssignedAt = r.AssignedAt
+                    }).ToList(),
+                    ApplicationStats = applicationStats
+                };
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error loading details for university ID: {id}");
+                TempData["Error"] = "An error occurred while loading university details.";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+        #endregion
+
+        #region Create
         [HttpGet]
         public IActionResult Create()
         {
             try
             {
-                // Prepare dropdown data
                 ViewBag.CommissionModes = new SelectList(Enum.GetValues(typeof(CommissionMode)));
                 ViewBag.UniversityTypes = new SelectList(Enum.GetValues(typeof(UniversityType)));
 
-                return View(new University());
+                return View(new CreateUniversityViewModel());
             }
             catch (Exception ex)
             {
@@ -111,7 +228,7 @@ namespace Uni_Selector.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(University university, IFormFile? logo, IFormFile? coverImage)
+        public async Task<IActionResult> Create(CreateUniversityViewModel model)
         {
             try
             {
@@ -119,39 +236,39 @@ namespace Uni_Selector.Controllers
                 {
                     ViewBag.CommissionModes = new SelectList(Enum.GetValues(typeof(CommissionMode)));
                     ViewBag.UniversityTypes = new SelectList(Enum.GetValues(typeof(UniversityType)));
-                    return View(university);
+                    return View(model);
                 }
 
-                if (logo != null && logo.Length > 0)
+                var university = new University
                 {
-                    var logoFileName = $"{Guid.NewGuid()}_{Path.GetFileName(logo.FileName)}";
-                    var logoPath = Path.Combine("wwwroot", "uploads", "universities", "logos", logoFileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(logoPath)!);
+                    NameEnglish = model.NameEnglish,
+                    NameArabic = model.NameArabic,
+                    Type = model.Type,
+                    Province = model.Province,
+                    City = model.City,
+                    FullAddress = model.FullAddress,
+                    Latitude = model.Latitude,
+                    Longitude = model.Longitude,
+                    AcademicAccreditation = model.AcademicAccreditation,
+                    PhoneNumber = model.PhoneNumber,
+                    Email = model.Email,
+                    OfficialWebsite = model.OfficialWebsite,
+                    CommissionMode = model.CommissionMode,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                };
 
-                    using (var stream = new FileStream(logoPath, FileMode.Create))
-                    {
-                        await logo.CopyToAsync(stream);
-                    }
-
-                    university.LogoPath = $"/uploads/universities/logos/{logoFileName}";
-                }
-
-                if (coverImage != null && coverImage.Length > 0)
+                // Handle logo upload
+                if (model.Logo != null && model.Logo.Length > 0)
                 {
-                    var imageFileName = $"{Guid.NewGuid()}_{Path.GetFileName(coverImage.FileName)}";
-                    var imagePath = Path.Combine("wwwroot", "uploads", "universities", "images", imageFileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(imagePath)!);
-
-                    using (var stream = new FileStream(imagePath, FileMode.Create))
-                    {
-                        await coverImage.CopyToAsync(stream);
-                    }
-
-                    university.ImagePath = $"/uploads/universities/images/{imageFileName}";
+                    university.LogoPath = await SaveFileAsync(model.Logo, "logos");
                 }
 
-                university.CreatedAt = DateTime.UtcNow;
-                university.IsActive = true;
+                // Handle cover image upload
+                if (model.CoverImage != null && model.CoverImage.Length > 0)
+                {
+                    university.ImagePath = await SaveFileAsync(model.CoverImage, "images");
+                }
 
                 _context.Universities.Add(university);
                 await _context.SaveChangesAsync();
@@ -167,18 +284,18 @@ namespace Uni_Selector.Controllers
                 ModelState.AddModelError("", "An error occurred while creating the university.");
                 ViewBag.CommissionModes = new SelectList(Enum.GetValues(typeof(CommissionMode)));
                 ViewBag.UniversityTypes = new SelectList(Enum.GetValues(typeof(UniversityType)));
-                return View(university);
+                return View(model);
             }
         }
+        #endregion
 
+        #region Edit
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                var university = await _context.Universities
-                    .Include(u => u.Representatives)
-                    .FirstOrDefaultAsync(u => u.Id == id);
+                var university = await _context.Universities.FindAsync(id);
 
                 if (university == null)
                 {
@@ -186,11 +303,30 @@ namespace Uni_Selector.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Prepare dropdown data
-                ViewBag.CommissionModes = new SelectList(Enum.GetValues(typeof(CommissionMode)), university.CommissionMode);
-                ViewBag.UniversityTypes = new SelectList(Enum.GetValues(typeof(UniversityType)), university.Type);
+                var viewModel = new EditUniversityViewModel
+                {
+                    Id = university.Id,
+                    NameEnglish = university.NameEnglish,
+                    NameArabic = university.NameArabic,
+                    Type = university.Type,
+                    Province = university.Province,
+                    City = university.City,
+                    FullAddress = university.FullAddress,
+                    Latitude = university.Latitude,
+                    Longitude = university.Longitude,
+                    AcademicAccreditation = university.AcademicAccreditation,
+                    PhoneNumber = university.PhoneNumber,
+                    Email = university.Email,
+                    OfficialWebsite = university.OfficialWebsite,
+                    CommissionMode = university.CommissionMode,
+                    CurrentLogoPath = university.LogoPath,
+                    CurrentImagePath = university.ImagePath
+                };
 
-                return View(university);
+                ViewBag.CommissionModes = new SelectList(Enum.GetValues(typeof(CommissionMode)), viewModel.CommissionMode);
+                ViewBag.UniversityTypes = new SelectList(Enum.GetValues(typeof(UniversityType)), viewModel.Type);
+
+                return View(viewModel);
             }
             catch (Exception ex)
             {
@@ -202,11 +338,11 @@ namespace Uni_Selector.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, University university, IFormFile? logo, IFormFile? coverImage)
+        public async Task<IActionResult> Edit(int id, EditUniversityViewModel model)
         {
             try
             {
-                if (id != university.Id)
+                if (id != model.Id)
                 {
                     TempData["Error"] = "Invalid university ID.";
                     return RedirectToAction(nameof(Index));
@@ -214,96 +350,75 @@ namespace Uni_Selector.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    ViewBag.CommissionModes = new SelectList(Enum.GetValues(typeof(CommissionMode)), university.CommissionMode);
-                    ViewBag.UniversityTypes = new SelectList(Enum.GetValues(typeof(UniversityType)), university.Type);
-                    return View(university);
+                    ViewBag.CommissionModes = new SelectList(Enum.GetValues(typeof(CommissionMode)), model.CommissionMode);
+                    ViewBag.UniversityTypes = new SelectList(Enum.GetValues(typeof(UniversityType)), model.Type);
+                    return View(model);
                 }
 
-                var existingUniversity = await _context.Universities.FindAsync(id);
-                if (existingUniversity == null)
+                var university = await _context.Universities.FindAsync(id);
+                if (university == null)
                 {
                     TempData["Error"] = "University not found.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                existingUniversity.NameArabic = university.NameArabic;
-                existingUniversity.NameEnglish = university.NameEnglish;
-                existingUniversity.Type = university.Type;
-                existingUniversity.Province = university.Province;
-                existingUniversity.City = university.City;
-                existingUniversity.FullAddress = university.FullAddress;
-                existingUniversity.Latitude = university.Latitude;
-                existingUniversity.Longitude = university.Longitude;
-                existingUniversity.AcademicAccreditation = university.AcademicAccreditation;
-                existingUniversity.PhoneNumber = university.PhoneNumber;
-                existingUniversity.Email = university.Email;
-                existingUniversity.OfficialWebsite = university.OfficialWebsite;
-                existingUniversity.CommissionMode = university.CommissionMode;
-                existingUniversity.UpdatedAt = DateTime.UtcNow;
+                // Update properties
+                university.NameEnglish = model.NameEnglish;
+                university.NameArabic = model.NameArabic;
+                university.Type = model.Type;
+                university.Province = model.Province;
+                university.City = model.City;
+                university.FullAddress = model.FullAddress;
+                university.Latitude = model.Latitude;
+                university.Longitude = model.Longitude;
+                university.AcademicAccreditation = model.AcademicAccreditation;
+                university.PhoneNumber = model.PhoneNumber;
+                university.Email = model.Email;
+                university.OfficialWebsite = model.OfficialWebsite;
+                university.CommissionMode = model.CommissionMode;
+                university.UpdatedAt = DateTime.UtcNow;
 
-                if (logo != null && logo.Length > 0)
+                // Handle logo update
+                if (model.Logo != null && model.Logo.Length > 0)
                 {
-                    if (!string.IsNullOrEmpty(existingUniversity.LogoPath))
+                    // Delete old logo
+                    if (!string.IsNullOrEmpty(university.LogoPath))
                     {
-                        var oldLogoPath = Path.Combine("wwwroot", existingUniversity.LogoPath.TrimStart('/'));
-                        if (System.IO.File.Exists(oldLogoPath))
-                        {
-                            System.IO.File.Delete(oldLogoPath);
-                        }
+                        DeleteFile(university.LogoPath);
                     }
-
-                    var logoFileName = $"{Guid.NewGuid()}_{Path.GetFileName(logo.FileName)}";
-                    var logoPath = Path.Combine("wwwroot", "uploads", "universities", "logos", logoFileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(logoPath)!);
-
-                    using (var stream = new FileStream(logoPath, FileMode.Create))
-                    {
-                        await logo.CopyToAsync(stream);
-                    }
-
-                    existingUniversity.LogoPath = $"/uploads/universities/logos/{logoFileName}";
+                    university.LogoPath = await SaveFileAsync(model.Logo, "logos");
                 }
 
-                if (coverImage != null && coverImage.Length > 0)
+                // Handle cover image update
+                if (model.CoverImage != null && model.CoverImage.Length > 0)
                 {
-                    if (!string.IsNullOrEmpty(existingUniversity.ImagePath))
+                    // Delete old image
+                    if (!string.IsNullOrEmpty(university.ImagePath))
                     {
-                        var oldImagePath = Path.Combine("wwwroot", existingUniversity.ImagePath.TrimStart('/'));
-                        if (System.IO.File.Exists(oldImagePath))
-                        {
-                            System.IO.File.Delete(oldImagePath);
-                        }
+                        DeleteFile(university.ImagePath);
                     }
-
-                    var imageFileName = $"{Guid.NewGuid()}_{Path.GetFileName(coverImage.FileName)}";
-                    var imagePath = Path.Combine("wwwroot", "uploads", "universities", "images", imageFileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(imagePath)!);
-
-                    using (var stream = new FileStream(imagePath, FileMode.Create))
-                    {
-                        await coverImage.CopyToAsync(stream);
-                    }
-
-                    existingUniversity.ImagePath = $"/uploads/universities/images/{imageFileName}";
+                    university.ImagePath = await SaveFileAsync(model.CoverImage, "images");
                 }
 
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation($"University updated: {existingUniversity.NameEnglish} (ID: {id}) by admin {User.Identity?.Name}");
+                _logger.LogInformation($"University updated: {university.NameEnglish} (ID: {id}) by admin {User.Identity?.Name}");
 
-                TempData["Success"] = $"University '{existingUniversity.NameEnglish}' has been updated successfully.";
+                TempData["Success"] = $"University '{university.NameEnglish}' has been updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error updating university ID: {id}");
                 ModelState.AddModelError("", "An error occurred while updating the university.");
-                ViewBag.CommissionModes = new SelectList(Enum.GetValues(typeof(CommissionMode)), university.CommissionMode);
-                ViewBag.UniversityTypes = new SelectList(Enum.GetValues(typeof(UniversityType)), university.Type);
-                return View(university);
+                ViewBag.CommissionModes = new SelectList(Enum.GetValues(typeof(CommissionMode)), model.CommissionMode);
+                ViewBag.UniversityTypes = new SelectList(Enum.GetValues(typeof(UniversityType)), model.Type);
+                return View(model);
             }
         }
+        #endregion
 
+        #region Approve & Suspend
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int id)
@@ -325,26 +440,13 @@ namespace Uni_Selector.Controllers
 
                 await _context.SaveChangesAsync();
 
-                foreach (var rep in university.Representatives.Where(r => r.IsActive))
-                {
-                    var notification = new Notification
-                    {
-                        UserId = rep.UserId,
-                        Title = "University Approved",
-                        Message = $"The university '{university.NameEnglish}' has been approved by the platform administrator.",
-                        Category = NotificationCategory.SystemAlert,
-                        ActionUrl = $"/UniversityRep/Dashboard",
-                        CreatedAt = DateTime.UtcNow
-                    };
-
-                    _context.Notifications.Add(notification);
-
-                    // Send real-time notification via SignalR
-                    await _hubContext.Clients.Group($"User_{rep.UserId}")
-                        .SendAsync("ReceiveNotification", notification.Title, notification.Message, notification.ActionUrl);
-                }
-
-                await _context.SaveChangesAsync();
+                // Send notifications to representatives
+                await SendNotificationToRepresentatives(
+                    university,
+                    "University Approved",
+                    $"The university '{university.NameEnglish}' has been approved by the platform administrator.",
+                    "/UniversityRep/Dashboard"
+                );
 
                 _logger.LogInformation($"University approved: {university.NameEnglish} (ID: {id}) by admin {User.Identity?.Name}");
 
@@ -380,29 +482,16 @@ namespace Uni_Selector.Controllers
 
                 await _context.SaveChangesAsync();
 
-                var suspensionMessage = string.IsNullOrWhiteSpace(reason)
+                var message = string.IsNullOrWhiteSpace(reason)
                     ? $"The university '{university.NameEnglish}' has been suspended by the platform administrator."
                     : $"The university '{university.NameEnglish}' has been suspended. Reason: {reason}";
 
-                foreach (var rep in university.Representatives.Where(r => r.IsActive))
-                {
-                    var notification = new Notification
-                    {
-                        UserId = rep.UserId,
-                        Title = "University Suspended",
-                        Message = suspensionMessage,
-                        Category = NotificationCategory.SystemAlert,
-                        ActionUrl = $"/UniversityRep/Dashboard",
-                        CreatedAt = DateTime.UtcNow
-                    };
-
-                    _context.Notifications.Add(notification);
-
-                    await _hubContext.Clients.Group($"User_{rep.UserId}")
-                        .SendAsync("ReceiveNotification", notification.Title, notification.Message, notification.ActionUrl);
-                }
-
-                await _context.SaveChangesAsync();
+                await SendNotificationToRepresentatives(
+                    university,
+                    "University Suspended",
+                    message,
+                    "/UniversityRep/Dashboard"
+                );
 
                 _logger.LogInformation($"University suspended: {university.NameEnglish} (ID: {id}) by admin {User.Identity?.Name}. Reason: {reason ?? "Not specified"}");
 
@@ -416,7 +505,9 @@ namespace Uni_Selector.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
+        #endregion
 
+        #region Representatives Management
         [HttpGet]
         public async Task<IActionResult> Representatives(int id)
         {
@@ -434,20 +525,64 @@ namespace Uni_Selector.Controllers
                 }
 
                 var existingRepUserIds = university.Representatives.Select(r => r.UserId).ToList();
-                var availableUsers = await _userManager.GetUsersInRoleAsync(UserRoles.UniversityRep);
-                var availableReps = availableUsers
-                    .Where(u => !existingRepUserIds.Contains(u.Id))
-                    .Select(u => new SelectListItem
+
+                // Get all active users
+                var allUsers = await _userManager.Users.Where(u => u.IsActive).ToListAsync();
+
+                // Filter to only show students and normal users (exclude Admin, UniversityRep, BtecAuthority)
+                var availableUsersList = new List<SelectListItem>();
+
+                foreach (var user in allUsers)
+                {
+                    // Skip if already a representative
+                    if (existingRepUserIds.Contains(user.Id))
+                        continue;
+
+                    // Get user roles
+                    var roles = await _userManager.GetRolesAsync(user);
+
+                    // Exclude users with Admin, UniversityRep, or BtecAuthority roles
+                    if (!roles.Contains(UserRoles.PlatformAdmin) &&
+                        !roles.Contains(UserRoles.UniversityRep) &&
+                        !roles.Contains(UserRoles.BtecAuthority))
                     {
-                        Value = u.Id,
-                        Text = $"{u.FullName} ({u.Email})"
-                    })
-                    .ToList();
+                        availableUsersList.Add(new SelectListItem
+                        {
+                            Value = user.Id,
+                            Text = $"{user.FullName} ({user.Email})"
+                        });
+                    }
+                }
 
-                ViewBag.University = university;
-                ViewBag.AvailableRepresentatives = availableReps;
+                var viewModel = new UniversityRepresentativesViewModel
+                {
+                    University = new UniversityBasicInfoDto
+                    {
+                        Id = university.Id,
+                        NameEnglish = university.NameEnglish,
+                        NameArabic = university.NameArabic,
+                        LogoPath = university.LogoPath,
+                        IsActive = university.IsActive
+                    },
+                    Representatives = university.Representatives
+                        .OrderByDescending(r => r.AssignedAt)
+                        .Select(r => new RepresentativeDetailDto
+                        {
+                            Id = r.Id,
+                            UserId = r.UserId,
+                            UserFullName = r.User.FullName,
+                            UserEmail = r.User.Email,
+                            Position = r.Position,
+                            CanManagePrograms = r.CanManagePrograms,
+                            CanManageFees = r.CanManageFees,
+                            CanViewApplications = r.CanViewApplications,
+                            IsActive = r.IsActive,
+                            AssignedAt = r.AssignedAt
+                        }).ToList(),
+                    AvailableUsers = availableUsersList
+                };
 
-                return View(university.Representatives.ToList());
+                return View(viewModel);
             }
             catch (Exception ex)
             {
@@ -477,6 +612,7 @@ namespace Uni_Selector.Controllers
                     return RedirectToAction(nameof(Representatives), new { id });
                 }
 
+                // Check if already assigned
                 var existingRep = await _context.UniversityRepresentatives
                     .FirstOrDefaultAsync(r => r.UserId == userId && r.UniversityId == id);
 
@@ -486,39 +622,35 @@ namespace Uni_Selector.Controllers
                     return RedirectToAction(nameof(Representatives), new { id });
                 }
 
+                // Ensure user has UniversityRep role
                 var isInRole = await _userManager.IsInRoleAsync(user, UserRoles.UniversityRep);
                 if (!isInRole)
                 {
                     await _userManager.AddToRoleAsync(user, UserRoles.UniversityRep);
                 }
 
+                // Create representative
                 var representative = new UniversityRepresentative
                 {
                     UserId = userId,
                     UniversityId = id,
                     IsActive = true,
+                    AssignedAt = DateTime.UtcNow,
+                    CanManagePrograms = true,
+                    CanManageFees = true,
+                    CanViewApplications = true
                 };
 
                 _context.UniversityRepresentatives.Add(representative);
                 await _context.SaveChangesAsync();
 
-                // Send notification to the user
-                var notification = new Notification
-                {
-                    UserId = userId,
-                    Title = "University Representative Assignment",
-                    Message = $"You have been assigned as a representative for '{university.NameEnglish}'.",
-                    Category = NotificationCategory.SystemAlert,
-                    ActionUrl = "/UniversityRep/Dashboard",
-                    CreatedAt = DateTime.UtcNow
-                };
-
-                _context.Notifications.Add(notification);
-                await _context.SaveChangesAsync();
-
-                // Send real-time notification
-                await _hubContext.Clients.Group($"User_{userId}")
-                    .SendAsync("ReceiveNotification", notification.Title, notification.Message, notification.ActionUrl);
+                // Send notification
+                await SendNotificationToUser(
+                    userId,
+                    "University Representative Assignment",
+                    $"You have been assigned as a representative for '{university.NameEnglish}'.",
+                    "/UniversityRep/Dashboard"
+                );
 
                 _logger.LogInformation($"Representative added: User {user.Email} to University {university.NameEnglish} (ID: {id}) by admin {User.Identity?.Name}");
 
@@ -535,8 +667,98 @@ namespace Uni_Selector.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateRepresentative(CreateRepresentativeViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    TempData["Error"] = "Please check all required fields.";
+                    return RedirectToAction(nameof(Representatives), new { id = model.UniversityId });
+                }
+
+                var university = await _context.Universities.FindAsync(model.UniversityId);
+                if (university == null)
+                {
+                    TempData["Error"] = "University not found.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Check if email already exists
+                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser != null)
+                {
+                    TempData["Error"] = "A user with this email already exists.";
+                    return RedirectToAction(nameof(Representatives), new { id = model.UniversityId });
+                }
+
+                // Create new user
+                var newUser = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FullName = model.FullName,
+                    PhoneNumber = model.PhoneNumber,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    EmailConfirmed = true // Auto-confirm for admin-created accounts
+                };
+
+                var result = await _userManager.CreateAsync(newUser, model.Password);
+
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    TempData["Error"] = $"Failed to create user: {errors}";
+                    return RedirectToAction(nameof(Representatives), new { id = model.UniversityId });
+                }
+
+                // Assign UniversityRep role
+                await _userManager.AddToRoleAsync(newUser, UserRoles.UniversityRep);
+
+                // Create representative
+                var representative = new UniversityRepresentative
+                {
+                    UserId = newUser.Id,
+                    UniversityId = model.UniversityId,
+                    Position = model.Position,
+                    IsActive = true,
+                    AssignedAt = DateTime.UtcNow,
+                    CanManagePrograms = model.CanManagePrograms,
+                    CanManageFees = model.CanManageFees,
+                    CanViewApplications = model.CanViewApplications
+                };
+
+                _context.UniversityRepresentatives.Add(representative);
+                await _context.SaveChangesAsync();
+
+                // Send notification
+                await SendNotificationToUser(
+                    newUser.Id,
+                    "University Representative Account Created",
+                    $"Your account has been created and you have been assigned as a representative for '{university.NameEnglish}'. Your login credentials have been set up.",
+                    "/UniversityRep/Dashboard"
+                );
+
+                _logger.LogInformation($"Representative created: User {newUser.Email} for University {university.NameEnglish} (ID: {model.UniversityId}) by admin {User.Identity?.Name}");
+
+                TempData["Success"] = $"Representative '{newUser.FullName}' has been created and assigned to '{university.NameEnglish}' successfully.";
+                return RedirectToAction(nameof(Representatives), new { id = model.UniversityId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error creating representative for university ID: {model.UniversityId}");
+                TempData["Error"] = "An error occurred while creating the representative.";
+                return RedirectToAction(nameof(Representatives), new { id = model.UniversityId });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveRepresentative(int id, int repId)
         {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
             try
             {
                 var representative = await _context.UniversityRepresentatives
@@ -550,82 +772,204 @@ namespace Uni_Selector.Controllers
                     return RedirectToAction(nameof(Representatives), new { id });
                 }
 
-                var userName = representative.User.FullName;
+                var user = representative.User;
                 var universityName = representative.University.NameEnglish;
-                var userId = representative.UserId;
 
+                // 1️⃣ Remove representative record
                 _context.UniversityRepresentatives.Remove(representative);
                 await _context.SaveChangesAsync();
 
-                var notification = new Notification
+                // 2️⃣ Remove UniversityRep role
+                if (await _userManager.IsInRoleAsync(user, UserRoles.UniversityRep))
                 {
-                    UserId = userId,
-                    Title = "University Representative Assignment Removed",
-                    Message = $"Your role as a representative for '{universityName}' has been removed by the platform administrator.",
-                    Category = NotificationCategory.SystemAlert,
-                    ActionUrl = "/Account/Profile",
-                    CreatedAt = DateTime.UtcNow
-                };
+                    await _userManager.RemoveFromRoleAsync(user, UserRoles.UniversityRep);
+                }
 
-                _context.Notifications.Add(notification);
-                await _context.SaveChangesAsync();
+                // 3️⃣ Assign Student role (if not already)
+                if (!await _userManager.IsInRoleAsync(user, UserRoles.Student))
+                {
+                    await _userManager.AddToRoleAsync(user, UserRoles.Student);
+                }
 
-                await _hubContext.Clients.Group($"User_{userId}")
-                    .SendAsync("ReceiveNotification", notification.Title, notification.Message, notification.ActionUrl);
+                // 4️⃣ Commit transaction
+                await transaction.CommitAsync();
 
-                _logger.LogInformation($"Representative removed: User {userName} from University {universityName} (ID: {id}) by admin {User.Identity?.Name}");
+                // 5️⃣ Notify user
+                await SendNotificationToUser(
+                    user.Id,
+                    "Representative Role Removed",
+                    $"Your representative role for '{universityName}' has been removed. Your account has been updated to a student role.",
+                    "/Account/Profile"
+                );
 
-                TempData["Success"] = $"{userName} has been removed as a representative for '{universityName}'.";
+                _logger.LogInformation(
+                    $"User {user.Email} removed from UniversityRep and assigned Student role by admin {User.Identity?.Name}"
+                );
+
+                TempData["Success"] = $"{user.FullName} has been removed as a representative and reassigned as a student.";
                 return RedirectToAction(nameof(Representatives), new { id });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error removing representative ID: {repId} from university ID: {id}");
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, $"Error removing representative ID {repId} from university ID {id}");
                 TempData["Error"] = "An error occurred while removing the representative.";
                 return RedirectToAction(nameof(Representatives), new { id });
             }
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> EditRepresentative(int id, int repId)
         {
             try
             {
-                var university = await _context.Universities
-                    .Include(u => u.Representatives)
-                        .ThenInclude(r => r.User)
-                    .Include(u => u.UniversityPrograms)
-                        .ThenInclude(up => up.Program)
-                    .Include(u => u.BtecPrograms)
-                    .FirstOrDefaultAsync(u => u.Id == id);
+                var representative = await _context.UniversityRepresentatives
+                    .Include(r => r.User)
+                    .FirstOrDefaultAsync(r => r.Id == repId && r.UniversityId == id);
 
-                if (university == null)
+                if (representative == null)
                 {
-                    TempData["Error"] = "University not found.";
-                    return RedirectToAction(nameof(Index));
+                    TempData["Error"] = "Representative not found.";
+                    return RedirectToAction(nameof(Representatives), new { id });
                 }
 
-                ViewBag.TotalPrograms = university.UniversityPrograms.Count + university.BtecPrograms.Count;
-                ViewBag.ActivePrograms = university.UniversityPrograms.Count(up => up.IsActive) + university.BtecPrograms.Count(bp => bp.IsActive);
-                ViewBag.TotalRepresentatives = university.Representatives.Count;
-                ViewBag.ActiveRepresentatives = university.Representatives.Count(r => r.IsActive);
+                var viewModel = new EditRepresentativeViewModel
+                {
+                    Id = representative.Id,
+                    UniversityId = representative.UniversityId,
+                    UserId = representative.UserId,
+                    UserFullName = representative.User.FullName,
+                    UserEmail = representative.User.Email,
+                    Position = representative.Position,
+                    CanManagePrograms = representative.CanManagePrograms,
+                    CanManageFees = representative.CanManageFees,
+                    CanViewApplications = representative.CanViewApplications,
+                    IsActive = representative.IsActive
+                };
 
-                var applicationStats = await _context.StudentApplications
-                    .Where(sa => sa.UniversityProgram!.UniversityId == id || sa.BtecProgram!.UniversityId == id)
-                    .GroupBy(sa => sa.Status)
-                    .Select(g => new { Status = g.Key, Count = g.Count() })
-                    .ToListAsync();
-
-                ViewBag.ApplicationStats = applicationStats;
-
-                return View(university);
+                // Return JSON for AJAX request
+                return Json(viewModel);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error loading details for university ID: {id}");
-                TempData["Error"] = "An error occurred while loading university details.";
-                return RedirectToAction(nameof(Index));
+                _logger.LogError(ex, $"Error loading representative ID: {repId} for editing");
+                return Json(new { error = "An error occurred while loading the representative." });
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditRepresentative(EditRepresentativeViewModel model)
+        {
+            try
+            {
+                if (model.Id <=0)
+                {
+                    TempData["Error"] = "Please fill in all required fields correctly.";
+                    return RedirectToAction(nameof(Representatives), new { id = model.UniversityId });
+                }
+
+                var representative = await _context.UniversityRepresentatives
+                    .Include(r => r.User)
+                    .Include(r => r.University)
+                    .FirstOrDefaultAsync(r => r.Id == model.Id && r.UniversityId == model.UniversityId);
+
+                if (representative == null)
+                {
+                    TempData["Error"] = "Representative not found.";
+                    return RedirectToAction(nameof(Representatives), new { id = model.UniversityId });
+                }
+
+                // Update representative details
+                representative.Position = model.Position;
+                representative.CanManagePrograms = model.CanManagePrograms;
+                representative.CanManageFees = model.CanManageFees;
+                representative.CanViewApplications = model.CanViewApplications;
+                representative.IsActive = model.IsActive;
+
+                await _context.SaveChangesAsync();
+
+                // Send notification about permission changes
+                await SendNotificationToUser(
+                    representative.UserId,
+                    "Representative Permissions Updated",
+                    $"Your permissions as a representative for '{representative.University.NameEnglish}' have been updated by the platform administrator.",
+                    "/UniversityRep/Dashboard"
+                );
+
+                _logger.LogInformation($"Representative updated: {representative.User.FullName} for University {representative.University.NameEnglish} (ID: {model.UniversityId}) by admin {User.Identity?.Name}");
+
+                TempData["Success"] = $"Representative '{representative.User.FullName}' has been updated successfully.";
+                return RedirectToAction(nameof(Representatives), new { id = model.UniversityId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error updating representative ID: {model.Id}");
+                TempData["Error"] = "An error occurred while updating the representative.";
+                return RedirectToAction(nameof(Representatives), new { id = model.UniversityId });
+            }
+        }
+        #endregion
+
+        #region Helper Methods
+        private async Task<string> SaveFileAsync(IFormFile file, string subFolder)
+        {
+            var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+            var relativePath = Path.Combine("uploads", "universities", subFolder, fileName);
+            var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return $"/{relativePath.Replace("\\", "/")}";
+        }
+
+        private void DeleteFile(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath)) return;
+
+            var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, filePath.TrimStart('/'));
+            if (System.IO.File.Exists(fullPath))
+            {
+                System.IO.File.Delete(fullPath);
+            }
+        }
+
+        private async Task SendNotificationToRepresentatives(University university, string title, string message, string actionUrl)
+        {
+            foreach (var rep in university.Representatives.Where(r => r.IsActive))
+            {
+                await SendNotificationToUser(rep.UserId, title, message, actionUrl);
+            }
+        }
+
+        private async Task SendNotificationToUser(string userId, string title, string message, string actionUrl)
+        {
+            var notification = new Notification
+            {
+                UserId = userId,
+                Title = title,
+                Message = message,
+                Category = NotificationCategory.SystemAlert,
+                Channel = NotificationChannel.InApp,
+                ActionUrl = actionUrl,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+
+            // Send real-time notification
+            await _hubContext.Clients.Group($"User_{userId}")
+                .SendAsync("ReceiveNotification", notification.Title, notification.Message, notification.ActionUrl);
+        }
+        #endregion
     }
 }
+
+

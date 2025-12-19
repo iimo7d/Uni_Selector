@@ -1,13 +1,11 @@
-﻿using Uni_Selector.Models.Enums;
-
-namespace Uni_Selector.ViewModels.UniversityAdmin
+﻿namespace Uni_Selector.ViewModels.UniversityAdmin
 {
     public class UniversityDetailsViewModel
     {
         public int Id { get; set; }
         public string NameEnglish { get; set; } = string.Empty;
         public string NameArabic { get; set; } = string.Empty;
-        public UniversityType Type { get; set; }
+        public string Type { get; set; } = string.Empty;
         public string Province { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string FullAddress { get; set; } = string.Empty;
@@ -20,7 +18,7 @@ namespace Uni_Selector.ViewModels.UniversityAdmin
         public string? LogoPath { get; set; }
         public string? ImagePath { get; set; }
         public bool IsActive { get; set; }
-        public CommissionMode CommissionMode { get; set; }
+        public string CommissionMode { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
@@ -29,13 +27,10 @@ namespace Uni_Selector.ViewModels.UniversityAdmin
         public int ActivePrograms { get; set; }
         public int TotalRepresentatives { get; set; }
         public int ActiveRepresentatives { get; set; }
-        public int TotalApplications { get; set; }
-        public int PendingApplications { get; set; }
-        public int ApprovedApplications { get; set; }
-        public int RejectedApplications { get; set; }
 
         // Related data
-        public List<RepresentativeItemViewModel> Representatives { get; set; } = new();
-        public Dictionary<string, int> ApplicationStatistics { get; set; } = new();
+        public List<UniversityProgramDto> UniversityPrograms { get; set; } = new();
+        public List<UniversityRepresentativeDto> Representatives { get; set; } = new();
+        public List<ApplicationStatusDto> ApplicationStats { get; set; } = new();
     }
 }

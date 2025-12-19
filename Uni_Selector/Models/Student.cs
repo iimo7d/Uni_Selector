@@ -45,6 +45,9 @@ namespace Uni_Selector.Models
         public string GuardianPhone { get; set; }
         public string GuardianRelation { get; set; }
 
+        public bool IsActive { get; set; } = true;
+
+
         public bool HasDisability { get; set; }
         public string? DisabilityType { get; set; }
         public bool IsOrphan { get; set; }

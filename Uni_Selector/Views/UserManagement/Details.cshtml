@@ -1,0 +1,329 @@
+﻿@model Uni_Selector.ViewModels.UserManagement.UserDetailsViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "User Details";
+}
+
+<!-- Breadcrumb -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+    <h6 class="fw-semibold mb-0">User Details</h6>
+    <ul class="d-flex align-items-center gap-2">
+        <li class="fw-medium">
+            <a asp-action="Index" asp-controller="Dashboard" class="d-flex align-items-center gap-1 hover-text-primary">
+                <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
+                Dashboard
+            </a>
+        </li>
+        <li>-</li>
+        <li class="fw-medium">
+            <a asp-action="Index" class="d-flex align-items-center gap-1 hover-text-primary">
+                Users
+            </a>
+        </li>
+        <li>-</li>
+        <li class="fw-medium">Details</li>
+    </ul>
+</div>
+
+<div class="row gy-4">
+    <!-- User Information Card -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-center mb-24">
+                    <div class="w-120-px h-120-px rounded-circle flex-shrink-0 mx-auto overflow-hidden bg-primary-100 d-flex align-items-center justify-content-center mb-16">
+                        <span class="text-primary-600 fw-semibold" style="font-size: 48px;">@Model.FullName.Substring(0, 1).ToUpper()</span>
+                    </div>
+                    <h5 class="mb-2">@Model.FullName</h5>
+                    <div class="mb-3">
+                        @foreach (var role in Model.Roles)
+                        {
+                            <span class="badge bg-primary-100 text-primary-600 px-16 py-6 rounded-pill fw-medium text-md me-2">@role</span>
+                        }
+                    </div>
+                    @if (Model.IsActive)
+                    {
+                        <span class="bg-success-focus text-success-main px-32 py-8 rounded-pill fw-medium text-sm">
+                            <i class="ri-check-line"></i> Active
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="bg-danger-focus text-danger-main px-32 py-8 rounded-pill fw-medium text-sm">
+                            <i class="ri-lock-line"></i> Locked
+                        </span>
+                    }
+                </div>
+
+                <div class="mt-24">
+                    <div class="d-flex align-items-center gap-3 mb-16">
+                        <div class="w-40-px h-40-px rounded-circle bg-primary-100 d-flex align-items-center justify-content-center">
+                            <iconify-icon icon="mage:email" class="text-primary-600 text-xl"></iconify-icon>
+                        </div>
+                        <div>
+                            <span class="text-sm text-secondary-light d-block">Email</span>
+                            <a href="mailto:@Model.Email" class="text-primary-600 fw-medium">@Model.Email</a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3 mb-16">
+                        <div class="w-40-px h-40-px rounded-circle bg-success-100 d-flex align-items-center justify-content-center">
+                            <iconify-icon icon="solar:phone-calling-linear" class="text-success-600 text-xl"></iconify-icon>
+                        </div>
+                        <div>
+                            <span class="text-sm text-secondary-light d-block">Phone</span>
+                            <span class="fw-medium">@(Model.PhoneNumber ?? "N/A")</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3 mb-16">
+                        <div class="w-40-px h-40-px rounded-circle bg-info-100 d-flex align-items-center justify-content-center">
+                            <iconify-icon icon="solar:calendar-outline" class="text-info-600 text-xl"></iconify-icon>
+                        </div>
+                        <div>
+                            <span class="text-sm text-secondary-light d-block">Created At</span>
+                            <span class="fw-medium">@Model.CreatedAt.ToString("MMMM dd, yyyy")</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="w-40-px h-40-px rounded-circle bg-warning-100 d-flex align-items-center justify-content-center">
+                            <iconify-icon icon="solar:login-3-linear" class="text-warning-600 text-xl"></iconify-icon>
+                        </div>
+                        <div>
+                            <span class="text-sm text-secondary-light d-block">Last Login</span>
+                            <span class="fw-medium">@(Model.LastLoginAt?.ToString("MMMM dd, yyyy HH:mm") ?? "Never")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-24 pt-24 border-top">
+                    <div class="d-flex gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary-600 w-100">
+                            <i class="ri-edit-line"></i> Edit User
+                        </a>
+                        @if (Model.IsActive)
+                        {
+                            <form id="lockForm" method="post" asp-action="Lock" asp-route-id="@Model.Id" style="display:inline;" class="w-100">
+                                @Html.AntiForgeryToken()
+                                <button type="button" class="btn btn-danger-600 w-100" onclick="lockUser('@Model.Id', '@Model.FullName')">
+                                    <i class="ri-lock-line"></i> Lock
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form id="unlockForm" method="post" asp-action="Unlock" asp-route-id="@Model.Id" style="display:inline;" class="w-100">
+                                @Html.AntiForgeryToken()
+                                <button type="button" class="btn btn-success-600 w-100" onclick="unlockUser('@Model.Id', '@Model.FullName')">
+                                    <i class="ri-lock-unlock-line"></i> Unlock
+                                </button>
+                            </form>
+                        }
+                    </div>
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="ri-arrow-left-line"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Information -->
+    <div class="col-lg-8">
+        @if (Model.Roles.Contains("UniversityRep") && Model.UniversityRepresentative != null)
+        {
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">University Representative Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row gy-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary-light">University</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <iconify-icon icon="solar:buildings-2-linear" class="text-primary-600 text-xl"></iconify-icon>
+                                <h6 class="mb-0">@Model.UniversityRepresentative.University.NameEnglish</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary-light">Position</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <iconify-icon icon="solar:case-minimalistic-linear" class="text-warning-600 text-xl"></iconify-icon>
+                                <h6 class="mb-0">@(Model.UniversityRepresentative.Position ?? "N/A")</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary-light">Assigned At</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <iconify-icon icon="solar:calendar-outline" class="text-info-600 text-xl"></iconify-icon>
+                                <span>@Model.UniversityRepresentative.AssignedAt.ToString("MMMM dd, yyyy")</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary-light">Status</label>
+                            <div>
+                                @if (Model.UniversityRepresentative.IsActive)
+                                {
+                                    <span class="bg-success-focus text-success-main px-24 py-4 rounded-pill fw-medium text-sm">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="bg-danger-focus text-danger-main px-24 py-4 rounded-pill fw-medium text-sm">Inactive</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-24 pt-24 border-top">
+                        <h6 class="mb-16">Permissions</h6>
+                        <div class="row gy-3">
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    @if (Model.UniversityRepresentative.CanManagePrograms)
+                                    {
+                                        <iconify-icon icon="solar:check-circle-bold" class="text-success-main text-xl"></iconify-icon>
+                                        <span class="text-success-main">Can Manage Programs</span>
+                                    }
+                                    else
+                                    {
+                                        <iconify-icon icon="solar:close-circle-bold" class="text-danger-main text-xl"></iconify-icon>
+                                        <span class="text-secondary-light">Cannot Manage Programs</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    @if (Model.UniversityRepresentative.CanManageFees)
+                                    {
+                                        <iconify-icon icon="solar:check-circle-bold" class="text-success-main text-xl"></iconify-icon>
+                                        <span class="text-success-main">Can Manage Fees</span>
+                                    }
+                                    else
+                                    {
+                                        <iconify-icon icon="solar:close-circle-bold" class="text-danger-main text-xl"></iconify-icon>
+                                        <span class="text-secondary-light">Cannot Manage Fees</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    @if (Model.UniversityRepresentative.CanViewApplications)
+                                    {
+                                        <iconify-icon icon="solar:check-circle-bold" class="text-success-main text-xl"></iconify-icon>
+                                        <span class="text-success-main">Can View Applications</span>
+                                    }
+                                    else
+                                    {
+                                        <iconify-icon icon="solar:close-circle-bold" class="text-danger-main text-xl"></iconify-icon>
+                                        <span class="text-secondary-light">Cannot View Applications</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- User Roles Card -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">User Roles & Permissions</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-borderless mb-0">
+                        <thead>
+                            <tr>
+                                <th>Role</th>
+                                <th>Assigned</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var role in new[] { "PlatformAdmin", "UniversityRep", "Student", "BtecAuthority" })
+                            {
+                                var hasRole = Model.Roles.Contains(role);
+                                <tr>
+                                    <td>
+                                        <span class="badge @(hasRole ? "bg-primary-100 text-primary-600" : "bg-neutral-200 text-secondary-light") px-16 py-6 rounded-pill fw-medium">
+                                            @role
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (hasRole)
+                                        {
+                                            <iconify-icon icon="solar:check-circle-bold" class="text-success-main text-xl"></iconify-icon>
+                                        }
+                                        else
+                                        {
+                                            <iconify-icon icon="solar:close-circle-linear" class="text-secondary-light text-xl"></iconify-icon>
+                                        }
+                                    </td>
+                                    <td class="text-secondary-light">
+                                        @switch (role)
+                                        {
+                                            case "PlatformAdmin":
+                                                <span>Full system administration access</span>
+                                                break;
+                                            case "UniversityRep":
+                                                <span>University representative with program management</span>
+                                                break;
+                                            case "Student":
+                                                <span>Student account with application access</span>
+                                                break;
+                                            case "BtecAuthority":
+                                                <span>BTEC authority with program approval rights</span>
+                                                break;
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- No hidden forms needed - forms are inline with buttons now -->
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function lockUser(userId, userName) {
+            Swal.fire({
+                title: 'Lock User?',
+                text: `Are you sure you want to lock ${userName}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, lock user!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('lockForm').submit();
+                }
+            });
+        }
+
+        function unlockUser(userId, userName) {
+            Swal.fire({
+                title: 'Unlock User?',
+                text: `Are you sure you want to unlock ${userName}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, unlock user!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('unlockForm').submit();
+                }
+            });
+        }
+    </script>
+}

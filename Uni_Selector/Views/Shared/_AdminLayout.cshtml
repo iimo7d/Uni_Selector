@@ -1,7 +1,45 @@
 ﻿<!DOCTYPE html>
 <html lang="en" data-theme="light">
 
-<partial name="~/Views/Shared/Partials/_Head.cshtml" />
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Uni Selector</title>
+    <link rel="icon" type="image/png" href="~/assets/images/favicon.ico" sizes="16x16">
+    <!-- remix icon font css  -->
+    <link rel="stylesheet" href="~/adminAssets/css/remixicon.css">
+    <!-- BootStrap css -->
+    <link rel="stylesheet" href="~/adminAssets/css/lib/bootstrap.min.css">
+    <!-- Apex Chart css -->
+    <link rel="stylesheet" href="~/adminAssets/css/lib/apexcharts.css">
+    <!-- Data Table css -->
+    <link rel="stylesheet" href="~/adminAssets/css/lib/dataTables.min.css">
+    <!-- Text Editor css -->
+    <link rel="stylesheet" href="~/adminAssets/css/lib/editor-katex.min.css">
+    <link rel="stylesheet" href="~/adminAssets/css/lib/editor.atom-one-dark.min.css">
+    <link rel="stylesheet" href="~/adminAssets/css/lib/editor.quill.snow.css">
+    <!-- Date picker css -->
+    <link rel="stylesheet" href="~/adminAssets/css/lib/flatpickr.min.css">
+    <!-- Calendar css -->
+    <link rel="stylesheet" href="~/adminAssets/css/lib/full-calendar.css">
+    <!-- Vector Map css -->
+    <link rel="stylesheet" href="~/adminAssets/css/lib/jquery-jvectormap-2.0.5.css">
+    <!-- Popup css -->
+    <link rel="stylesheet" href="~/adminAssets/css/lib/magnific-popup.css">
+    <!-- Slick Slider css -->
+    <link rel="stylesheet" href="~/adminAssets/css/lib/slick.css">
+    <!-- prism css -->
+    <link rel="stylesheet" href="~/adminAssets/css/lib/prism.css">
+    <!-- file upload css -->
+    <link rel="stylesheet" href="~/adminAssets/css/lib/file-upload.css">
+
+    <link rel="stylesheet" href="~/adminAssets/css/lib/audioplayer.css">
+    <!-- main css -->
+    <link rel="stylesheet" href="~/adminAssets/css/style.css">
+
+    @RenderSection("Styles", required: false)
+</head>
 
 <body>
     <partial name="~/Views/Shared/Partials/_Sidebar.cshtml" />

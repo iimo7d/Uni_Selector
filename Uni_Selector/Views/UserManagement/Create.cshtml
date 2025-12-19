@@ -1,0 +1,257 @@
+﻿@model Uni_Selector.ViewModels.UserManagement.CreateUserViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Create User";
+}
+
+<!-- Breadcrumb -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+    <h6 class="fw-semibold mb-0">Create New User</h6>
+    <ul class="d-flex align-items-center gap-2">
+        <li class="fw-medium">
+            <a asp-action="Index" asp-controller="Dashboard" class="d-flex align-items-center gap-1 hover-text-primary">
+                <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
+                Dashboard
+            </a>
+        </li>
+        <li>-</li>
+        <li class="fw-medium">
+            <a asp-action="Index" class="d-flex align-items-center gap-1 hover-text-primary">
+                Users
+            </a>
+        </li>
+        <li>-</li>
+        <li class="fw-medium">Create</li>
+    </ul>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">User Information</h5>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create" method="post" class="row gy-3 needs-validation" novalidate id="createUserForm">
+            @Html.AntiForgeryToken()
+
+            <!-- Validation Summary -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="col-12">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <div class="d-flex align-items-center gap-2">
+                            <iconify-icon icon="solar:danger-circle-bold" class="text-xl"></iconify-icon>
+                            <div>
+                                <h6 class="mb-1">Please correct the following errors:</h6>
+                                <ul class="mb-0">
+                                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            }
+
+            <!-- Basic Information -->
+            <div class="col-12">
+                <h6 class="text-md mb-16">Basic Information</h6>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                <div class="icon-field has-validation">
+                    <span class="icon">
+                        <iconify-icon icon="f7:person"></iconify-icon>
+                    </span>
+                    <input asp-for="FullName" class="form-control" placeholder="Enter full name" required>
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Email Address <span class="text-danger">*</span></label>
+                <div class="icon-field has-validation">
+                    <span class="icon">
+                        <iconify-icon icon="mage:email"></iconify-icon>
+                    </span>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="Enter email address" required>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Phone Number</label>
+                <div class="icon-field">
+                    <span class="icon">
+                        <iconify-icon icon="solar:phone-calling-linear"></iconify-icon>
+                    </span>
+                    <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="+962 79 123 4567">
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Role <span class="text-danger">*</span></label>
+                <div class="icon-field has-validation">
+                    <span class="icon">
+                        <iconify-icon icon="solar:user-id-linear"></iconify-icon>
+                    </span>
+                    <select asp-for="Role" asp-items="Model.AvailableRoles" class="form-select" id="roleSelect" required>
+                        <option value="">Select Role</option>
+                    </select>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Password Section -->
+            <div class="col-12 mt-24">
+                <h6 class="text-md mb-16">Account Security</h6>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Password <span class="text-danger">*</span></label>
+                <div class="icon-field has-validation">
+                    <span class="icon">
+                        <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
+                    </span>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" required id="password">
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <small class="text-secondary-light">Password must be at least 6 characters long</small>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                <div class="icon-field has-validation">
+                    <span class="icon">
+                        <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
+                    </span>
+                    <input type="password" class="form-control" placeholder="Confirm password" required id="confirmPassword">
+                    <div class="invalid-feedback">Passwords do not match</div>
+                </div>
+            </div>
+
+            <!-- University Representative Section (Hidden by default) -->
+            <div id="universityRepSection" class="col-12" style="display: none;">
+                <div class="row gy-3">
+                    <div class="col-12 mt-24">
+                        <h6 class="text-md mb-16">University Representative Details</h6>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">University <span class="text-danger" id="universityRequired">*</span></label>
+                        <div class="icon-field">
+                            <span class="icon">
+                                <iconify-icon icon="solar:buildings-2-linear"></iconify-icon>
+                            </span>
+                            <select asp-for="UniversityId" asp-items="Model.AvailableUniversities" class="form-select" id="universitySelect">
+                                <option value="">Select University</option>
+                            </select>
+                            <span asp-validation-for="UniversityId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Position</label>
+                        <div class="icon-field">
+                            <span class="icon">
+                                <iconify-icon icon="solar:case-minimalistic-linear"></iconify-icon>
+                            </span>
+                            <input asp-for="Position" class="form-control" placeholder="e.g., Admissions Director">
+                            <span asp-validation-for="Position" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label d-block mb-12">Permissions</label>
+                        <div class="row gy-3">
+                            <div class="col-md-4">
+                                <div class="form-check style-check d-flex align-items-center">
+                                    <input asp-for="CanManagePrograms" class="form-check-input" type="checkbox">
+                                    <label asp-for="CanManagePrograms" class="form-check-label">
+                                        Can Manage Programs
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check style-check d-flex align-items-center">
+                                    <input asp-for="CanManageFees" class="form-check-input" type="checkbox">
+                                    <label asp-for="CanManageFees" class="form-check-label">
+                                        Can Manage Fees
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check style-check d-flex align-items-center">
+                                    <input asp-for="CanViewApplications" class="form-check-input" type="checkbox">
+                                    <label asp-for="CanViewApplications" class="form-check-label">
+                                        Can View Applications
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Section (Hidden by default) -->
+            <div id="studentSection" class="col-12" style="display: none;">
+                <div class="alert alert-info" role="alert">
+                    <div class="d-flex align-items-center gap-2">
+                        <iconify-icon icon="solar:info-circle-bold" class="text-xl"></iconify-icon>
+                        <div>
+                            <strong>Student Account:</strong> Students can complete their profile and submit applications after registration.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Platform Admin Section (Hidden by default) -->
+            <div id="adminSection" class="col-12" style="display: none;">
+                <div class="alert alert-warning" role="alert">
+                    <div class="d-flex align-items-center gap-2">
+                        <iconify-icon icon="solar:shield-warning-bold" class="text-xl"></iconify-icon>
+                        <div>
+                            <strong>Platform Admin:</strong> This user will have full access to all system features and settings.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BTEC Authority Section (Hidden by default) -->
+            <div id="btecSection" class="col-12" style="display: none;">
+                <div class="alert alert-primary" role="alert">
+                    <div class="d-flex align-items-center gap-2">
+                        <iconify-icon icon="solar:diploma-bold" class="text-xl"></iconify-icon>
+                        <div>
+                            <strong>BTEC Authority:</strong> This user can review and approve BTEC programs submitted by universities.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="col-12 mt-32">
+                <div class="d-flex align-items-center gap-3">
+                    <button type="submit" class="btn btn-primary-600 px-40">
+                        <i class="ri-add-line"></i> Create User
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary px-40">
+                        <i class="ri-close-line"></i> Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/adminAssets/js/user-role-manager.js"></script>
+}

@@ -12,8 +12,8 @@ using Uni_Selector.Data;
 namespace Uni_Selector.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251207215855_newProperty")]
-    partial class newProperty
+    [Migration("20251208200059_Seeding")]
+    partial class Seeding
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,7 +49,37 @@ namespace Uni_Selector.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("Roles", "sec");
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "247845c3-87f8-46f1-a455-555c330c3c41",
+                            ConcurrencyStamp = "d72e20f4-8245-4a69-ad2b-358a14cd4ce7",
+                            Name = "Student",
+                            NormalizedName = "STUDENT"
+                        },
+                        new
+                        {
+                            Id = "80f3af8c-17c5-456e-a4cc-15bb694e863b",
+                            ConcurrencyStamp = "5b6cd610-3ead-4ec8-8d9d-2d4daf456312",
+                            Name = "UniversityRep",
+                            NormalizedName = "UNIVERSITYREP"
+                        },
+                        new
+                        {
+                            Id = "dd348c1a-172c-41ce-81e7-d096a7596f93",
+                            ConcurrencyStamp = "afa21429-070e-41b0-ad52-91e817a3beb2",
+                            Name = "PlatformAdmin",
+                            NormalizedName = "PLATFORMADMIN"
+                        },
+                        new
+                        {
+                            Id = "912202c3-2b0f-4a73-94e5-6d85d64fa4db",
+                            ConcurrencyStamp = "bf10b102-86d0-4caa-8e36-3434a5bb91c4",
+                            Name = "BtecAuthority",
+                            NormalizedName = "BTECAUTHORITY"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -74,7 +104,7 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RoleClaims", "sec");
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -99,7 +129,7 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserClaims", "sec");
+                    b.ToTable("AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -121,7 +151,7 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserLogins", "sec");
+                    b.ToTable("AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -136,7 +166,14 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles", "sec");
+                    b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "bc7c5647-7196-414a-b94a-5c1a51ff492c",
+                            RoleId = "dd348c1a-172c-41ce-81e7-d096a7596f93"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -155,7 +192,7 @@ namespace Uni_Selector.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("UserTokens", "sec");
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.ApplicationUser", b =>
@@ -228,7 +265,9 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("CreatedAt");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("IsActive");
 
@@ -240,7 +279,28 @@ namespace Uni_Selector.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("Users", "sec");
+                    b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "bc7c5647-7196-414a-b94a-5c1a51ff492c",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "4d33e595-96f6-48db-a638-33e59adba91b",
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "admin@uniselector.com",
+                            EmailConfirmed = true,
+                            FullName = "Platform Administrator",
+                            IsActive = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@UNISELECTOR.COM",
+                            NormalizedUserName = "ADMIN@UNISELECTOR.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPFUaq3Y9kfJmwtE4V8iv3DpjWSDEPZV/zgI8eRG5DA/AI4lc65U32nkR5GAysqXmA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "19cfcb40-6c5b-4e83-8796-ab1abf7741f9",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@uniselector.com"
+                        });
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.BtecEntryRequirement", b =>
@@ -261,22 +321,17 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<double>("MinGPA")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("float(5)");
+                        .HasColumnType("float");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("RequiresBtecL2")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("RequiresBtecL3")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -303,9 +358,7 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("Capacity")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -321,14 +374,10 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsApprovedByBtecAuthority")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<int>("Language")
                         .HasColumnType("int");
@@ -361,9 +410,7 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("TotalCreditHours")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(120);
+                        .HasColumnType("int");
 
                     b.Property<int>("UniversityId")
                         .HasColumnType("int");
@@ -443,15 +490,11 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("CreatedAt");
 
-                    b.HasIndex("Mode");
-
                     b.HasIndex("MonthlySettlementId");
 
                     b.HasIndex("Settled");
 
-                    b.HasIndex("UniversityId", "CreatedAt");
-
-                    b.HasIndex("UniversityId", "Settled");
+                    b.HasIndex("UniversityId");
 
                     b.ToTable("Commissions");
                 });
@@ -507,7 +550,7 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("Status");
 
-                    b.HasIndex("UniversityId", "Status");
+                    b.HasIndex("UniversityId");
 
                     b.ToTable("DiscountGrants");
                 });
@@ -524,9 +567,7 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("AllowNoTawjihi")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("EffectiveFrom")
                         .HasColumnType("datetime2");
@@ -535,8 +576,7 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<double>("MinGPA")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("float(5)");
+                        .HasColumnType("float");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
@@ -553,17 +593,85 @@ namespace Uni_Selector.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AcademicTrack");
-
                     b.HasIndex("MinGPA");
 
                     b.HasIndex("Path");
 
                     b.HasIndex("UniversityProgramId");
 
-                    b.HasIndex("VocationalBranch");
-
                     b.ToTable("EntryRequirements");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            MinGPA = 80.0,
+                            Path = 1,
+                            UniversityProgramId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            MinGPA = 75.0,
+                            Path = 1,
+                            UniversityProgramId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            MinGPA = 70.0,
+                            Path = 1,
+                            UniversityProgramId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            MinGPA = 68.0,
+                            Path = 1,
+                            UniversityProgramId = 3
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            MinGPA = 75.0,
+                            Path = 1,
+                            UniversityProgramId = 4
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            MinGPA = 72.0,
+                            Path = 1,
+                            UniversityProgramId = 5
+                        },
+                        new
+                        {
+                            Id = 7,
+                            AcademicTrack = 3,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            MinGPA = 70.0,
+                            Path = 1,
+                            UniversityProgramId = 5
+                        });
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.MonthlySettlement", b =>
@@ -575,9 +683,7 @@ namespace Uni_Selector.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Closed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("ClosedAt")
                         .HasColumnType("datetime2");
@@ -615,8 +721,6 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("CreatedAt");
 
-                    b.HasIndex("UniversityId", "Closed");
-
                     b.HasIndex("UniversityId", "Year", "Month")
                         .IsUnique();
 
@@ -645,14 +749,10 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("EmailSent")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsRead")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -666,9 +766,7 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("SmsSent")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -685,9 +783,9 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("CreatedAt");
 
-                    b.HasIndex("UserId", "IsRead");
+                    b.HasIndex("IsRead");
 
-                    b.HasIndex("UserId", "Category", "IsRead");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
                 });
@@ -728,9 +826,7 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("TotalCreditHours")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(120);
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -742,9 +838,69 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("NameEnglish");
 
-                    b.HasIndex("Degree", "Language");
-
                     b.ToTable("Programs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AcademicClassification = "Engineering",
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Degree = 2,
+                            Description = "Bachelor's degree in Software Engineering",
+                            Language = 1,
+                            NameArabic = "هندسة البرمجيات",
+                            NameEnglish = "Software Engineering",
+                            TotalCreditHours = 132
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AcademicClassification = "Engineering",
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Degree = 2,
+                            Description = "Bachelor's degree in Computer Science",
+                            Language = 1,
+                            NameArabic = "علوم الحاسوب",
+                            NameEnglish = "Computer Science",
+                            TotalCreditHours = 132
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AcademicClassification = "Business",
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Degree = 2,
+                            Description = "Bachelor's degree in Business Administration",
+                            Language = 3,
+                            NameArabic = "إدارة الأعمال",
+                            NameEnglish = "Business Administration",
+                            TotalCreditHours = 126
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AcademicClassification = "Medical",
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Degree = 2,
+                            Description = "Medical Doctor degree",
+                            Language = 1,
+                            NameArabic = "الطب البشري",
+                            NameEnglish = "Medicine",
+                            TotalCreditHours = 240
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AcademicClassification = "Law",
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Degree = 2,
+                            Description = "Bachelor's degree in Law",
+                            Language = 2,
+                            NameArabic = "القانون",
+                            NameEnglish = "Law",
+                            TotalCreditHours = 132
+                        });
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.Recommendation", b =>
@@ -768,17 +924,14 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsViewed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<string>("ReasonsJson")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<double>("Score")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("float(5)");
+                        .HasColumnType("float");
 
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
@@ -792,18 +945,13 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("CreatedAt");
 
-                    b.HasIndex("IsViewed");
+                    b.HasIndex("Score");
+
+                    b.HasIndex("StudentId");
 
                     b.HasIndex("UniversityProgramId");
 
-                    b.HasIndex("StudentId", "CreatedAt");
-
-                    b.HasIndex("StudentId", "Score");
-
-                    b.ToTable("Recommendations", t =>
-                        {
-                            t.HasCheckConstraint("CK_Recommendation_OneProgram", "(UniversityProgramId IS NOT NULL AND BtecProgramId IS NULL) OR (UniversityProgramId IS NULL AND BtecProgramId IS NOT NULL)");
-                        });
+                    b.ToTable("Recommendations");
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.Student", b =>
@@ -853,8 +1001,7 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("GPA")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("float(5)");
+                        .HasColumnType("float");
 
                     b.Property<int>("Gender")
                         .HasColumnType("int");
@@ -875,6 +1022,9 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("HasFamilyConnection")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsEmployeeChild")
@@ -934,11 +1084,11 @@ namespace Uni_Selector.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedAt");
-
                     b.HasIndex("FamilyConnectionUniversityId");
 
                     b.HasIndex("GPA");
+
+                    b.HasIndex("IsActive");
 
                     b.HasIndex("Path");
 
@@ -965,7 +1115,7 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ApplicationNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("ApprovalDate")
                         .HasColumnType("datetime2");
@@ -974,7 +1124,7 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("HourDiscountPercent")
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("HourDiscountSetAt")
                         .HasColumnType("datetime2");
@@ -1006,22 +1156,23 @@ namespace Uni_Selector.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApplicationDate");
+
+                    b.HasIndex("ApplicationNumber")
+                        .IsUnique()
+                        .HasFilter("[ApplicationNumber] IS NOT NULL");
+
                     b.HasIndex("BtecProgramId");
 
                     b.HasIndex("HourDiscountSetByUserId");
 
                     b.HasIndex("Status");
 
+                    b.HasIndex("StudentId");
+
                     b.HasIndex("UniversityProgramId");
 
-                    b.HasIndex("Status", "ApplicationDate");
-
-                    b.HasIndex("StudentId", "ApplicationDate");
-
-                    b.ToTable("StudentApplications", t =>
-                        {
-                            t.HasCheckConstraint("CK_Application_OneProgram", "(UniversityProgramId IS NOT NULL AND BtecProgramId IS NULL) OR (UniversityProgramId IS NULL AND BtecProgramId IS NOT NULL)");
-                        });
+                    b.ToTable("StudentApplications");
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.University", b =>
@@ -1062,9 +1213,7 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<double?>("Latitude")
                         .HasColumnType("float");
@@ -1108,8 +1257,6 @@ namespace Uni_Selector.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CommissionMode");
-
                     b.HasIndex("IsActive");
 
                     b.HasIndex("NameArabic");
@@ -1121,6 +1268,62 @@ namespace Uni_Selector.Migrations
                     b.HasIndex("Province", "City");
 
                     b.ToTable("Universities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            City = "Amman",
+                            CommissionMode = 1,
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "info@ju.edu.jo",
+                            FullAddress = "Queen Rania Street, Amman 11942, Jordan",
+                            IsActive = true,
+                            Latitude = 31.953900000000001,
+                            Longitude = 35.910600000000002,
+                            NameArabic = "الجامعة الأردنية",
+                            NameEnglish = "University of Jordan",
+                            OfficialWebsite = "https://www.ju.edu.jo",
+                            PhoneNumber = "+96265355000",
+                            Province = "Amman",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            City = "Zarqa",
+                            CommissionMode = 2,
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "info@hu.edu.jo",
+                            FullAddress = "P.O. Box 330127, Zarqa 13133, Jordan",
+                            IsActive = true,
+                            Latitude = 32.136499999999998,
+                            Longitude = 36.002200000000002,
+                            NameArabic = "الجامعة الهاشمية",
+                            NameEnglish = "The Hashemite University",
+                            OfficialWebsite = "https://www.hu.edu.jo",
+                            PhoneNumber = "+96253903333",
+                            Province = "Zarqa",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            City = "Amman",
+                            CommissionMode = 3,
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "info@asu.edu.jo",
+                            FullAddress = "Al-Arab Street, Shafa Badran, Amman 11931, Jordan",
+                            IsActive = true,
+                            Latitude = 32.0182,
+                            Longitude = 35.8767,
+                            NameArabic = "جامعة العلوم التطبيقية",
+                            NameEnglish = "Applied Science Private University",
+                            OfficialWebsite = "https://www.asu.edu.jo",
+                            PhoneNumber = "+96264609999",
+                            Province = "Amman",
+                            Type = 1
+                        });
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.UniversityProgram", b =>
@@ -1132,9 +1335,7 @@ namespace Uni_Selector.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Capacity")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1146,9 +1347,7 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<int>("ProgramId")
                         .HasColumnType("int");
@@ -1177,13 +1376,88 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("ProgramId");
 
-                    b.HasIndex("SemesterStartDate");
+                    b.HasIndex("UniversityId");
 
-                    b.HasIndex("StudySystem");
-
-                    b.HasIndex("UniversityId", "ProgramId");
+                    b.HasIndex("UniversityId", "ProgramId", "StudySystem");
 
                     b.ToTable("UniversityPrograms");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Capacity = 100,
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DurationInYears = 4,
+                            HourPriceBase = 85m,
+                            IsActive = true,
+                            ProgramId = 1,
+                            RegistrationFeeFirstSemester = 500m,
+                            RegistrationFeeRegularSemester = 300m,
+                            SemesterStartDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StudySystem = 1,
+                            UniversityId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Capacity = 120,
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DurationInYears = 4,
+                            HourPriceBase = 80m,
+                            IsActive = true,
+                            ProgramId = 2,
+                            RegistrationFeeFirstSemester = 500m,
+                            RegistrationFeeRegularSemester = 300m,
+                            SemesterStartDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StudySystem = 1,
+                            UniversityId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Capacity = 150,
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DurationInYears = 4,
+                            HourPriceBase = 70m,
+                            IsActive = true,
+                            ProgramId = 3,
+                            RegistrationFeeFirstSemester = 400m,
+                            RegistrationFeeRegularSemester = 250m,
+                            SemesterStartDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StudySystem = 1,
+                            UniversityId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Capacity = 80,
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DurationInYears = 4,
+                            HourPriceBase = 90m,
+                            IsActive = true,
+                            ProgramId = 1,
+                            RegistrationFeeFirstSemester = 600m,
+                            RegistrationFeeRegularSemester = 350m,
+                            SemesterStartDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StudySystem = 2,
+                            UniversityId = 3
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Capacity = 100,
+                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DurationInYears = 4,
+                            HourPriceBase = 75m,
+                            IsActive = true,
+                            ProgramId = 5,
+                            RegistrationFeeFirstSemester = 450m,
+                            RegistrationFeeRegularSemester = 275m,
+                            SemesterStartDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StudySystem = 1,
+                            UniversityId = 3
+                        });
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.UniversityRepresentative", b =>
@@ -1226,8 +1500,7 @@ namespace Uni_Selector.Migrations
 
                     b.HasIndex("UniversityId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("UniversityRepresentatives");
                 });
@@ -1310,13 +1583,13 @@ namespace Uni_Selector.Migrations
                     b.HasOne("Uni_Selector.Models.StudentApplication", "Application")
                         .WithOne("Commission")
                         .HasForeignKey("Uni_Selector.Models.Commission", "ApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Uni_Selector.Models.MonthlySettlement", "MonthlySettlement")
                         .WithMany("Commissions")
                         .HasForeignKey("MonthlySettlementId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Uni_Selector.Models.University", "University")
                         .WithMany()
@@ -1336,13 +1609,13 @@ namespace Uni_Selector.Migrations
                     b.HasOne("Uni_Selector.Models.StudentApplication", "Application")
                         .WithOne("DiscountGrant")
                         .HasForeignKey("Uni_Selector.Models.DiscountGrant", "ApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Uni_Selector.Models.ApplicationUser", "RedeemedByUser")
                         .WithMany()
                         .HasForeignKey("RedeemedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Uni_Selector.Models.University", "University")
                         .WithMany()
@@ -1373,7 +1646,7 @@ namespace Uni_Selector.Migrations
                     b.HasOne("Uni_Selector.Models.ApplicationUser", "ClosedByUser")
                         .WithMany()
                         .HasForeignKey("ClosedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Uni_Selector.Models.University", "University")
                         .WithMany()
@@ -1426,8 +1699,7 @@ namespace Uni_Selector.Migrations
                 {
                     b.HasOne("Uni_Selector.Models.University", "FamilyConnectionUniversity")
                         .WithMany()
-                        .HasForeignKey("FamilyConnectionUniversityId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("FamilyConnectionUniversityId");
 
                     b.HasOne("Uni_Selector.Models.ApplicationUser", "User")
                         .WithMany()
@@ -1450,12 +1722,12 @@ namespace Uni_Selector.Migrations
                     b.HasOne("Uni_Selector.Models.ApplicationUser", "HourDiscountSetByUser")
                         .WithMany()
                         .HasForeignKey("HourDiscountSetByUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Uni_Selector.Models.Student", "Student")
                         .WithMany("Applications")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Uni_Selector.Models.UniversityProgram", "UniversityProgram")

@@ -2,10 +2,10 @@
 
 namespace Uni_Selector.ViewModels.UniversityAdmin
 {
-    public class UniversitySuspensionViewModel
+    public class SuspendUniversityViewModel
     {
         [Required]
-        public int UniversityId { get; set; }
+        public int Id { get; set; }
 
         [StringLength(500, ErrorMessage = "Reason cannot exceed 500 characters")]
         [Display(Name = "Suspension Reason")]
