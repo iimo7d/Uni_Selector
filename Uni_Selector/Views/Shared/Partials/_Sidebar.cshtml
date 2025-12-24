@@ -9,9 +9,9 @@
     </button>
 
     <div>
-        <a href="@Url.Action("Dashboard", "Admin")" class="sidebar-logo">
+        <a href="@Url.Action("Index", "Home")" class="sidebar-logo">
             <img src="~/assets/images/logo/logo_1.png" alt="site logo" class="light-logo">
-            <img src="~/adminAssets/images/logo-light.png" alt="site logo" class="dark-logo">
+            <img src="~/assets/images/logo/logo_1.png" alt="site logo" class="dark-logo">
             <img src="~/assets/images/logo/logo_1.png" alt="site logo" class="logo-icon">
         </a>
     </div>
@@ -60,6 +60,63 @@
                     </li>
                 </ul>
             </li>
+
+
+            <!-- Commission -->
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="hugeicons:money-send-square" class="menu-icon"></iconify-icon>
+                    <span>Commissions</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="@Url.Action("Index", "CommissionAdmin")">
+                            <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> All Commissions
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Settlements", "CommissionAdmin")">
+                            <i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Settlements
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("CreateSettlement", "CommissionAdmin")">
+                            <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Create Settlement
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- Notificatoin -->
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <i class="ri-star-line text-xl me-14 d-flex w-auto"></i>
+                    <span>Notificatoins</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="@Url.Action("Index", "NotificationAdmin")">
+                            <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> All Notificatoins
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Send", "NotificationAdmin")">
+                            <i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Send Notificatoins
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Templates", "NotificationAdmin")">
+                            <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> Notificatoins Templates
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("History", "Notification")">
+                            <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Notificatoins History
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
 
             <!-- Programs -->
             <li class="dropdown">

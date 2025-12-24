@@ -86,5 +86,12 @@ namespace Uni_Selector.ViewModels.UserManagement
         // Available options for dropdowns
         public List<string> AvailableRoles { get; set; } = new();
         public List<UniversityOption> AvailableUniversities { get; set; } = new();
+
+        public bool ProfileCompletedValue
+        {
+            get => ProfileCompleted ?? false;
+            set => ProfileCompleted = value;
+        }
+
     }
 }

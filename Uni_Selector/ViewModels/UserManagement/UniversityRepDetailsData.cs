@@ -6,7 +6,6 @@
         public int UniversityId { get; set; }
         public string UniversityName { get; set; }
         public string Position { get; set; }
-        public string Department { get; set; }
 
         // University statistics
         public int UniversityProgramsCount { get; set; }

@@ -103,8 +103,9 @@
     <div class="card-body p-24">
         <!-- Filters -->
         <form asp-action="Index" method="get" class="mb-24">
-            <div class="row align-items-end gy-3">
-                <div class="col-md-2">
+            <div class="row g-3 align-items-end">
+
+                <div class="col-12 col-md-2 col-lg-1">
                     <label class="form-label fw-medium text-sm mb-8">Show</label>
                     <select name="pageSize" class="form-select form-select-sm radius-8" onchange="this.form.submit()">
                         <option value="10" selected="@(Model.PageSize == 10)">10</option>
@@ -113,7 +114,9 @@
                         <option value="100" selected="@(Model.PageSize == 100)">100</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+
+                <!-- was col-lg-3 -> make it col-lg-2 -->
+                <div class="col-12 col-md-4 col-lg-2">
                     <label class="form-label fw-medium text-sm mb-8">University</label>
                     <select name="universityId" class="form-select form-select-sm radius-8">
                         <option value="">All Universities</option>
@@ -123,7 +126,8 @@
                         }
                     </select>
                 </div>
-                <div class="col-md-2">
+
+                <div class="col-12 col-md-3 col-lg-2">
                     <label class="form-label fw-medium text-sm mb-8">Status</label>
                     <select name="settled" class="form-select form-select-sm radius-8">
                         <option value="">All</option>
@@ -131,7 +135,8 @@
                         <option value="false" selected="@(Model.Settled == false)">Pending</option>
                     </select>
                 </div>
-                <div class="col-md-2">
+
+                <div class="col-12 col-md-3 col-lg-2">
                     <label class="form-label fw-medium text-sm mb-8">Mode</label>
                     <select name="mode" class="form-select form-select-sm radius-8">
                         <option value="">All Modes</option>
@@ -141,17 +146,28 @@
                         }
                     </select>
                 </div>
-                <div class="col-md-3">
+
+                <!-- was col-lg-2 -> make it col-lg-3 -->
+                <div class="col-12 col-md-6 col-lg-3">
                     <label class="form-label fw-medium text-sm mb-8">Date Range</label>
                     <div class="d-flex gap-2">
-                        <input type="date" name="startDate" value="@Model.StartDate?.ToString("yyyy-MM-dd")" class="form-control form-control-sm radius-8">
-                        <input type="date" name="endDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" class="form-control form-control-sm radius-8">
+                        <input type="date" name="startDate"
+                               value="@Model.StartDate?.ToString("yyyy-MM-dd")"
+                               class="form-control form-control-sm radius-8"
+                               style="min-width:0; flex:1 1 0;" />
+                        <input type="date" name="endDate"
+                               value="@Model.EndDate?.ToString("yyyy-MM-dd")"
+                               class="form-control form-control-sm radius-8"
+                               style="min-width:0; flex:1 1 0;" />
                     </div>
                 </div>
-                <div class="col-auto">
+
+                <!-- keep buttons col-lg-2 -->
+                <div class="col-12 col-md-6 col-lg-2 d-flex gap-2 justify-content-start justify-content-lg-end">
                     <button type="submit" class="btn btn-primary btn-sm radius-8 px-20">Filter</button>
                     <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-sm radius-8 px-16">Clear</a>
                 </div>
+
             </div>
         </form>
 

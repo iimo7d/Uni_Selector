@@ -169,8 +169,8 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden">
-                                            <img src="~/assets/images/user-grid/user-grid-img13.png" alt="" class="w-100 h-100 object-fit-cover">
+                                        <div class="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 bg-primary-50 d-flex align-items-center justify-content-center">
+                                            <span class="text-primary-600 fw-bold">@user.FullName[0]</span>
                                         </div>
                                         <div class="flex-grow-1">
                                             <h6 class="text-md mb-0 fw-medium">@user.FullName</h6>
@@ -214,6 +214,11 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
+                                        <a asp-action="Details" asp-route-id="@user.Id"
+                                           class="bg-primary-focus text-primary-600 bg-hover-primary-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                                           title="View Details">
+                                            <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
+                                        </a>
                                         <a asp-action="Edit" asp-route-id="@user.Id"
                                            class="bg-info-focus text-info-600 bg-hover-info-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
                                            title="Edit">

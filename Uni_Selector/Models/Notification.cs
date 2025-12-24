@@ -16,7 +16,6 @@ namespace Uni_Selector.Models
         [Required] public NotificationChannel Channel { get; set; }
         public bool IsRead { get; set; } = false;
         public bool EmailSent { get; set; } = false;
-        public bool SmsSent { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? ReadAt { get; set; }
         public DateTime? SentAt { get; set; }

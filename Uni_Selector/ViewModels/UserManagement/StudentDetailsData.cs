@@ -8,7 +8,7 @@ namespace Uni_Selector.ViewModels.UserManagement
         public DateTime? DateOfBirth { get; set; }
         public Gender Gender { get; set; }
         public double GPA { get; set; }
-        public Province Province { get; set; }
+        public string Province { get; set; }
         public string City { get; set; }
         public PathType Path { get; set; }
         public decimal RegistrationBudget { get; set; }

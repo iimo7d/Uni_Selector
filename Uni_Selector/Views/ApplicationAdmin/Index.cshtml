@@ -43,8 +43,9 @@
             <!-- Filters -->
             <div class="col-12">
                 <form asp-action="Index" method="get">
-                    <div class="row align-items-end gy-3">
-                        <div class="col-md-2">
+                    <div class="row g-3 align-items-end filters-row">
+
+                        <div class="col-12 col-md-2 col-lg-1">
                             <label class="form-label fw-medium text-sm mb-8">Show</label>
                             <select name="pageSize" class="form-select form-select-sm radius-8" onchange="this.form.submit()">
                                 <option value="10" selected="@(Model.PageSize == 10 ? "selected" : null)">10</option>
@@ -54,15 +55,19 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <!-- قللنا Search على lg عشان نوسّع مساحة الأزرار -->
+                        <div class="col-12 col-md-4 col-lg-2 col-xl-3">
                             <label class="form-label fw-medium text-sm mb-8">Search</label>
                             <div class="position-relative">
-                                <input type="text" name="searchTerm" value="@Model.SearchTerm" class="form-control form-control-sm radius-8 ps-36" placeholder="Application #, Student name...">
-                                <iconify-icon icon="ion:search-outline" class="icon text-lg position-absolute top-50 translate-middle-y ms-12"></iconify-icon>
+                                <input type="text" name="searchTerm" value="@Model.SearchTerm"
+                                       class="form-control form-control-sm radius-8 ps-36"
+                                       placeholder="Application #, Student name...">
+                                <iconify-icon icon="ion:search-outline"
+                                              class="icon text-lg position-absolute top-50 translate-middle-y ms-12"></iconify-icon>
                             </div>
                         </div>
 
-                        <div class="col-md-2">
+                        <div class="col-12 col-md-3 col-lg-2">
                             <label class="form-label fw-medium text-sm mb-8">Status</label>
                             <select name="status" class="form-select form-select-sm radius-8">
                                 <option value="">All Statuses</option>
@@ -73,7 +78,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-2">
+                        <div class="col-12 col-md-3 col-lg-2">
                             <label class="form-label fw-medium text-sm mb-8">University</label>
                             <select name="universityId" class="form-select form-select-sm radius-8">
                                 <option value="">All Universities</option>
@@ -84,20 +89,28 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-12 col-md-6 col-lg-3">
                             <label class="form-label fw-medium text-sm mb-8">Date Range</label>
                             <div class="d-flex gap-2">
-                                <input type="date" name="startDate" value="@Model.StartDate?.ToString("yyyy-MM-dd")" class="form-control form-control-sm radius-8" placeholder="From">
-                                <input type="date" name="endDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" class="form-control form-control-sm radius-8" placeholder="To">
+                                <input type="date" name="startDate"
+                                       value="@Model.StartDate?.ToString("yyyy-MM-dd")"
+                                       class="form-control form-control-sm radius-8"
+                                       style="min-width:0; flex:1 1 0;" />
+
+                                <input type="date" name="endDate"
+                                       value="@Model.EndDate?.ToString("yyyy-MM-dd")"
+                                       class="form-control form-control-sm radius-8"
+                                       style="min-width:0; flex:1 1 0;" />
                             </div>
                         </div>
 
-                        <div class="col-auto">
-                            <button type="submit" class="btn btn-primary btn-sm radius-8 px-20">
+                        <!-- أهم تغيير: من col-lg-1 إلى col-lg-2 + flex-wrap -->
+                        <div class="col-12 col-md-6 col-lg-2 d-flex flex-wrap gap-2 justify-content-start justify-content-lg-end">
+                            <button type="submit" class="btn btn-primary btn-sm radius-8 px-20 text-nowrap">
                                 <iconify-icon icon="ic:baseline-filter-list" class="icon text-lg me-4"></iconify-icon>
                                 Filter
                             </button>
-                            <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-sm radius-8 px-16">
+                            <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-sm radius-8 px-16 text-nowrap">
                                 Clear
                             </a>
                         </div>
@@ -105,6 +118,14 @@
                         <input type="hidden" name="page" value="@Model.CurrentPage" />
                     </div>
                 </form>
+
+                <style>
+                    /* يمنع أي عناصر داخل الأعمدة تعمل overflow */
+                    .filters-row .form-control,
+                    .filters-row .form-select {
+                        min-width: 0;
+                    }
+                </style>
             </div>
         </div>
     </div>

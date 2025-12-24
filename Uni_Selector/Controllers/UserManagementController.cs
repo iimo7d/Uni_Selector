@@ -133,6 +133,116 @@ namespace Uni_Selector.Controllers
             }
         }
 
+
+
+
+
+
+        public async Task<IActionResult> Details(string id)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(id);
+                if (user == null)
+                {
+                    TempData["Error"] = "User not found.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var roles = await _userManager.GetRolesAsync(user);
+                var primaryRole = roles.FirstOrDefault() ?? "No Role";
+
+                var viewModel = new UserDetailsViewModel
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber ?? "N/A",
+                    IsActive = user.IsActive,
+                    EmailConfirmed = user.EmailConfirmed,
+                    LockoutEnabled = user.LockoutEnabled,
+                    LockoutEnd = user.LockoutEnd,
+                    CreatedAt = user.CreatedAt,
+                    LastLoginAt = user.LastLoginAt,
+                    Roles = roles.ToList()
+                };
+
+                // Load role-specific data and statistics
+                if (primaryRole == "Student")
+                {
+                    var student = await _context.Students
+                        .Include(s => s.Applications)
+                        .FirstOrDefaultAsync(s => s.UserId == user.Id);
+
+                    if (student != null)
+                    {
+                        viewModel.StudentDetails = new StudentDetailsData
+                        {
+                            StudentId = student.Id,
+                            DateOfBirth = student.DateOfBirth,
+                            Gender = student.Gender,
+                            GPA = student.GPA,
+                            Province = student.Province,
+                            City = student.City,
+                            Path = student.Path,
+                            RegistrationBudget = student.RegistrationBudget,
+                            ProfileCompleted = student.ProfileCompleted ?? false,
+                            TotalApplications = student.Applications.Count,
+                            PendingApplications = student.Applications.Count(a => a.Status == ApplicationStatus.Pending || a.Status == ApplicationStatus.UnderReview),
+                            ApprovedApplications = student.Applications.Count(a => a.Status == ApplicationStatus.Approved || a.Status == ApplicationStatus.Enrolled),
+                            RejectedApplications = student.Applications.Count(a => a.Status == ApplicationStatus.Rejected)
+                        };
+
+                        viewModel.ApplicationsCount = student.Applications.Count;
+                    }
+                }
+                else if (primaryRole == "UniversityRepresentative")
+                {
+                    var rep = await _context.UniversityRepresentatives
+                        .Include(r => r.University)
+                            .ThenInclude(u => u.UniversityPrograms)
+                        .Include(r => r.University)
+                            .ThenInclude(u => u.BtecPrograms)
+                        .FirstOrDefaultAsync(r => r.UserId == user.Id);
+
+                    if (rep != null)
+                    {
+                        var pendingApplicationsCount = await _context.StudentApplications
+                            .Where(a => (a.UniversityProgram.UniversityId == rep.UniversityId ||
+                                        a.BtecProgram.UniversityId == rep.UniversityId) &&
+                                       (a.Status == ApplicationStatus.Pending || a.Status == ApplicationStatus.UnderReview))
+                            .CountAsync();
+
+                        viewModel.UniversityRepDetails = new UniversityRepDetailsData
+                        {
+                            RepresentativeId = rep.Id,
+                            UniversityId = rep.UniversityId,
+                            UniversityName = rep.University.NameEnglish,
+                            Position = rep.Position ?? "N/A",
+                            UniversityProgramsCount = rep.University.UniversityPrograms.Count + rep.University.BtecPrograms.Count,
+                            PendingApplicationsCount = pendingApplicationsCount
+                        };
+                    }
+                }
+
+                // Get notification count
+                viewModel.NotificationsCount = await _context.Notifications
+                    .Where(n => n.UserId == user.Id)
+                    .CountAsync();
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error loading details for user {id}");
+                TempData["Error"] = "An error occurred while loading user details.";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+
+
+
         public async Task<IActionResult> Create()
         {
             try
