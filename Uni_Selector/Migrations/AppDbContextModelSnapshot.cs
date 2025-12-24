@@ -51,29 +51,29 @@ namespace Uni_Selector.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "247845c3-87f8-46f1-a455-555c330c3c41",
-                            ConcurrencyStamp = "d72e20f4-8245-4a69-ad2b-358a14cd4ce7",
-                            Name = "Student",
-                            NormalizedName = "STUDENT"
-                        },
-                        new
-                        {
-                            Id = "80f3af8c-17c5-456e-a4cc-15bb694e863b",
-                            ConcurrencyStamp = "5b6cd610-3ead-4ec8-8d9d-2d4daf456312",
-                            Name = "UniversityRep",
-                            NormalizedName = "UNIVERSITYREP"
-                        },
-                        new
-                        {
-                            Id = "dd348c1a-172c-41ce-81e7-d096a7596f93",
-                            ConcurrencyStamp = "afa21429-070e-41b0-ad52-91e817a3beb2",
+                            Id = "1",
+                            ConcurrencyStamp = "ROLE-PLATFORMADMIN-0001",
                             Name = "PlatformAdmin",
                             NormalizedName = "PLATFORMADMIN"
                         },
                         new
                         {
-                            Id = "912202c3-2b0f-4a73-94e5-6d85d64fa4db",
-                            ConcurrencyStamp = "bf10b102-86d0-4caa-8e36-3434a5bb91c4",
+                            Id = "2",
+                            ConcurrencyStamp = "ROLE-STUDENT-0001",
+                            Name = "Student",
+                            NormalizedName = "STUDENT"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            ConcurrencyStamp = "ROLE-UNIVERSITYREP-0001",
+                            Name = "UniversityRep",
+                            NormalizedName = "UNIVERSITYREP"
+                        },
+                        new
+                        {
+                            Id = "4",
+                            ConcurrencyStamp = "ROLE-BTECAUTHORITY-0001",
                             Name = "BtecAuthority",
                             NormalizedName = "BTECAUTHORITY"
                         });
@@ -168,8 +168,43 @@ namespace Uni_Selector.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "bc7c5647-7196-414a-b94a-5c1a51ff492c",
-                            RoleId = "dd348c1a-172c-41ce-81e7-d096a7596f93"
+                            UserId = "admin-001",
+                            RoleId = "1"
+                        },
+                        new
+                        {
+                            UserId = "btec-001",
+                            RoleId = "4"
+                        },
+                        new
+                        {
+                            UserId = "rep-001",
+                            RoleId = "3"
+                        },
+                        new
+                        {
+                            UserId = "rep-002",
+                            RoleId = "3"
+                        },
+                        new
+                        {
+                            UserId = "student-001",
+                            RoleId = "2"
+                        },
+                        new
+                        {
+                            UserId = "student-002",
+                            RoleId = "2"
+                        },
+                        new
+                        {
+                            UserId = "student-003",
+                            RoleId = "2"
+                        },
+                        new
+                        {
+                            UserId = "student-004",
+                            RoleId = "2"
                         });
                 });
 
@@ -281,22 +316,155 @@ namespace Uni_Selector.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "bc7c5647-7196-414a-b94a-5c1a51ff492c",
+                            Id = "admin-001",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4d33e595-96f6-48db-a638-33e59adba91b",
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "admin@uniselector.com",
+                            ConcurrencyStamp = "ADMIN-CONC-0001",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@uni-selector.jo",
                             EmailConfirmed = true,
                             FullName = "Platform Administrator",
                             IsActive = true,
                             LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@UNISELECTOR.COM",
-                            NormalizedUserName = "ADMIN@UNISELECTOR.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPFUaq3Y9kfJmwtE4V8iv3DpjWSDEPZV/zgI8eRG5DA/AI4lc65U32nkR5GAysqXmA==",
+                            NormalizedEmail = "ADMIN@UNI-SELECTOR.JO",
+                            NormalizedUserName = "ADMIN@UNI-SELECTOR.JO",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJVgs6mPsWwvEKY1wpShOzf2GxkLkDjwUhRoQjp2JEDkJh5qiC7nH06tMxyMwSb6GQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "19cfcb40-6c5b-4e83-8796-ab1abf7741f9",
+                            SecurityStamp = "ADMIN-SEC-0001",
                             TwoFactorEnabled = false,
-                            UserName = "admin@uniselector.com"
+                            UserName = "admin@uni-selector.jo"
+                        },
+                        new
+                        {
+                            Id = "btec-001",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "BTEC-CONC-0001",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "btec@education.gov.jo",
+                            EmailConfirmed = true,
+                            FullName = "BTEC Authority Officer",
+                            IsActive = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "BTEC@EDUCATION.GOV.JO",
+                            NormalizedUserName = "BTEC@EDUCATION.GOV.JO",
+                            PasswordHash = "AQAAAAIAAYagAAAAEA+KJEMkwqIlD5VWv+IQSXKJZBlW+nEFN8m/5e5xYVjr/sioqXtgMtzc0jDLoBbXXw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "BTEC-SEC-0001",
+                            TwoFactorEnabled = false,
+                            UserName = "btec@education.gov.jo"
+                        },
+                        new
+                        {
+                            Id = "rep-001",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "REP-001-CONC-0001",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "rep@gju.edu.jo",
+                            EmailConfirmed = true,
+                            FullName = "Ahmad Al-Hassan",
+                            IsActive = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "REP@GJU.EDU.JO",
+                            NormalizedUserName = "REP@GJU.EDU.JO",
+                            PasswordHash = "AQAAAAIAAYagAAAAELNueszlDmvnXkCm6ndtewhFTyVPQ49pe04XrjMHrV18BV9lgUnRGvc6f4EZoCOfPA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "REP-001-SEC-0001",
+                            TwoFactorEnabled = false,
+                            UserName = "rep@gju.edu.jo"
+                        },
+                        new
+                        {
+                            Id = "rep-002",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "REP-002-CONC-0001",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "rep@meu.edu.jo",
+                            EmailConfirmed = true,
+                            FullName = "Sarah Al-Ahmad",
+                            IsActive = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "REP@MEU.EDU.JO",
+                            NormalizedUserName = "REP@MEU.EDU.JO",
+                            PasswordHash = "AQAAAAIAAYagAAAAELNueszlDmvnXkCm6ndtewhFTyVPQ49pe04XrjMHrV18BV9lgUnRGvc6f4EZoCOfPA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "REP-002-SEC-0001",
+                            TwoFactorEnabled = false,
+                            UserName = "rep@meu.edu.jo"
+                        },
+                        new
+                        {
+                            Id = "student-001",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "STUDENT-001-CONC-0001",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "mohammad.khaled@example.com",
+                            EmailConfirmed = true,
+                            FullName = "Mohammad Khaled",
+                            IsActive = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "MOHAMMAD.KHALED@EXAMPLE.COM",
+                            NormalizedUserName = "MOHAMMAD.KHALED@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAENtGxzgPJi6WhJ8QqfT9DN9fYamOfTr/cC8KY3o3dgQLviAZc3PEDD82Qkn0OoD4TQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "STUDENT-001-SEC-0001",
+                            TwoFactorEnabled = false,
+                            UserName = "mohammad.khaled@example.com"
+                        },
+                        new
+                        {
+                            Id = "student-002",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "STUDENT-002-CONC-0001",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "fatima.hassan@example.com",
+                            EmailConfirmed = true,
+                            FullName = "Fatima Hassan",
+                            IsActive = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "FATIMA.HASSAN@EXAMPLE.COM",
+                            NormalizedUserName = "FATIMA.HASSAN@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAENtGxzgPJi6WhJ8QqfT9DN9fYamOfTr/cC8KY3o3dgQLviAZc3PEDD82Qkn0OoD4TQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "STUDENT-002-SEC-0001",
+                            TwoFactorEnabled = false,
+                            UserName = "fatima.hassan@example.com"
+                        },
+                        new
+                        {
+                            Id = "student-003",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "STUDENT-003-CONC-0001",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "omar.salem@example.com",
+                            EmailConfirmed = true,
+                            FullName = "Omar Salem",
+                            IsActive = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "OMAR.SALEM@EXAMPLE.COM",
+                            NormalizedUserName = "OMAR.SALEM@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAENtGxzgPJi6WhJ8QqfT9DN9fYamOfTr/cC8KY3o3dgQLviAZc3PEDD82Qkn0OoD4TQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "STUDENT-003-SEC-0001",
+                            TwoFactorEnabled = false,
+                            UserName = "omar.salem@example.com"
+                        },
+                        new
+                        {
+                            Id = "student-004",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "STUDENT-004-CONC-0001",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "leen.ibrahim@example.com",
+                            EmailConfirmed = true,
+                            FullName = "Leen Ibrahim",
+                            IsActive = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "LEEN.IBRAHIM@EXAMPLE.COM",
+                            NormalizedUserName = "LEEN.IBRAHIM@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAENtGxzgPJi6WhJ8QqfT9DN9fYamOfTr/cC8KY3o3dgQLviAZc3PEDD82Qkn0OoD4TQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "STUDENT-004-SEC-0001",
+                            TwoFactorEnabled = false,
+                            UserName = "leen.ibrahim@example.com"
                         });
                 });
 
@@ -337,6 +505,38 @@ namespace Uni_Selector.Migrations
                     b.HasIndex("MinGPA");
 
                     b.ToTable("BtecEntryRequirements");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BtecProgramId = 1,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Notes = "Accepts Tawjihi graduates with minimum 60%",
+                            RequiresBtecL2 = false,
+                            RequiresBtecL3 = false
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BtecProgramId = 2,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Notes = "Accepts Tawjihi graduates with minimum 65%",
+                            RequiresBtecL2 = false,
+                            RequiresBtecL3 = false
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BtecProgramId = 3,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Notes = "Accepts Tawjihi graduates with minimum 60%",
+                            RequiresBtecL2 = false,
+                            RequiresBtecL3 = false
+                        });
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.BtecProgram", b =>
@@ -428,6 +628,74 @@ namespace Uni_Selector.Migrations
                     b.HasIndex("UniversityId");
 
                     b.ToTable("BtecPrograms");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ApprovalDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Capacity = 40,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "BTEC Level 5 in Business Technologies",
+                            DurationInYears = 2,
+                            HourPriceBase = 33.15m,
+                            IsActive = true,
+                            IsApprovedByBtecAuthority = true,
+                            Language = 3,
+                            Level = 5,
+                            NameArabic = "تقنيات الأعمال - BTEC",
+                            NameEnglish = "Business Technologies - BTEC",
+                            RegistrationFeeFirstSemester = 300m,
+                            RegistrationFeeRegularSemester = 300m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            TechnicalField = "Business Administration",
+                            TotalCreditHours = 120,
+                            UniversityId = 7
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ApprovalDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Capacity = 30,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "BTEC Level 5 in Technical Engineering",
+                            DurationInYears = 2,
+                            HourPriceBase = 100m,
+                            IsActive = true,
+                            IsApprovedByBtecAuthority = true,
+                            Language = 3,
+                            Level = 5,
+                            NameArabic = "الهندسة التقنية - BTEC",
+                            NameEnglish = "Technical Engineering - BTEC",
+                            RegistrationFeeFirstSemester = 350m,
+                            RegistrationFeeRegularSemester = 350m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            TechnicalField = "Engineering",
+                            TotalCreditHours = 120,
+                            UniversityId = 11
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ApprovalDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Capacity = 35,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "BTEC Level 5 in Information Technology",
+                            DurationInYears = 2,
+                            HourPriceBase = 28m,
+                            IsActive = true,
+                            IsApprovedByBtecAuthority = true,
+                            Language = 3,
+                            Level = 5,
+                            NameArabic = "تكنولوجيا المعلومات - BTEC",
+                            NameEnglish = "Information Technology - BTEC",
+                            RegistrationFeeFirstSemester = 250m,
+                            RegistrationFeeRegularSemester = 250m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            TechnicalField = "Information Technology",
+                            TotalCreditHours = 120,
+                            UniversityId = 9
+                        });
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.Commission", b =>
@@ -494,6 +762,50 @@ namespace Uni_Selector.Migrations
                     b.HasIndex("UniversityId");
 
                     b.ToTable("Commissions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AmountEstimated = 9m,
+                            ApplicationId = 1,
+                            BaseAmount = 450m,
+                            CalculatedAt = new DateTime(2025, 11, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2025, 11, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Mode = 1,
+                            Percentage = 2m,
+                            RegistrationFeeUsed = 450m,
+                            Settled = false,
+                            UniversityId = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AmountEstimated = 6m,
+                            ApplicationId = 4,
+                            BaseAmount = 300m,
+                            CalculatedAt = new DateTime(2025, 11, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2025, 11, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Mode = 1,
+                            Percentage = 2m,
+                            RegistrationFeeUsed = 300m,
+                            Settled = false,
+                            UniversityId = 7
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AmountEstimated = 10m,
+                            ApplicationId = 5,
+                            BaseAmount = 500m,
+                            CalculatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Mode = 1,
+                            Percentage = 2m,
+                            RegistrationFeeUsed = 500m,
+                            Settled = false,
+                            UniversityId = 6
+                        });
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.DiscountGrant", b =>
@@ -550,6 +862,45 @@ namespace Uni_Selector.Migrations
                     b.HasIndex("UniversityId");
 
                     b.ToTable("DiscountGrants");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AmountEstimated = 22.5m,
+                            ApplicationId = 1,
+                            Code = "DISC-MEU-2025-001",
+                            GrantedAt = new DateTime(2025, 11, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Percentage = 5m,
+                            Status = 1,
+                            UniversityId = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AmountEstimated = 15m,
+                            ApplicationId = 4,
+                            Code = "DISC-NUCT-2025-001",
+                            GrantedAt = new DateTime(2025, 11, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Percentage = 5m,
+                            RedeemedAt = new DateTime(2025, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            RedeemedByUserId = "rep-001",
+                            Status = 2,
+                            UniversityId = 7
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AmountEstimated = 25m,
+                            ApplicationId = 5,
+                            Code = "DISC-AAU-2025-001",
+                            GrantedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Percentage = 5m,
+                            RedeemedAt = new DateTime(2025, 11, 16, 0, 0, 0, 0, DateTimeKind.Utc),
+                            RedeemedByUserId = "rep-002",
+                            Status = 2,
+                            UniversityId = 6
+                        });
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.EntryRequirement", b =>
@@ -604,70 +955,420 @@ namespace Uni_Selector.Migrations
                             Id = 1,
                             AcademicTrack = 1,
                             AllowNoTawjihi = false,
-                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MinGPA = 80.0,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 75.0,
                             Path = 1,
                             UniversityProgramId = 1
                         },
                         new
                         {
                             Id = 2,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 70.0,
+                            Path = 1,
+                            UniversityProgramId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
                             AcademicTrack = 1,
                             AllowNoTawjihi = false,
-                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             MinGPA = 75.0,
                             Path = 1,
                             UniversityProgramId = 2
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 4,
                             AcademicTrack = 2,
                             AllowNoTawjihi = false,
-                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             MinGPA = 70.0,
                             Path = 1,
-                            UniversityProgramId = 3
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AcademicTrack = 1,
-                            AllowNoTawjihi = false,
-                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MinGPA = 68.0,
-                            Path = 1,
-                            UniversityProgramId = 3
+                            UniversityProgramId = 2
                         },
                         new
                         {
                             Id = 5,
                             AcademicTrack = 1,
                             AllowNoTawjihi = false,
-                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MinGPA = 75.0,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 70.0,
                             Path = 1,
-                            UniversityProgramId = 4
+                            UniversityProgramId = 3
                         },
                         new
                         {
                             Id = 6,
                             AcademicTrack = 2,
                             AllowNoTawjihi = false,
-                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MinGPA = 72.0,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 3
+                        },
+                        new
+                        {
+                            Id = 7,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 4
+                        },
+                        new
+                        {
+                            Id = 8,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Path = 1,
+                            UniversityProgramId = 4
+                        },
+                        new
+                        {
+                            Id = 9,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 70.0,
                             Path = 1,
                             UniversityProgramId = 5
                         },
                         new
                         {
-                            Id = 7,
-                            AcademicTrack = 3,
+                            Id = 10,
+                            AcademicTrack = 2,
                             AllowNoTawjihi = false,
-                            EffectiveFrom = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MinGPA = 70.0,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
                             Path = 1,
                             UniversityProgramId = 5
+                        },
+                        new
+                        {
+                            Id = 11,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 6
+                        },
+                        new
+                        {
+                            Id = 12,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Path = 1,
+                            UniversityProgramId = 6
+                        },
+                        new
+                        {
+                            Id = 13,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 7
+                        },
+                        new
+                        {
+                            Id = 14,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Path = 1,
+                            UniversityProgramId = 7
+                        },
+                        new
+                        {
+                            Id = 15,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 8
+                        },
+                        new
+                        {
+                            Id = 16,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Path = 1,
+                            UniversityProgramId = 8
+                        },
+                        new
+                        {
+                            Id = 17,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 9
+                        },
+                        new
+                        {
+                            Id = 18,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Path = 1,
+                            UniversityProgramId = 9
+                        },
+                        new
+                        {
+                            Id = 19,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 10
+                        },
+                        new
+                        {
+                            Id = 20,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Path = 1,
+                            UniversityProgramId = 10
+                        },
+                        new
+                        {
+                            Id = 21,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 70.0,
+                            Path = 1,
+                            UniversityProgramId = 11
+                        },
+                        new
+                        {
+                            Id = 22,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 11
+                        },
+                        new
+                        {
+                            Id = 23,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 12
+                        },
+                        new
+                        {
+                            Id = 24,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Path = 1,
+                            UniversityProgramId = 12
+                        },
+                        new
+                        {
+                            Id = 25,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 75.0,
+                            Path = 1,
+                            UniversityProgramId = 13
+                        },
+                        new
+                        {
+                            Id = 26,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 70.0,
+                            Path = 1,
+                            UniversityProgramId = 13
+                        },
+                        new
+                        {
+                            Id = 27,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 70.0,
+                            Path = 1,
+                            UniversityProgramId = 14
+                        },
+                        new
+                        {
+                            Id = 28,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 14
+                        },
+                        new
+                        {
+                            Id = 29,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 70.0,
+                            Path = 1,
+                            UniversityProgramId = 15
+                        },
+                        new
+                        {
+                            Id = 30,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 15
+                        },
+                        new
+                        {
+                            Id = 31,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 70.0,
+                            Path = 1,
+                            UniversityProgramId = 16
+                        },
+                        new
+                        {
+                            Id = 32,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 16
+                        },
+                        new
+                        {
+                            Id = 33,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 17
+                        },
+                        new
+                        {
+                            Id = 34,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Path = 1,
+                            UniversityProgramId = 17
+                        },
+                        new
+                        {
+                            Id = 35,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 18
+                        },
+                        new
+                        {
+                            Id = 36,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Path = 1,
+                            UniversityProgramId = 18
+                        },
+                        new
+                        {
+                            Id = 37,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 19
+                        },
+                        new
+                        {
+                            Id = 38,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Path = 1,
+                            UniversityProgramId = 19
+                        },
+                        new
+                        {
+                            Id = 39,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 20
+                        },
+                        new
+                        {
+                            Id = 40,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Path = 1,
+                            UniversityProgramId = 20
+                        },
+                        new
+                        {
+                            Id = 41,
+                            AcademicTrack = 1,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 65.0,
+                            Path = 1,
+                            UniversityProgramId = 21
+                        },
+                        new
+                        {
+                            Id = 42,
+                            AcademicTrack = 2,
+                            AllowNoTawjihi = false,
+                            EffectiveFrom = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MinGPA = 60.0,
+                            Path = 1,
+                            UniversityProgramId = 21
                         });
                 });
 
@@ -841,62 +1542,266 @@ namespace Uni_Selector.Migrations
                         new
                         {
                             Id = 1,
-                            AcademicClassification = "Engineering",
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AcademicClassification = "Computer Science",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Degree = 2,
-                            Description = "Bachelor's degree in Software Engineering",
-                            Language = 1,
-                            NameArabic = "هندسة البرمجيات",
-                            NameEnglish = "Software Engineering",
+                            Description = "Bachelor's degree in Artificial Intelligence and Machine Learning",
+                            Language = 3,
+                            NameArabic = "الذكاء الاصطناعي",
+                            NameEnglish = "Artificial Intelligence",
                             TotalCreditHours = 132
                         },
                         new
                         {
                             Id = 2,
-                            AcademicClassification = "Engineering",
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AcademicClassification = "Business Administration",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Degree = 2,
-                            Description = "Bachelor's degree in Computer Science",
-                            Language = 1,
-                            NameArabic = "علوم الحاسوب",
-                            NameEnglish = "Computer Science",
+                            Description = "Bachelor's degree in Logistics and Supply Chain Management",
+                            Language = 3,
+                            NameArabic = "التقنيات اللوجستية",
+                            NameEnglish = "Logistics Technologies",
                             TotalCreditHours = 132
                         },
                         new
                         {
                             Id = 3,
-                            AcademicClassification = "Business",
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AcademicClassification = "Arts and Design",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Degree = 2,
-                            Description = "Bachelor's degree in Business Administration",
+                            Description = "Bachelor's degree in Interior Design and Architecture",
                             Language = 3,
-                            NameArabic = "إدارة الأعمال",
-                            NameEnglish = "Business Administration",
-                            TotalCreditHours = 126
+                            NameArabic = "التصميم الداخلي",
+                            NameEnglish = "Interior Design",
+                            TotalCreditHours = 132
                         },
                         new
                         {
                             Id = 4,
-                            AcademicClassification = "Medical",
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Degree = 2,
-                            Description = "Medical Doctor degree",
-                            Language = 1,
-                            NameArabic = "الطب البشري",
-                            NameEnglish = "Medicine",
-                            TotalCreditHours = 240
+                            AcademicClassification = "Business Administration",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Electronic Business Administration",
+                            Language = 3,
+                            NameArabic = "إدارة الأعمال الإلكترونية",
+                            NameEnglish = "E-Business Management",
+                            TotalCreditHours = 72
                         },
                         new
                         {
                             Id = 5,
-                            AcademicClassification = "Law",
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AcademicClassification = "Accounting",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Technical Accounting",
+                            Language = 3,
+                            NameArabic = "المحاسبة التقنية",
+                            NameEnglish = "Technical Accounting",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AcademicClassification = "Tourism and Hospitality",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Hotel and Hospitality Management",
+                            Language = 3,
+                            NameArabic = "إدارة الفنادق",
+                            NameEnglish = "Hotel Management",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 7,
+                            AcademicClassification = "Tourism and Hospitality",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Tourism and Hotel Management",
+                            Language = 3,
+                            NameArabic = "إدارة السياحة والفنادق",
+                            NameEnglish = "Tourism and Hotel Management",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 8,
+                            AcademicClassification = "Hospitality",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Degree = 2,
-                            Description = "Bachelor's degree in Law",
-                            Language = 2,
-                            NameArabic = "القانون",
-                            NameEnglish = "Law",
+                            Description = "Bachelor in Culinary Arts and Food Management",
+                            Language = 3,
+                            NameArabic = "فنون الطهي",
+                            NameEnglish = "Culinary Arts",
                             TotalCreditHours = 132
+                        },
+                        new
+                        {
+                            Id = 9,
+                            AcademicClassification = "Engineering",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Civil Engineering Technology",
+                            Language = 3,
+                            NameArabic = "تكنولوجيا إنشاء وصيانة المباني",
+                            NameEnglish = "Building Construction and Maintenance Technology",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 10,
+                            AcademicClassification = "Architecture",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Architecture and Interior Design",
+                            Language = 3,
+                            NameArabic = "هندسة العمارة والتصميم الداخلي",
+                            NameEnglish = "Architecture and Interior Design",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 11,
+                            AcademicClassification = "Engineering",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Road Surveying",
+                            Language = 3,
+                            NameArabic = "مساحة الطرق وحساب الكميات",
+                            NameEnglish = "Road Surveying and Quantity Calculation",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 12,
+                            AcademicClassification = "Engineering",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Energy Technology",
+                            Language = 3,
+                            NameArabic = "تكنولوجيا الطاقة",
+                            NameEnglish = "Energy Technology",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 13,
+                            AcademicClassification = "Information Technology",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Computer Networks",
+                            Language = 3,
+                            NameArabic = "الاتصالات وشبكات الحاسوب",
+                            NameEnglish = "Communications and Computer Networks",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 14,
+                            AcademicClassification = "Information Technology",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Cybersecurity",
+                            Language = 3,
+                            NameArabic = "أمن المعلومات والشبكات",
+                            NameEnglish = "Information Security and Networks",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 15,
+                            AcademicClassification = "Medical",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Pharmacy",
+                            Language = 3,
+                            NameArabic = "الصيدلة",
+                            NameEnglish = "Pharmacy",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 16,
+                            AcademicClassification = "Medical",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Nursing",
+                            Language = 3,
+                            NameArabic = "التمريض المشارك",
+                            NameEnglish = "Associate Nursing",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 17,
+                            AcademicClassification = "Medical",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 2,
+                            Description = "Bachelor in Dentistry",
+                            Language = 3,
+                            NameArabic = "طب الأسنان",
+                            NameEnglish = "Dentistry",
+                            TotalCreditHours = 180
+                        },
+                        new
+                        {
+                            Id = 18,
+                            AcademicClassification = "Arts",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Graphic Design",
+                            Language = 3,
+                            NameArabic = "التصميم الجرافيكي",
+                            NameEnglish = "Graphic Design",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 19,
+                            AcademicClassification = "Arts",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Interior Decoration",
+                            Language = 3,
+                            NameArabic = "فنون التصميم الداخلي والديكور",
+                            NameEnglish = "Interior Design and Decoration Arts",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 20,
+                            AcademicClassification = "Arts",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Film and TV Production",
+                            Language = 3,
+                            NameArabic = "فنون السينما والتلفزيون",
+                            NameEnglish = "Cinema and Television Arts",
+                            TotalCreditHours = 72
+                        },
+                        new
+                        {
+                            Id = 21,
+                            AcademicClassification = "Arts",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 2,
+                            Description = "Bachelor in Film Production",
+                            Language = 3,
+                            NameArabic = "صناعة الأفلام",
+                            NameEnglish = "Film Production",
+                            TotalCreditHours = 132
+                        },
+                        new
+                        {
+                            Id = 22,
+                            AcademicClassification = "Languages",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Degree = 1,
+                            Description = "Diploma in Applied English",
+                            Language = 1,
+                            NameArabic = "اللغة الإنجليزية التطبيقية",
+                            NameEnglish = "Applied English Language",
+                            TotalCreditHours = 72
                         });
                 });
 
@@ -1057,6 +1962,9 @@ namespace Uni_Selector.Migrations
                     b.Property<int>("PreferredLanguage")
                         .HasColumnType("int");
 
+                    b.Property<bool?>("ProfileCompleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Province")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -1095,6 +2003,149 @@ namespace Uni_Selector.Migrations
                     b.HasIndex("Province", "City");
 
                     b.ToTable("Students");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AcademicTrack = 1,
+                            Area = "Abdoun",
+                            BtecLevel2Completed = false,
+                            BtecLevel3Completed = false,
+                            City = "Amman",
+                            CreatedAt = new DateTime(2025, 7, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateOfBirth = new DateTime(2006, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DesiredMajors = "الذكاء الاصطناعي, أمن المعلومات",
+                            GPA = 85.5,
+                            Gender = 1,
+                            GuardianName = "Khaled Ahmad",
+                            GuardianPhone = "0791111111",
+                            GuardianRelation = "Father",
+                            HasDisability = false,
+                            HasFamilyConnection = false,
+                            IsActive = true,
+                            IsEmployeeChild = false,
+                            IsOrphan = false,
+                            Latitude = 31.953900000000001,
+                            Longitude = 35.866599999999998,
+                            MaxDistanceKm = 30,
+                            NationalId = "1234567890",
+                            Nationality = "Jordanian",
+                            Path = 1,
+                            PreferredCity = "Amman",
+                            PreferredLanguage = 3,
+                            ProfileCompleted = false,
+                            Province = "Amman",
+                            RegistrationBudget = 10000m,
+                            SeatNumber = "A10001",
+                            UserId = "student-001"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AcademicTrack = 2,
+                            Area = "Al-Zarqa Al-Jadida",
+                            BtecLevel2Completed = false,
+                            BtecLevel3Completed = false,
+                            City = "Zarqa",
+                            CreatedAt = new DateTime(2025, 8, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateOfBirth = new DateTime(2006, 7, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DesiredMajors = "التصميم الداخلي",
+                            FamilyConnectionUniversityId = 2,
+                            GPA = 72.0,
+                            Gender = 2,
+                            GuardianName = "Hassan Ali",
+                            GuardianPhone = "0792222222",
+                            GuardianRelation = "Father",
+                            HasDisability = false,
+                            HasFamilyConnection = true,
+                            IsActive = true,
+                            IsEmployeeChild = false,
+                            IsOrphan = false,
+                            Latitude = 32.083300000000001,
+                            Longitude = 36.083300000000001,
+                            MaxDistanceKm = 60,
+                            NationalId = "2234567890",
+                            Nationality = "Jordanian",
+                            Path = 1,
+                            PreferredCity = "Amman",
+                            PreferredLanguage = 2,
+                            ProfileCompleted = false,
+                            Province = "Zarqa",
+                            RegistrationBudget = 6000m,
+                            SeatNumber = "A20002",
+                            UserId = "student-002"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Area = "Marj Al-Hamam",
+                            BtecCertificateUrl = "/uploads/btec/omar_salem_btec_cert.pdf",
+                            BtecLevel2Completed = true,
+                            BtecLevel3Completed = true,
+                            City = "Amman",
+                            CreatedAt = new DateTime(2025, 9, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateOfBirth = new DateTime(2006, 11, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DesiredMajors = "BTEC",
+                            GPA = 68.0,
+                            Gender = 1,
+                            GuardianName = "Salem Omar",
+                            GuardianPhone = "0793333333",
+                            GuardianRelation = "Father",
+                            HasDisability = false,
+                            HasFamilyConnection = false,
+                            IsActive = true,
+                            IsEmployeeChild = false,
+                            IsOrphan = false,
+                            Latitude = 31.8794,
+                            Longitude = 35.8414,
+                            MaxDistanceKm = 80,
+                            NationalId = "3234567890",
+                            Nationality = "Jordanian",
+                            Path = 3,
+                            PreferredCity = "Amman",
+                            PreferredLanguage = 1,
+                            ProfileCompleted = false,
+                            Province = "Amman",
+                            RegistrationBudget = 5000m,
+                            SeatNumber = "B30003",
+                            UserId = "student-003"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AcademicTrack = 1,
+                            Area = "Shmeisani",
+                            BtecLevel2Completed = false,
+                            BtecLevel3Completed = false,
+                            City = "Amman",
+                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateOfBirth = new DateTime(2006, 1, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DesiredMajors = "طب الأسنان",
+                            GPA = 92.5,
+                            Gender = 2,
+                            GuardianName = "Ibrahim Mahmoud",
+                            GuardianPhone = "0794444444",
+                            GuardianRelation = "Father",
+                            HasDisability = false,
+                            HasFamilyConnection = false,
+                            IsActive = true,
+                            IsEmployeeChild = false,
+                            IsOrphan = false,
+                            Latitude = 31.9636,
+                            Longitude = 35.909399999999998,
+                            MaxDistanceKm = 20,
+                            NationalId = "4234567890",
+                            Nationality = "Jordanian",
+                            Path = 1,
+                            PreferredCity = "Amman",
+                            PreferredLanguage = 3,
+                            ProfileCompleted = false,
+                            Province = "Amman",
+                            RegistrationBudget = 15000m,
+                            SeatNumber = "A40004",
+                            UserId = "student-004"
+                        });
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.StudentApplication", b =>
@@ -1121,7 +2172,8 @@ namespace Uni_Selector.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("HourDiscountPercent")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<DateTime?>("HourDiscountSetAt")
                         .HasColumnType("datetime2");
@@ -1170,6 +2222,95 @@ namespace Uni_Selector.Migrations
                     b.HasIndex("UniversityProgramId");
 
                     b.ToTable("StudentApplications");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AdmissionNumber = "ADM-MEU-2025-001",
+                            ApplicationDate = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ApplicationNumber = "APP-2025-001",
+                            ApprovalDate = new DateTime(2025, 11, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            HourDiscountPercent = 35m,
+                            HourDiscountSetAt = new DateTime(2025, 11, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            HourDiscountSetByUserId = "rep-002",
+                            Notes = "Application approved. Waiting for student confirmation.",
+                            PlannedFirstSemesterHours = 15,
+                            Status = 3,
+                            StudentId = 1,
+                            UniversityProgramId = 3,
+                            UpdatedAt = new DateTime(2025, 11, 6, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ApplicationDate = new DateTime(2025, 11, 3, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ApplicationNumber = "APP-2025-002",
+                            Notes = "Under review by university representative.",
+                            PlannedFirstSemesterHours = 15,
+                            Status = 2,
+                            StudentId = 1,
+                            UniversityProgramId = 2,
+                            UpdatedAt = new DateTime(2025, 11, 3, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ApplicationDate = new DateTime(2025, 11, 8, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ApplicationNumber = "APP-2025-003",
+                            Notes = "New application submitted.",
+                            PlannedFirstSemesterHours = 12,
+                            Status = 1,
+                            StudentId = 2,
+                            UniversityProgramId = 5,
+                            UpdatedAt = new DateTime(2025, 11, 8, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AdmissionNumber = "ADM-NUCT-2025-001",
+                            ApplicationDate = new DateTime(2025, 11, 11, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ApplicationNumber = "APP-2025-004",
+                            ApprovalDate = new DateTime(2025, 11, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            BtecProgramId = 1,
+                            HourDiscountPercent = 30m,
+                            HourDiscountSetAt = new DateTime(2025, 11, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            HourDiscountSetByUserId = "rep-001",
+                            Notes = "BTEC application approved by NUCT.",
+                            PlannedFirstSemesterHours = 18,
+                            Status = 3,
+                            StudentId = 3,
+                            UpdatedAt = new DateTime(2025, 11, 15, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AdmissionNumber = "ADM-AAU-2025-001",
+                            ApplicationDate = new DateTime(2025, 11, 4, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ApplicationNumber = "APP-2025-005",
+                            ApprovalDate = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            HourDiscountPercent = 40m,
+                            HourDiscountSetAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            HourDiscountSetByUserId = "admin-001",
+                            Notes = "Student enrolled and paid first semester registration.",
+                            PlannedFirstSemesterHours = 18,
+                            Status = 5,
+                            StudentId = 4,
+                            UniversityProgramId = 13,
+                            UpdatedAt = new DateTime(2025, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ApplicationDate = new DateTime(2025, 11, 13, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ApplicationNumber = "APP-2025-006",
+                            Notes = "Under review. Need additional documents.",
+                            PlannedFirstSemesterHours = 15,
+                            Status = 2,
+                            StudentId = 2,
+                            UniversityProgramId = 21,
+                            UpdatedAt = new DateTime(2025, 11, 14, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
                 });
 
             modelBuilder.Entity("Uni_Selector.Models.University", b =>
@@ -1272,52 +2413,196 @@ namespace Uni_Selector.Migrations
                             Id = 1,
                             City = "Amman",
                             CommissionMode = 1,
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "info@ju.edu.jo",
-                            FullAddress = "Queen Rania Street, Amman 11942, Jordan",
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "info@gju.edu.jo",
+                            FullAddress = "Madaba Street, Amman 11180, Jordan",
                             IsActive = true,
                             Latitude = 31.953900000000001,
-                            Longitude = 35.910600000000002,
-                            NameArabic = "الجامعة الأردنية",
-                            NameEnglish = "University of Jordan",
-                            OfficialWebsite = "https://www.ju.edu.jo",
-                            PhoneNumber = "+96265355000",
+                            Longitude = 35.866599999999998,
+                            NameArabic = "الجامعة الألمانية الأردنية",
+                            NameEnglish = "German Jordanian University",
+                            OfficialWebsite = "https://www.gju.edu.jo",
+                            PhoneNumber = "+962-6-4294444",
                             Province = "Amman",
                             Type = 1
                         },
                         new
                         {
                             Id = 2,
-                            City = "Zarqa",
-                            CommissionMode = 2,
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "info@hu.edu.jo",
-                            FullAddress = "P.O. Box 330127, Zarqa 13133, Jordan",
+                            City = "Amman",
+                            CommissionMode = 1,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "info@meu.edu.jo",
+                            FullAddress = "Airport Road, Amman 11831, Jordan",
                             IsActive = true,
-                            Latitude = 32.136499999999998,
-                            Longitude = 36.002200000000002,
-                            NameArabic = "الجامعة الهاشمية",
-                            NameEnglish = "The Hashemite University",
-                            OfficialWebsite = "https://www.hu.edu.jo",
-                            PhoneNumber = "+96253903333",
-                            Province = "Zarqa",
+                            Latitude = 31.921500000000002,
+                            Longitude = 35.941099999999999,
+                            NameArabic = "جامعة الشرق الأوسط",
+                            NameEnglish = "Middle East University",
+                            OfficialWebsite = "https://www.meu.edu.jo",
+                            PhoneNumber = "+962-6-4790222",
+                            Province = "Amman",
                             Type = 1
                         },
                         new
                         {
                             Id = 3,
                             City = "Amman",
-                            CommissionMode = 3,
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "info@asu.edu.jo",
-                            FullAddress = "Al-Arab Street, Shafa Badran, Amman 11931, Jordan",
+                            CommissionMode = 1,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "info@iu.edu.jo",
+                            FullAddress = "King Abdullah II Street, Amman 11622, Jordan",
                             IsActive = true,
-                            Latitude = 32.0182,
-                            Longitude = 35.8767,
-                            NameArabic = "جامعة العلوم التطبيقية",
+                            Latitude = 31.971900000000002,
+                            Longitude = 35.872799999999998,
+                            NameArabic = "جامعة الإسراء",
+                            NameEnglish = "Isra University",
+                            OfficialWebsite = "https://www.iu.edu.jo",
+                            PhoneNumber = "+962-6-4711710",
+                            Province = "Amman",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            City = "Zarqa",
+                            CommissionMode = 1,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "info@zu.edu.jo",
+                            FullAddress = "Zarqa 13110, Jordan",
+                            IsActive = true,
+                            Latitude = 32.083300000000001,
+                            Longitude = 36.083300000000001,
+                            NameArabic = "جامعة الزرقاء",
+                            NameEnglish = "Zarqa University",
+                            OfficialWebsite = "https://www.zu.edu.jo",
+                            PhoneNumber = "+962-5-3821100",
+                            Province = "Zarqa",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            City = "Amman",
+                            CommissionMode = 1,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "info@uop.edu.jo",
+                            FullAddress = "Airport Road, Amman 11196, Jordan",
+                            IsActive = true,
+                            Latitude = 31.9453,
+                            Longitude = 35.928400000000003,
+                            NameArabic = "جامعة البترا",
+                            NameEnglish = "Petra University",
+                            OfficialWebsite = "https://www.uop.edu.jo",
+                            PhoneNumber = "+962-6-5715546",
+                            Province = "Amman",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            City = "Amman",
+                            CommissionMode = 1,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "info@ammanu.edu.jo",
+                            FullAddress = "Al-Salt Highway, Amman 19328, Jordan",
+                            IsActive = true,
+                            Latitude = 32.012599999999999,
+                            Longitude = 35.843299999999999,
+                            NameArabic = "جامعة عمان الأهلية",
+                            NameEnglish = "Al-Ahliyya Amman University",
+                            OfficialWebsite = "https://www.ammanu.edu.jo",
+                            PhoneNumber = "+962-6-5008000",
+                            Province = "Amman",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 7,
+                            City = "Amman",
+                            CommissionMode = 1,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "info@nuct.edu.jo",
+                            FullAddress = "Amman, Jordan",
+                            IsActive = true,
+                            Latitude = 31.945399999999999,
+                            Longitude = 35.928400000000003,
+                            NameArabic = "كلية الجامعة للتكنولوجيا الحديثة",
+                            NameEnglish = "New University College of Technology",
+                            OfficialWebsite = "https://www.nuct.edu.jo",
+                            PhoneNumber = "+962-6-5000000",
+                            Province = "Amman",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 8,
+                            City = "Amman",
+                            CommissionMode = 1,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "info@khawarizmi.edu.jo",
+                            FullAddress = "Airport Road, Amman, Jordan",
+                            IsActive = true,
+                            Latitude = 31.945399999999999,
+                            Longitude = 35.928400000000003,
+                            NameArabic = "كلية الخوارزمي الجامعية",
+                            NameEnglish = "Al-Khawarizmi College",
+                            OfficialWebsite = "https://www.khawarizmi.edu.jo",
+                            PhoneNumber = "+962-6-4899450",
+                            Province = "Amman",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 9,
+                            City = "Amman",
+                            CommissionMode = 1,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "info@arabcollege.edu.jo",
+                            FullAddress = "Amman, Jordan",
+                            IsActive = true,
+                            Latitude = 31.945399999999999,
+                            Longitude = 35.928400000000003,
+                            NameArabic = "كلية المجتمع العربي",
+                            NameEnglish = "Arab Community College",
+                            OfficialWebsite = "https://www.arabcollege.edu.jo",
+                            PhoneNumber = "+962-6-5000000",
+                            Province = "Amman",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 10,
+                            City = "Amman",
+                            CommissionMode = 1,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "info@asu.edu.jo",
+                            FullAddress = "Al-Arab Street, Amman 11931, Jordan",
+                            IsActive = true,
+                            Latitude = 31.9909,
+                            Longitude = 35.870899999999999,
+                            NameArabic = "جامعة العلوم التطبيقية الخاصة",
                             NameEnglish = "Applied Science Private University",
                             OfficialWebsite = "https://www.asu.edu.jo",
-                            PhoneNumber = "+96264609999",
+                            PhoneNumber = "+962-6-5609999",
+                            Province = "Amman",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 11,
+                            City = "Amman",
+                            CommissionMode = 1,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "info@htu.edu.jo",
+                            FullAddress = "Al-Hussein Bin Talal Street, Amman, Jordan",
+                            IsActive = true,
+                            Latitude = 31.9754,
+                            Longitude = 35.867600000000003,
+                            NameArabic = "جامعة الحسين التقنية",
+                            NameEnglish = "Hussein Technical University",
+                            OfficialWebsite = "https://www.htu.edu.jo",
+                            PhoneNumber = "+962-6-5331000",
                             Province = "Amman",
                             Type = 1
                         });
@@ -1383,77 +2668,317 @@ namespace Uni_Selector.Migrations
                         new
                         {
                             Id = 1,
-                            Capacity = 100,
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Capacity = 50,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             DurationInYears = 4,
-                            HourPriceBase = 85m,
+                            HourPriceBase = 110m,
                             IsActive = true,
-                            ProgramId = 1,
-                            RegistrationFeeFirstSemester = 500m,
-                            RegistrationFeeRegularSemester = 300m,
-                            SemesterStartDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProgramId = 2,
+                            RegistrationFeeFirstSemester = 557m,
+                            RegistrationFeeRegularSemester = 230m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             StudySystem = 1,
                             UniversityId = 1
                         },
                         new
                         {
                             Id = 2,
-                            Capacity = 120,
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Capacity = 50,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             DurationInYears = 4,
-                            HourPriceBase = 80m,
+                            HourPriceBase = 110m,
                             IsActive = true,
-                            ProgramId = 2,
-                            RegistrationFeeFirstSemester = 500m,
-                            RegistrationFeeRegularSemester = 300m,
-                            SemesterStartDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProgramId = 1,
+                            RegistrationFeeFirstSemester = 557m,
+                            RegistrationFeeRegularSemester = 230m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             StudySystem = 1,
                             UniversityId = 1
                         },
                         new
                         {
                             Id = 3,
-                            Capacity = 150,
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Capacity = 80,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             DurationInYears = 4,
-                            HourPriceBase = 70m,
+                            HourPriceBase = 65m,
                             IsActive = true,
-                            ProgramId = 3,
-                            RegistrationFeeFirstSemester = 400m,
-                            RegistrationFeeRegularSemester = 250m,
-                            SemesterStartDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProgramId = 1,
+                            RegistrationFeeFirstSemester = 450m,
+                            RegistrationFeeRegularSemester = 450m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             StudySystem = 1,
                             UniversityId = 2
                         },
                         new
                         {
                             Id = 4,
-                            Capacity = 80,
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Capacity = 60,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             DurationInYears = 4,
-                            HourPriceBase = 90m,
+                            HourPriceBase = 58.5m,
                             IsActive = true,
-                            ProgramId = 1,
-                            RegistrationFeeFirstSemester = 600m,
-                            RegistrationFeeRegularSemester = 350m,
-                            SemesterStartDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            StudySystem = 2,
-                            UniversityId = 3
+                            ProgramId = 2,
+                            RegistrationFeeFirstSemester = 450m,
+                            RegistrationFeeRegularSemester = 450m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 2
                         },
                         new
                         {
                             Id = 5,
-                            Capacity = 100,
-                            CreatedAt = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Capacity = 40,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 4,
+                            HourPriceBase = 65m,
+                            IsActive = true,
+                            ProgramId = 3,
+                            RegistrationFeeFirstSemester = 450m,
+                            RegistrationFeeRegularSemester = 450m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 2
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Capacity = 70,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 4,
+                            HourPriceBase = 45m,
+                            IsActive = true,
+                            ProgramId = 1,
+                            RegistrationFeeFirstSemester = 350m,
+                            RegistrationFeeRegularSemester = 350m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 3
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Capacity = 60,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 4,
+                            HourPriceBase = 50m,
+                            IsActive = true,
+                            ProgramId = 1,
+                            RegistrationFeeFirstSemester = 350m,
+                            RegistrationFeeRegularSemester = 350m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 4
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Capacity = 50,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 4,
+                            HourPriceBase = 44m,
+                            IsActive = true,
+                            ProgramId = 2,
+                            RegistrationFeeFirstSemester = 350m,
+                            RegistrationFeeRegularSemester = 350m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 4
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Capacity = 50,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 4,
+                            HourPriceBase = 45m,
+                            IsActive = true,
+                            ProgramId = 2,
+                            RegistrationFeeFirstSemester = 370m,
+                            RegistrationFeeRegularSemester = 370m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 5
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Capacity = 60,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 4,
+                            HourPriceBase = 52.5m,
+                            IsActive = true,
+                            ProgramId = 1,
+                            RegistrationFeeFirstSemester = 370m,
+                            RegistrationFeeRegularSemester = 370m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 5
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Capacity = 30,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             DurationInYears = 4,
                             HourPriceBase = 75m,
                             IsActive = true,
-                            ProgramId = 5,
-                            RegistrationFeeFirstSemester = 450m,
-                            RegistrationFeeRegularSemester = 275m,
-                            SemesterStartDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ProgramId = 3,
+                            RegistrationFeeFirstSemester = 370m,
+                            RegistrationFeeRegularSemester = 370m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             StudySystem = 1,
-                            UniversityId = 3
+                            UniversityId = 5
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Capacity = 30,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 4,
+                            HourPriceBase = 48.75m,
+                            IsActive = true,
+                            ProgramId = 21,
+                            RegistrationFeeFirstSemester = 370m,
+                            RegistrationFeeRegularSemester = 370m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 5
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Capacity = 25,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 5,
+                            HourPriceBase = 91m,
+                            IsActive = true,
+                            ProgramId = 17,
+                            RegistrationFeeFirstSemester = 500m,
+                            RegistrationFeeRegularSemester = 500m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 6
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Capacity = 50,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 4,
+                            HourPriceBase = 80m,
+                            IsActive = true,
+                            ProgramId = 1,
+                            RegistrationFeeFirstSemester = 350m,
+                            RegistrationFeeRegularSemester = 350m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 6
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Capacity = 30,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 4,
+                            HourPriceBase = 70m,
+                            IsActive = true,
+                            ProgramId = 8,
+                            RegistrationFeeFirstSemester = 350m,
+                            RegistrationFeeRegularSemester = 350m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 6
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Capacity = 60,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 4,
+                            HourPriceBase = 70m,
+                            IsActive = true,
+                            ProgramId = 1,
+                            RegistrationFeeFirstSemester = 450m,
+                            RegistrationFeeRegularSemester = 450m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 10
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Capacity = 40,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 2,
+                            HourPriceBase = 35m,
+                            IsActive = true,
+                            ProgramId = 4,
+                            RegistrationFeeFirstSemester = 200m,
+                            RegistrationFeeRegularSemester = 150m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 8
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Capacity = 40,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 2,
+                            HourPriceBase = 35m,
+                            IsActive = true,
+                            ProgramId = 5,
+                            RegistrationFeeFirstSemester = 200m,
+                            RegistrationFeeRegularSemester = 150m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 8
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Capacity = 30,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 2,
+                            HourPriceBase = 35m,
+                            IsActive = true,
+                            ProgramId = 6,
+                            RegistrationFeeFirstSemester = 200m,
+                            RegistrationFeeRegularSemester = 150m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 8
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Capacity = 35,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 2,
+                            HourPriceBase = 35m,
+                            IsActive = true,
+                            ProgramId = 14,
+                            RegistrationFeeFirstSemester = 200m,
+                            RegistrationFeeRegularSemester = 150m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 8
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Capacity = 30,
+                            CreatedAt = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DurationInYears = 2,
+                            HourPriceBase = 35m,
+                            IsActive = true,
+                            ProgramId = 18,
+                            RegistrationFeeFirstSemester = 200m,
+                            RegistrationFeeRegularSemester = 150m,
+                            SemesterStartDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            StudySystem = 1,
+                            UniversityId = 8
                         });
                 });
 

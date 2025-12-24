@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using Uni_Selector.Data;
 using Uni_Selector.Helpers;
+using Uni_Selector.Models;
 using Uni_Selector.Models.Enums;
 using Uni_Selector.ViewModels.Admin;
 
@@ -11,6 +12,7 @@ namespace Uni_Selector.Controllers
 {
 
 
+    [Authorize(Roles = UserRoles.PlatformAdmin)]
     public class AdminController : Controller
     {
         private readonly AppDbContext _context;
@@ -433,6 +435,7 @@ namespace Uni_Selector.Controllers
 
 
     }
+
 }
 
 

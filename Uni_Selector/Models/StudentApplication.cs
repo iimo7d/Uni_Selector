@@ -21,7 +21,8 @@ namespace Uni_Selector.Models
         public DateTime? ApprovalDate { get; set; }
         public DateTime? UpdatedAt { get; set; }
         [StringLength(1000)] public string? Notes { get; set; }
-        [Range(30, 50)] public decimal? HourDiscountPercent { get; set; }
+        [Range(30, 50)]
+        public decimal? HourDiscountPercent { get; set; }
         public string? HourDiscountSetByUserId { get; set; }
         [ForeignKey("HourDiscountSetByUserId")]
         public ApplicationUser? HourDiscountSetByUser { get; set; }

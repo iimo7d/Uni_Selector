@@ -383,7 +383,9 @@
                                 </tr>
                                 <tr>
                                     <td class="text-secondary-light">Pending View</td>
-                                    <td class="text-end">@(Model.TotalRecommendations - Model.ViewedRecommendations).ToString("N0")</td>
+                                    <td class="text-end">
+                                        @((Model.TotalRecommendations - Model.ViewedRecommendations).ToString("N0"))
+                                    </td>
                                 </tr>
                                 <tr class="border-top">
                                     <td class="text-secondary-light fw-semibold">View Rate</td>

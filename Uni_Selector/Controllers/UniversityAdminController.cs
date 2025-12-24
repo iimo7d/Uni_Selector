@@ -12,7 +12,7 @@ using Uni_Selector.ViewModels.UniversityAdmin;
 
 namespace Uni_Selector.Controllers
 {
-    //[Authorize(Roles = UserRoles.PlatformAdmin)]
+    [Authorize(Roles = UserRoles.PlatformAdmin)]
     public class UniversityAdminController : Controller
     {
         private readonly AppDbContext _context;
@@ -970,6 +970,7 @@ namespace Uni_Selector.Controllers
         }
         #endregion
     }
+
 }
 
 

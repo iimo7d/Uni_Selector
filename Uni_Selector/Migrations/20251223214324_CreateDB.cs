@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Uni_Selector.Migrations
 {
     /// <inheritdoc />
-    public partial class Seeding : Migration
+    public partial class CreateDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -354,7 +352,8 @@ namespace Uni_Selector.Migrations
                     HasDisability = table.Column<bool>(type: "bit", nullable: false),
                     DisabilityType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsOrphan = table.Column<bool>(type: "bit", nullable: false),
-                    IsEmployeeChild = table.Column<bool>(type: "bit", nullable: false)
+                    IsEmployeeChild = table.Column<bool>(type: "bit", nullable: false),
+                    ProfileCompleted = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -545,7 +544,7 @@ namespace Uni_Selector.Migrations
                     ApprovalDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    HourDiscountPercent = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    HourDiscountPercent = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: true),
                     HourDiscountSetByUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     HourDiscountSetAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PlannedFirstSemesterHours = table.Column<int>(type: "int", nullable: true),
@@ -663,75 +662,6 @@ namespace Uni_Selector.Migrations
                         principalTable: "Universities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { "247845c3-87f8-46f1-a455-555c330c3c41", "d72e20f4-8245-4a69-ad2b-358a14cd4ce7", "Student", "STUDENT" },
-                    { "80f3af8c-17c5-456e-a4cc-15bb694e863b", "5b6cd610-3ead-4ec8-8d9d-2d4daf456312", "UniversityRep", "UNIVERSITYREP" },
-                    { "912202c3-2b0f-4a73-94e5-6d85d64fa4db", "bf10b102-86d0-4caa-8e36-3434a5bb91c4", "BtecAuthority", "BTECAUTHORITY" },
-                    { "dd348c1a-172c-41ce-81e7-d096a7596f93", "afa21429-070e-41b0-ad52-91e817a3beb2", "PlatformAdmin", "PLATFORMADMIN" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedAt", "Email", "EmailConfirmed", "FullName", "IsActive", "LastLoginAt", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "bc7c5647-7196-414a-b94a-5c1a51ff492c", 0, "4d33e595-96f6-48db-a638-33e59adba91b", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@uniselector.com", true, "Platform Administrator", true, null, false, null, "ADMIN@UNISELECTOR.COM", "ADMIN@UNISELECTOR.COM", "AQAAAAIAAYagAAAAEPFUaq3Y9kfJmwtE4V8iv3DpjWSDEPZV/zgI8eRG5DA/AI4lc65U32nkR5GAysqXmA==", null, false, "19cfcb40-6c5b-4e83-8796-ab1abf7741f9", false, "admin@uniselector.com" });
-
-            migrationBuilder.InsertData(
-                table: "Programs",
-                columns: new[] { "Id", "AcademicClassification", "CreatedAt", "Degree", "Description", "Language", "NameArabic", "NameEnglish", "TotalCreditHours" },
-                values: new object[,]
-                {
-                    { 1, "Engineering", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Bachelor's degree in Software Engineering", 1, "هندسة البرمجيات", "Software Engineering", 132 },
-                    { 2, "Engineering", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Bachelor's degree in Computer Science", 1, "علوم الحاسوب", "Computer Science", 132 },
-                    { 3, "Business", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Bachelor's degree in Business Administration", 3, "إدارة الأعمال", "Business Administration", 126 },
-                    { 4, "Medical", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Medical Doctor degree", 1, "الطب البشري", "Medicine", 240 },
-                    { 5, "Law", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Bachelor's degree in Law", 2, "القانون", "Law", 132 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Universities",
-                columns: new[] { "Id", "AcademicAccreditation", "City", "CommissionMode", "CreatedAt", "Email", "FullAddress", "ImagePath", "IsActive", "Latitude", "LogoPath", "Longitude", "NameArabic", "NameEnglish", "OfficialWebsite", "PhoneNumber", "Province", "Type", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, null, "Amman", 1, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "info@ju.edu.jo", "Queen Rania Street, Amman 11942, Jordan", null, true, 31.953900000000001, null, 35.910600000000002, "الجامعة الأردنية", "University of Jordan", "https://www.ju.edu.jo", "+96265355000", "Amman", 1, null },
-                    { 2, null, "Zarqa", 2, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "info@hu.edu.jo", "P.O. Box 330127, Zarqa 13133, Jordan", null, true, 32.136499999999998, null, 36.002200000000002, "الجامعة الهاشمية", "The Hashemite University", "https://www.hu.edu.jo", "+96253903333", "Zarqa", 1, null },
-                    { 3, null, "Amman", 3, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "info@asu.edu.jo", "Al-Arab Street, Shafa Badran, Amman 11931, Jordan", null, true, 32.0182, null, 35.8767, "جامعة العلوم التطبيقية", "Applied Science Private University", "https://www.asu.edu.jo", "+96264609999", "Amman", 1, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUserRoles",
-                columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "dd348c1a-172c-41ce-81e7-d096a7596f93", "bc7c5647-7196-414a-b94a-5c1a51ff492c" });
-
-            migrationBuilder.InsertData(
-                table: "UniversityPrograms",
-                columns: new[] { "Id", "Capacity", "CreatedAt", "DurationInYears", "HourPriceBase", "IsActive", "ProgramId", "RegistrationFeeFirstSemester", "RegistrationFeeRegularSemester", "SemesterStartDate", "StudySystem", "UniversityId", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, 100, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 85m, true, 1, 500m, 300m, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 1, null },
-                    { 2, 120, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 80m, true, 2, 500m, 300m, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 1, null },
-                    { 3, 150, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 70m, true, 3, 400m, 250m, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 2, null },
-                    { 4, 80, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 90m, true, 1, 600m, 350m, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 3, null },
-                    { 5, 100, new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 75m, true, 5, 450m, 275m, new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 3, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "EntryRequirements",
-                columns: new[] { "Id", "AcademicTrack", "AllowNoTawjihi", "EffectiveFrom", "EffectiveTo", "MinGPA", "Notes", "Path", "UniversityProgramId", "VocationalBranch" },
-                values: new object[,]
-                {
-                    { 1, 1, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 80.0, null, 1, 1, null },
-                    { 2, 1, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 75.0, null, 1, 2, null },
-                    { 3, 2, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 70.0, null, 1, 3, null },
-                    { 4, 1, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 68.0, null, 1, 3, null },
-                    { 5, 1, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 75.0, null, 1, 4, null },
-                    { 6, 2, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 72.0, null, 1, 5, null },
-                    { 7, 3, false, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 70.0, null, 1, 5, null }
                 });
 
             migrationBuilder.CreateIndex(

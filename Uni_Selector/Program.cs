@@ -11,7 +11,6 @@ using Uni_Selector.Service.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
@@ -47,15 +46,18 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy =
+        builder.Environment.IsDevelopment()
+            ? CookieSecurePolicy.SameAsRequest
+            : CookieSecurePolicy.Always;
 });
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("StudentOnly", policy => policy.RequireRole(UserRoles.Student));
-    options.AddPolicy("UniversityOnly", policy => policy.RequireRole(UserRoles.UniversityRep));
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole(UserRoles.PlatformAdmin));
-    options.AddPolicy("BTECAuthorityOnly", policy => policy.RequireRole(UserRoles.BtecAuthority));
+    options.AddPolicy("Student", policy => policy.RequireRole(UserRoles.Student));
+    options.AddPolicy("UniversityRep", policy => policy.RequireRole(UserRoles.UniversityRep));
+    options.AddPolicy("PlatformAdmin", policy => policy.RequireRole(UserRoles.PlatformAdmin));
+    options.AddPolicy("BtecAuthority", policy => policy.RequireRole(UserRoles.BtecAuthority));
 });
 
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -90,18 +92,28 @@ var localizationOptions = new RequestLocalizationOptions()
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
+builder.Services.AddDistributedMemoryCache();
+
+
+
+//// ? Seeders
+//builder.Services.AddScoped<IdentitySeeder>();
+//builder.Services.AddScoped<AppDataSeeder>();
+//builder.Services.AddScoped<DatabaseSeeder>();
+
 
 var app = builder.Build();
 
+
 if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
+    {
+        app.UseDeveloperExceptionPage();
+    }
+    else
+    {
+        app.UseExceptionHandler("/Home/Error");
+        app.UseHsts();
+    }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -111,11 +123,11 @@ app.UseMiddleware<ResponseTimeMiddleware>();
 app.UseRouting();
 
 app.UseRequestLocalization(localizationOptions);
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
@@ -127,5 +139,10 @@ app.MapControllerRoute(
 
 app.MapHub<NotificationHub>("/hubs/notification");
 
+//using (var scope = app.Services.CreateScope())
+//{
+//    var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+//    await seeder.SeedAsync();
+//}
 
 app.Run();

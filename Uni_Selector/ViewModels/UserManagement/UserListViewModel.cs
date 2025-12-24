@@ -2,13 +2,23 @@
 {
     public class UserListViewModel
     {
-        public string Id { get; set; }
-        public string FullName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Roles { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? LastLoginAt { get; set; }
+        public List<UserListItemViewModel> Users { get; set; } = new();
+        public int CurrentPage { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
+        public int TotalUsers { get; set; }
+        public int TotalPages => (int)Math.Ceiling((double)TotalUsers / PageSize);
+
+        // Filters
+        public string? SearchTerm { get; set; }
+        public string? Role { get; set; }
+        public bool? IsActive { get; set; }
+
+        // Summary
+        public int TotalActiveUsers { get; set; }
+        public int TotalInactiveUsers { get; set; }
+        public Dictionary<string, int> RoleCounts { get; set; } = new();
+
+        // Filter options
+        public List<string> AllRoles { get; set; } = new();
     }
 }

@@ -1,267 +1,81 @@
-﻿@model Uni_Selector.ViewModels.UserManagement.EditUserViewModel
+﻿@model Uni_Selector.ViewModels.UserManagement.UserEditViewModel
 @{
-    Layout = "_AdminLayout";
-    ViewData["Title"] = "Edit User";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; ViewData["Title"] = "Edit User";
 }
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24"><h6 class="fw-semibold mb-0">Edit User</h6><ul class="d-flex align-items-center gap-2"><li class="fw-medium"><a href="@Url.Action("Index", "Admin")" class="d-flex align-items-center gap-1 hover-text-primary"><iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon> Dashboard</a></li><li>-</li><li class="fw-medium"><a href="@Url.Action("Index")" class="hover-text-primary">Users</a></li><li>-</li><li class="fw-medium">Edit</li></ul></div>
+<div class="row justify-content-center">
+    <div class="col-xxl-9 col-xl-10">
+        <div class="card radius-12">
+            <div class="card-header py-16 px-24 bg-base border-bottom"><h6 class="text-lg fw-semibold mb-0">User Information</h6></div><div class="card-body p-24">
+                <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()<input type="hidden" asp-for="Id" /><input type="hidden" asp-for="CreatedAt" /><input type="hidden" asp-for="LastLoginAt" /><input type="hidden" asp-for="StudentId" /><input type="hidden" asp-for="UniversityRepresentativeId" /><div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="alert alert-info-focus d-flex align-items-center gap-12 mb-24">
+                        <iconify-icon icon="solar:info-circle-outline" class="icon text-xl"></iconify-icon><div>
+                            <small class="d-block"><strong>Created:</strong> @Model.CreatedAt.ToString("dd MMM yyyy, HH:mm")</small>@if (Model.LastLoginAt.HasValue)
+                            {
+                                <small class="d-block"><strong>Last Login:</strong> @Model.LastLoginAt.Value.ToString("dd MMM yyyy, HH:mm")</small>
+                            }
+                                                        else
+                            {
 
-<!-- Breadcrumb -->
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-    <h6 class="fw-semibold mb-0">Edit User</h6>
-    <ul class="d-flex align-items-center gap-2">
-        <li class="fw-medium">
-            <a asp-action="Index" asp-controller="Dashboard" class="d-flex align-items-center gap-1 hover-text-primary">
-                <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
-                Dashboard
-            </a>
-        </li>
-        <li>-</li>
-        <li class="fw-medium">
-            <a asp-action="Index" class="d-flex align-items-center gap-1 hover-text-primary">
-                Users
-            </a>
-        </li>
-        <li>-</li>
-        <li class="fw-medium">Edit</li>
-    </ul>
-</div>
-
-<div class="card">
-    <div class="card-header">
-        <h5 class="card-title mb-0">Edit User Information</h5>
-    </div>
-    <div class="card-body">
-        <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="row gy-3 needs-validation" novalidate id="editUserForm">
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="Id" />
-
-            <!-- Validation Summary -->
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="col-12">
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <div class="d-flex align-items-center gap-2">
-                            <iconify-icon icon="solar:danger-circle-bold" class="text-xl"></iconify-icon>
-                            <div>
-                                <h6 class="mb-1">Please correct the following errors:</h6>
-                                <ul class="mb-0">
-                                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                <small class="d-block"><strong>Last Login:</strong> Never</small>
+                            }
+                        </div>
+                    </div>
+                    <h6 class="text-md text-primary-light mb-16 fw-semibold">Basic Information</h6><div class="row gy-3">
+                        <div class="col-sm-6"><label asp-for="FullName" class="form-label fw-semibold text-primary-light text-sm mb-8">Full Name <span class="text-danger-600">*</span></label><input asp-for="FullName" type="text" class="form-control radius-8" placeholder="Enter full name"><span asp-validation-for="FullName" class="text-danger text-sm"></span></div>
+                        <div class="col-sm-6"><label asp-for="Email" class="form-label fw-semibold text-primary-light text-sm mb-8">Email <span class="text-danger-600">*</span></label><input asp-for="Email" type="email" class="form-control radius-8" placeholder="Enter email address"><span asp-validation-for="Email" class="text-danger text-sm"></span></div>
+                        <div class="col-sm-6"><label asp-for="PhoneNumber" class="form-label fw-semibold text-primary-light text-sm mb-8">Phone Number</label><input asp-for="PhoneNumber" type="tel" class="form-control radius-8" placeholder="Enter phone number"><span asp-validation-for="PhoneNumber" class="text-danger text-sm"></span></div>
+                        <div class="col-sm-6">
+                            <label asp-for="Role" class="form-label fw-semibold text-primary-light text-sm mb-8">Role <span class="text-danger-600">*</span></label><select asp-for="Role" class="form-control radius-8" id="roleSelect">
+                                <option value="">Select Role</option>@foreach (var role in Model.AvailableRoles)
+                                {
+                                    <option value="@role" selected="@(Model.Role == role)">@role</option>
+                                }
+                            </select><span asp-validation-for="Role" class="text-danger text-sm"></span>
+                        </div>
+                        <div class="col-sm-6"><div class="form-check form-switch"><input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActive"><label class="form-check-label fw-medium text-secondary-light" for="isActive">Active Account</label></div></div>
+                        <div class="col-sm-6"><div class="form-check form-switch"><input asp-for="EmailConfirmed" class="form-check-input" type="checkbox" id="emailConfirmed"><label class="form-check-label fw-medium text-secondary-light" for="emailConfirmed">Email Confirmed</label></div></div>
+                    </div>
+                    <div id="studentFields" style="display: none;">
+                        <hr class="my-24"><h6 class="text-md text-primary-light mb-16 fw-semibold">Student Information</h6><div class="row gy-3">
+                            <div class="col-sm-4"><label asp-for="DateOfBirth" class="form-label fw-semibold text-primary-light text-sm mb-8">Date of Birth</label><input asp-for="DateOfBirth" type="date" class="form-control radius-8"><span asp-validation-for="DateOfBirth" class="text-danger text-sm"></span></div>
+                            <div class="col-sm-4"><label asp-for="Gender" class="form-label fw-semibold text-primary-light text-sm mb-8">Gender</label><select asp-for="Gender" class="form-control radius-8" asp-items="Html.GetEnumSelectList<Uni_Selector.Models.Enums.Gender>()"><option value="">Select Gender</option></select><span asp-validation-for="Gender" class="text-danger text-sm"></span></div>
+                            <div class="col-sm-4"><label asp-for="GPA" class="form-label fw-semibold text-primary-light text-sm mb-8">GPA</label><input asp-for="GPA" type="number" step="0.01" min="0" max="100" class="form-control radius-8" placeholder="0.00"><span asp-validation-for="GPA" class="text-danger text-sm"></span></div>
+                            <div class="col-sm-6"><label asp-for="Province" class="form-label fw-semibold text-primary-light text-sm mb-8">Province</label><input asp-for="Province" type="text" class="form-control radius-8" placeholder="e.g., Amman"><span asp-validation-for="Province" class="text-danger text-sm"></span></div>
+                            <div class="col-sm-6"><label asp-for="City" class="form-label fw-semibold text-primary-light text-sm mb-8">City</label><input asp-for="City" type="text" class="form-control radius-8" placeholder="Enter city"><span asp-validation-for="City" class="text-danger text-sm"></span></div>
+                            <div class="col-sm-6"><label asp-for="Path" class="form-label fw-semibold text-primary-light text-sm mb-8">Path Type</label><select asp-for="Path" class="form-control radius-8" id="pathSelect" asp-items="Html.GetEnumSelectList<Uni_Selector.Models.Enums.PathType>()"><option value="">Select Path</option></select><span asp-validation-for="Path" class="text-danger text-sm"></span></div>
+                            <div class="col-sm-6" id="academicTrackField" style="display:none;"><label asp-for="AcademicTrack" class="form-label fw-semibold text-primary-light text-sm mb-8">Academic Track</label><select asp-for="AcademicTrack" class="form-control radius-8" asp-items="Html.GetEnumSelectList<Uni_Selector.Models.Enums.AcademicTrack>()"><option value="">Select Track</option></select><span asp-validation-for="AcademicTrack" class="text-danger text-sm"></span></div>
+                            <div class="col-sm-6" id="vocationalBranchField" style="display:none;"><label asp-for="VocationalBranch" class="form-label fw-semibold text-primary-light text-sm mb-8">Vocational Branch</label><select asp-for="VocationalBranch" class="form-control radius-8" asp-items="Html.GetEnumSelectList<Uni_Selector.Models.Enums.VocationalBranch>()"><option value="">Select Branch</option></select><span asp-validation-for="VocationalBranch" class="text-danger text-sm"></span></div>
+                            <div class="col-sm-6"><label asp-for="RegistrationBudget" class="form-label fw-semibold text-primary-light text-sm mb-8">Registration Budget (JOD)</label><input asp-for="RegistrationBudget" type="number" step="0.01" min="0" class="form-control radius-8" placeholder="0.00"><span asp-validation-for="RegistrationBudget" class="text-danger text-sm"></span></div>
+                            <div class="col-12"><div class="form-check form-switch"><input asp-for="ProfileCompleted" class="form-check-input" type="checkbox" id="profileCompleted"><label class="form-check-label fw-medium text-secondary-light" for="profileCompleted">Profile Completed</label></div></div>
+                        </div>
+                    </div>
+                    <div id="universityRepFields" style="display: none;">
+                        <hr class="my-24"><h6 class="text-md text-primary-light mb-16 fw-semibold">University Representative Information</h6><div class="row gy-3">
+                            <div class="col-sm-12">
+                                <label asp-for="UniversityId" class="form-label fw-semibold text-primary-light text-sm mb-8">University <span class="text-danger-600">*</span></label><select asp-for="UniversityId" class="form-control radius-8">
+                                    <option value="">Select University</option>@foreach (var uni in Model.AvailableUniversities)
                                     {
-                                        <li>@error.ErrorMessage</li>
+                                        <option value="@uni.Id" selected="@(Model.UniversityId == uni.Id)">@uni.Name</option>
                                     }
-                                </ul>
+                                </select><span asp-validation-for="UniversityId" class="text-danger text-sm"></span>
                             </div>
-                        </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                </div>
-            }
-
-            <!-- Basic Information -->
-            <div class="col-12">
-                <h6 class="text-md mb-16">Basic Information</h6>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                <div class="icon-field has-validation">
-                    <span class="icon">
-                        <iconify-icon icon="f7:person"></iconify-icon>
-                    </span>
-                    <input asp-for="FullName" class="form-control" placeholder="Enter full name" required>
-                    <span asp-validation-for="FullName" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">Email Address <span class="text-danger">*</span></label>
-                <div class="icon-field has-validation">
-                    <span class="icon">
-                        <iconify-icon icon="mage:email"></iconify-icon>
-                    </span>
-                    <input asp-for="Email" type="email" class="form-control" placeholder="Enter email address" readonly>
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <small class="text-secondary-light">Email cannot be changed</small>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">Phone Number</label>
-                <div class="icon-field">
-                    <span class="icon">
-                        <iconify-icon icon="solar:phone-calling-linear"></iconify-icon>
-                    </span>
-                    <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="+962 79 123 4567">
-                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">Role <span class="text-danger">*</span></label>
-                <select asp-for="Role" asp-items="Model.AvailableRoles" class="form-select form-control h-48-px" id="roleSelect" required>
-                    <option value="">Select Role</option>
-                </select>
-                <span asp-validation-for="Role" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">Account Status <span class="text-danger">*</span></label>
-                <select asp-for="IsActive" class="form-select form-control h-48-px" required>
-                    <option value="true">Active</option>
-                    <option value="false">Locked</option>
-                </select>
-                <span asp-validation-for="IsActive" class="text-danger"></span>
-            </div>
-
-            <!-- Password Section (Optional) -->
-            <div class="col-12 mt-24">
-                <h6 class="text-md mb-16">Change Password (Optional)</h6>
-                <p class="text-secondary-light mb-16">Leave blank if you don't want to change the password</p>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">New Password</label>
-                <div class="icon-field">
-                    <span class="icon">
-                        <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
-                    </span>
-                    <input asp-for="NewPassword" type="password" class="form-control" placeholder="Enter new password" id="newPassword" data-val="false">
-                    <span asp-validation-for="NewPassword" class="text-danger"></span>
-                </div>
-                <small class="text-secondary-light">Leave blank to keep current password. Minimum 6 characters if changing.</small>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">Confirm New Password</label>
-                <div class="icon-field">
-                    <span class="icon">
-                        <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
-                    </span>
-                    <input type="password" name="ConfirmNewPassword" class="form-control" placeholder="Confirm new password" id="confirmNewPassword" data-val="false">
-                    <div class="invalid-feedback">Passwords do not match</div>
-                </div>
-            </div>
-
-            <!-- University Representative Section (Hidden by default) -->
-            <div id="universityRepSection" class="col-12" style="display: none;">
-                <div class="row gy-3">
-                    <div class="col-12 mt-24">
-                        <h6 class="text-md mb-16">University Representative Details</h6>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">University <span class="text-danger" id="universityRequired">*</span></label>
-                        <div class="icon-field">
-                            <span class="icon">
-                                <iconify-icon icon="solar:buildings-2-linear"></iconify-icon>
-                            </span>
-                            <select asp-for="UniversityId" asp-items="Model.AvailableUniversities" class="form-select" id="universitySelect">
-                                <option value="">Select University</option>
-                            </select>
-                            <span asp-validation-for="UniversityId" class="text-danger"></span>
+                            <div class="col-sm-6"><label asp-for="Position" class="form-label fw-semibold text-primary-light text-sm mb-8">Position/Title</label><input asp-for="Position" type="text" class="form-control radius-8" placeholder="e.g., Admissions Director"><span asp-validation-for="Position" class="text-danger text-sm"></span></div>
                         </div>
                     </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Position</label>
-                        <div class="icon-field">
-                            <span class="icon">
-                                <iconify-icon icon="solar:case-minimalistic-linear"></iconify-icon>
-                            </span>
-                            <input asp-for="Position" class="form-control" placeholder="e.g., Admissions Director">
-                            <span asp-validation-for="Position" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label d-block mb-12">Permissions</label>
-                        <div class="row gy-3">
-                            <div class="col-md-4">
-                                <div class="form-check style-check d-flex align-items-center">
-                                    <input asp-for="CanManagePrograms" class="form-check-input" type="checkbox">
-                                    <label asp-for="CanManagePrograms" class="form-check-label">
-                                        Can Manage Programs
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-check style-check d-flex align-items-center">
-                                    <input asp-for="CanManageFees" class="form-check-input" type="checkbox">
-                                    <label asp-for="CanManageFees" class="form-check-label">
-                                        Can Manage Fees
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-check style-check d-flex align-items-center">
-                                    <input asp-for="CanViewApplications" class="form-check-input" type="checkbox">
-                                    <label asp-for="CanViewApplications" class="form-check-label">
-                                        Can View Applications
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    <div id="adminFields" style="display: none;"><hr class="my-24"><div class="alert alert-info"><iconify-icon icon="solar:info-circle-outline" class="icon text-xl me-8"></iconify-icon>No additional information required for this role.</div></div>
+                    <div class="d-flex align-items-center justify-content-center gap-3 mt-32"><a href="@Url.Action("Index")" class="btn btn-outline-danger border border-danger-600 text-md px-56 py-11 radius-8"><iconify-icon icon="ep:back" class="icon text-lg me-4"></iconify-icon>Cancel</a><button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-11 radius-8"><iconify-icon icon="solar:check-circle-outline" class="icon text-lg me-4"></iconify-icon>Update User</button></div>
+                </form>
             </div>
-
-            <!-- Student Section (Hidden by default) -->
-            <div id="studentSection" class="col-12" style="display: none;">
-                <div class="alert alert-info" role="alert">
-                    <div class="d-flex align-items-center gap-2">
-                        <iconify-icon icon="solar:info-circle-bold" class="text-xl"></iconify-icon>
-                        <div>
-                            <strong>Student Account:</strong> Students can complete their profile and submit applications after registration.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Platform Admin Section (Hidden by default) -->
-            <div id="adminSection" class="col-12" style="display: none;">
-                <div class="alert alert-warning" role="alert">
-                    <div class="d-flex align-items-center gap-2">
-                        <iconify-icon icon="solar:shield-warning-bold" class="text-xl"></iconify-icon>
-                        <div>
-                            <strong>Platform Admin:</strong> This user will have full access to all system features and settings.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- BTEC Authority Section (Hidden by default) -->
-            <div id="btecSection" class="col-12" style="display: none;">
-                <div class="alert alert-primary" role="alert">
-                    <div class="d-flex align-items-center gap-2">
-                        <iconify-icon icon="solar:diploma-bold" class="text-xl"></iconify-icon>
-                        <div>
-                            <strong>BTEC Authority:</strong> This user can review and approve BTEC programs submitted by universities.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Form Actions -->
-            <div class="col-12 mt-32">
-                <div class="d-flex align-items-center gap-3">
-                    <button type="submit" class="btn btn-primary-600 px-40">
-                        <i class="ri-save-line"></i> Update User
-                    </button>
-                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info px-40">
-                        <i class="ri-eye-line"></i> View Details
-                    </a>
-                    <a asp-action="Index" class="btn btn-outline-secondary px-40">
-                        <i class="ri-arrow-left-line"></i> Back to List
-                    </a>
-                </div>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
-
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <script src="~/adminAssets/js/user-role-manager.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function updateFieldVisibility() { const role = document.getElementById('roleSelect').value; document.getElementById('studentFields').style.display = 'none'; document.getElementById('universityRepFields').style.display = 'none'; document.getElementById('adminFields').style.display = 'none'; if (role === 'Student') { document.getElementById('studentFields').style.display = 'block'; } else if (role === 'UniversityRepresentative') { document.getElementById('universityRepFields').style.display = 'block'; } else if (role === 'PlatformAdmin' || role === 'BtecAuthority') { document.getElementById('adminFields').style.display = 'block'; } }
+            document.getElementById('roleSelect').addEventListener('change', updateFieldVisibility);
+            document.getElementById('pathSelect')?.addEventListener('change', function () { const path = parseInt(this.value); document.getElementById('academicTrackField').style.display = 'none'; document.getElementById('vocationalBranchField').style.display = 'none'; if (path === 1) { document.getElementById('academicTrackField').style.display = 'block'; } else if (path === 2) { document.getElementById('vocationalBranchField').style.display = 'block'; } });
+            window.addEventListener('DOMContentLoaded', function () { updateFieldVisibility(); const pathSelect = document.getElementById('pathSelect'); if (pathSelect && pathSelect.value) { pathSelect.dispatchEvent(new Event('change')); } });</script>
 }

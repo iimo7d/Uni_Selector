@@ -52,6 +52,8 @@ namespace Uni_Selector.Models
         public string? DisabilityType { get; set; }
         public bool IsOrphan { get; set; }
         public bool IsEmployeeChild { get; set; }
+        
+        public bool? ProfileCompleted { get; set; } = false;
 
         public ICollection<Recommendation> Recommendations { get; set; }
         public ICollection<StudentApplication> Applications { get; set; }
