@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Uni_Selector.Data;
 using Uni_Selector.Models;
 using Uni_Selector.Service.Interface;
 using Uni_Selector.ViewModels.Account;
@@ -13,14 +15,16 @@ namespace Uni_Selector.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
-        private readonly ILogger<AccountController> _logger;
+        private readonly ILogger<AccountController> _logger; 
+        private readonly AppDbContext _context;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailService emailService,
             ILogger<AccountController> logger,
-            RoleManager<IdentityRole> roleManager
+            RoleManager<IdentityRole> roleManager,
+            AppDbContext context
             )
         {
             _roleManager = roleManager;
@@ -28,6 +32,7 @@ namespace Uni_Selector.Controllers
             _signInManager = signInManager;
             _emailService = emailService;
             _logger = logger;
+            _context = context;
         }
 
         // ENDPOINT 1: Login/Register Page (Unified)
@@ -257,7 +262,7 @@ namespace Uni_Selector.Controllers
         {
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Account");
             }
 
             var user = await _userManager.FindByIdAsync(userId);
@@ -271,14 +276,142 @@ namespace Uni_Selector.Controllers
             if (result.Succeeded)
             {
                 await _emailService.SendWelcomeEmailAsync(user.Email, user.FullName);
-                TempData["SuccessMessage"] = "Email confirmed successfully! Welcome to Uni Selector.";
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Email confirmation failed. The link may have expired.";
+
+                TempData["SuccessMessage"] =
+                    "Email confirmed successfully! Please complete your profile to continue.";
+
+                return RedirectToAction(
+                    actionName: "CompleteProfile",
+                    controllerName: "Student");
             }
 
-            return RedirectToAction("Login");
+            TempData["ErrorMessage"] =
+                "Email confirmation failed. The link may have expired.";
+
+            return RedirectToAction("Login", "Account");
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> Me(string? id)
+        {
+            try
+            {
+                // If no id provided, use current logged-in user
+                var userId = id ?? _userManager.GetUserId(User);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    TempData["ErrorMessage"] = "User not found.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Get the user
+                var user = await _userManager.Users
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User not found.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Check if the current user can view this profile
+                var currentUserId = _userManager.GetUserId(User);
+                var isAdmin = User.IsInRole(UserRoles.PlatformAdmin);
+
+                if (currentUserId != userId && !isAdmin)
+                {
+                    TempData["ErrorMessage"] = "You don't have permission to view this profile.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Get user roles
+                var roles = await _userManager.GetRolesAsync(user);
+                var primaryRole = roles.FirstOrDefault() ?? "Unknown";
+
+                // Build the view model
+                var viewModel = new UserProfileViewModel
+                {
+                    UserId = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    IsActive = user.IsActive,
+                    CreatedAt = user.CreatedAt,
+                    LastLoginAt = user.LastLoginAt,
+                    Role = primaryRole
+                };
+
+                // Populate role-specific data
+                if (primaryRole == UserRoles.Student)
+                {
+                    var student = await _context.Students
+                        .Include(s => s.FamilyConnectionUniversity)
+                        .FirstOrDefaultAsync(s => s.UserId == userId);
+
+                    if (student != null)
+                    {
+                        viewModel.NationalId = student.NationalId;
+                        viewModel.SeatNumber = student.SeatNumber;
+                        viewModel.Gender = student.Gender.ToString();
+                        viewModel.DateOfBirth = student.DateOfBirth;
+                        viewModel.Nationality = student.Nationality;
+                        viewModel.Province = student.Province;
+                        viewModel.City = student.City;
+                        viewModel.Area = student.Area;
+                        viewModel.GPA = student.GPA;
+                        viewModel.PathType = student.Path.ToString();
+                        viewModel.AcademicTrack = student.AcademicTrack?.ToString();
+                        viewModel.VocationalBranch = student.VocationalBranch?.ToString();
+                        viewModel.BtecLevel2Completed = student.BtecLevel2Completed;
+                        viewModel.BtecLevel3Completed = student.BtecLevel3Completed;
+                        viewModel.BtecCertificateUrl = student.BtecCertificateUrl;
+                        viewModel.RegistrationBudget = student.RegistrationBudget;
+                        viewModel.DesiredMajors = student.DesiredMajors;
+                        viewModel.PreferredCity = student.PreferredCity;
+                        viewModel.MaxDistanceKm = student.MaxDistanceKm;
+                        viewModel.PreferredLanguage = student.PreferredLanguage.ToString();
+                        viewModel.HasFamilyConnection = student.HasFamilyConnection;
+                        viewModel.FamilyConnectionUniversityName = student.FamilyConnectionUniversity?.NameEnglish;
+                        viewModel.GuardianName = student.GuardianName;
+                        viewModel.GuardianPhone = student.GuardianPhone;
+                        viewModel.GuardianRelation = student.GuardianRelation;
+                        viewModel.HasDisability = student.HasDisability;
+                        viewModel.DisabilityType = student.DisabilityType;
+                        viewModel.IsOrphan = student.IsOrphan;
+                        viewModel.IsEmployeeChild = student.IsEmployeeChild;
+                        viewModel.ProfileCompleted = student.ProfileCompleted;
+                    }
+                }
+                else if (primaryRole == UserRoles.UniversityRep)
+                {
+                    var rep = await _context.UniversityRepresentatives
+                        .Include(r => r.University)
+                        .FirstOrDefaultAsync(r => r.UserId == userId);
+
+                    if (rep != null)
+                    {
+                        viewModel.UniversityName = rep.University.NameEnglish;
+                        viewModel.Position = rep.Position;
+                        viewModel.CanManagePrograms = rep.CanManagePrograms;
+                        viewModel.CanManageFees = rep.CanManageFees;
+                        viewModel.CanViewApplications = rep.CanViewApplications;
+                        viewModel.AssignedAt = rep.AssignedAt;
+                        viewModel.RepIsActive = rep.IsActive;
+                    }
+                }
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "An error occurred while loading the profile.";
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }
+
+

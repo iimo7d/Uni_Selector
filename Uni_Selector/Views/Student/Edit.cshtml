@@ -1,0 +1,449 @@
+﻿@using Uni_Selector.Models.Enums
+@using Uni_Selector.ViewModels.Students
+@model EditProfileViewModel
+
+@{
+    ViewData["Title"] = "Edit Your Profile";
+}
+
+<!-- Breadcrumb -->
+<section class="bg-whiteColor dark:bg-whiteColor-dark py-30px">
+    <div class="container 3xl:container-secondary-lg 4xl:container mx-auto">
+        <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-blackColor dark:text-blackColor-dark">
+                Edit Your Profile
+            </h2>
+            <ul class="flex gap-1 text-sm text-contentColor dark:text-contentColor-dark">
+                <li><a asp-action="Index" asp-controller="Dashboard" class="hover:text-primaryColor">Dashboard</a></li>
+                <li>/</li>
+                <li>Edit Profile</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="py-50px">
+    <div class="container 3xl:container-secondary-lg 4xl:container mx-auto">
+        <div class="bg-whiteColor dark:bg-whiteColor-dark shadow-md rounded-lg">
+
+            <form asp-action="Edit" method="post" enctype="multipart/form-data" id="editProfileForm">
+                <div asp-validation-summary="ModelOnly" class="text-red-500 mb-4"></div>
+
+                <!-- Accordion Section -->
+                <div class="accordion mb-5">
+                    <!-- Personal Information Accordion -->
+                    <div class="bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark">
+                        <div class="py-5 px-30px">
+                            <div class="cursor-pointer accordion-controller flex justify-between items-center text-lg text-headingColor font-semibold w-full dark:text-headingColor-dark">
+                                <div><span>Personal Information</span></div>
+                                <svg class="transition-all duration-500 rotate-0" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#212529">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="accordion-content transition-all duration-500 overflow-hidden h-0">
+                            <div class="content-wrapper py-4 px-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <!-- Display Only Fields -->
+                                    <div>
+                                        <label class="block mb-2 font-semibold">Full Name</label>
+                                        <input type="text" value="@Model.FullName" disabled class="w-full py-2 px-4 bg-gray-100 border border-borderColor rounded-md" />
+                                    </div>
+                                    <div>
+                                        <label class="block mb-2 font-semibold">Email</label>
+                                        <input type="text" value="@Model.Email" disabled class="w-full py-2 px-4 bg-gray-100 border border-borderColor rounded-md" />
+                                    </div>
+                                    <div>
+                                        <label class="block mb-2 font-semibold">Phone Number</label>
+                                        <input type="text" value="@Model.PhoneNumber" disabled class="w-full py-2 px-4 bg-gray-100 border border-borderColor rounded-md" />
+                                    </div>
+
+                                    <div>
+                                        <label asp-for="NationalId" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="NationalId" class="w-full py-2 px-4 border border-borderColor rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" />
+                                        <span asp-validation-for="NationalId" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div>
+                                        <label asp-for="SeatNumber" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="SeatNumber" class="w-full py-2 px-4 border border-borderColor rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" />
+                                        <span asp-validation-for="SeatNumber" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div>
+                                        <label asp-for="Gender" class="block mb-2 font-semibold"></label>
+                                        <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="w-full py-2 px-4 border border-borderColor rounded-md">
+                                            <option value="">-- Select Gender --</option>
+                                        </select>
+                                        <span asp-validation-for="Gender" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div>
+                                        <label asp-for="DateOfBirth" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="DateOfBirth" type="date" class="w-full py-2 px-4 border border-borderColor rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" />
+                                        <span asp-validation-for="DateOfBirth" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div>
+                                        <label asp-for="Nationality" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="Nationality" class="w-full py-2 px-4 border border-borderColor rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" />
+                                        <span asp-validation-for="Nationality" class="text-red-500 text-sm"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guardian Information Accordion -->
+                    <div class="bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark mt-5">
+                        <div class="py-5 px-30px">
+                            <div class="cursor-pointer accordion-controller flex justify-between items-center text-lg text-headingColor font-semibold w-full dark:text-headingColor-dark">
+                                <div><span>Guardian Information</span></div>
+                                <svg class="transition-all duration-500 rotate-0" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#212529">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="accordion-content transition-all duration-500 overflow-hidden h-0">
+                            <div class="content-wrapper py-4 px-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label asp-for="GuardianName" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="GuardianName" class="w-full py-2 px-4 border border-borderColor rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" />
+                                        <span asp-validation-for="GuardianName" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div>
+                                        <label asp-for="GuardianPhone" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="GuardianPhone" class="w-full py-2 px-4 border border-borderColor rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" />
+                                        <span asp-validation-for="GuardianPhone" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div>
+                                        <label asp-for="GuardianRelation" class="block mb-2 font-semibold"></label>
+                                        <select asp-for="GuardianRelation" class="w-full py-2 px-4 border border-borderColor rounded-md">
+                                            <option value="">-- Select Relation --</option>
+                                            @foreach (var relation in ViewBag.GuardianRelations as List<string>)
+                                            {
+                                                <option value="@relation">@relation</option>
+                                            }
+                                        </select>
+                                        <span asp-validation-for="GuardianRelation" class="text-red-500 text-sm"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Information Accordion -->
+                    <div class="bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark mt-5">
+                        <div class="py-5 px-30px">
+                            <div class="cursor-pointer accordion-controller flex justify-between items-center text-lg text-headingColor font-semibold w-full dark:text-headingColor-dark">
+                                <div><span>Location Information</span></div>
+                                <svg class="transition-all duration-500 rotate-0" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#212529">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="accordion-content transition-all duration-500 overflow-hidden h-0">
+                            <div class="content-wrapper py-4 px-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label asp-for="Province" class="block mb-2 font-semibold"></label>
+                                        <select asp-for="Province" class="w-full py-2 px-4 border border-borderColor rounded-md">
+                                            <option value="">-- Select Province --</option>
+                                            @foreach (var province in ViewBag.Provinces as List<string>)
+                                            {
+                                                <option value="@province">@province</option>
+                                            }
+                                        </select>
+                                        <span asp-validation-for="Province" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div>
+                                        <label asp-for="City" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="City" class="w-full py-2 px-4 border border-borderColor rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" />
+                                        <span asp-validation-for="City" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div class="md:col-span-2">
+                                        <label asp-for="Area" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="Area" class="w-full py-2 px-4 border border-borderColor rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" />
+                                        <span asp-validation-for="Area" class="text-red-500 text-sm"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Academic Information Accordion -->
+                    <div class="bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark mt-5">
+                        <div class="py-5 px-30px">
+                            <div class="cursor-pointer accordion-controller flex justify-between items-center text-lg text-headingColor font-semibold w-full dark:text-headingColor-dark">
+                                <div><span>Academic Information</span></div>
+                                <svg class="transition-all duration-500 rotate-0" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#212529">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="accordion-content transition-all duration-500 overflow-hidden h-0">
+                            <div class="content-wrapper py-4 px-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label asp-for="GPA" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="GPA" type="number" step="0.01" min="0" max="100" class="w-full py-2 px-4 border border-borderColor rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" />
+                                        <span asp-validation-for="GPA" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div>
+                                        <label asp-for="Path" class="block mb-2 font-semibold"></label>
+                                        <select asp-for="Path" id="pathSelect" asp-items="Html.GetEnumSelectList<PathType>()" class="w-full py-2 px-4 border border-borderColor rounded-md">
+                                            <option value="">-- Select Educational Path --</option>
+                                        </select>
+                                        <span asp-validation-for="Path" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div id="academicTrackDiv" style="display:none;">
+                                        <label asp-for="AcademicTrack" class="block mb-2 font-semibold"></label>
+                                        <select asp-for="AcademicTrack" asp-items="Html.GetEnumSelectList<AcademicTrack>()" class="w-full py-2 px-4 border border-borderColor rounded-md">
+                                            <option value="">-- Select Academic Track --</option>
+                                        </select>
+                                    </div>
+
+                                    <div id="vocationalBranchDiv" style="display:none;">
+                                        <label asp-for="VocationalBranch" class="block mb-2 font-semibold"></label>
+                                        <select asp-for="VocationalBranch" asp-items="Html.GetEnumSelectList<VocationalBranch>()" class="w-full py-2 px-4 border border-borderColor rounded-md">
+                                            <option value="">-- Select Vocational Branch --</option>
+                                        </select>
+                                    </div>
+
+                                    <div id="btecDiv" style="display:none;" class="md:col-span-2">
+                                        <div class="flex gap-4 mb-3">
+                                            <div class="flex items-center">
+                                                <input asp-for="BtecLevel2Completed" type="checkbox" class="mr-2" />
+                                                <label asp-for="BtecLevel2Completed">BTEC Level 2 Completed</label>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <input asp-for="BtecLevel3Completed" type="checkbox" class="mr-2" />
+                                                <label asp-for="BtecLevel3Completed">BTEC Level 3 Completed</label>
+                                            </div>
+                                        </div>
+
+                                        @if (!string.IsNullOrEmpty(Model.CurrentBtecCertificateUrl))
+                                        {
+                                            <div class="mb-3">
+                                                <label class="block mb-2 font-semibold">Current BTEC Certificate</label>
+                                                <a href="@Model.CurrentBtecCertificateUrl" target="_blank" class="text-primaryColor hover:underline">
+                                                    <i class="icofont-file-pdf"></i> View Current Certificate
+                                                </a>
+                                            </div>
+                                        }
+
+                                        <div>
+                                            <label asp-for="BtecCertificateFile" class="block mb-2 font-semibold">Upload New BTEC Certificate</label>
+                                            <input asp-for="BtecCertificateFile" type="file" accept=".pdf,.jpg,.jpeg,.png" class="w-full py-2 px-4 border border-borderColor rounded-md" />
+                                            <small class="text-gray-500">Leave empty to keep current certificate</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preferences Accordion -->
+                    <div class="bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark mt-5">
+                        <div class="py-5 px-30px">
+                            <div class="cursor-pointer accordion-controller flex justify-between items-center text-lg text-headingColor font-semibold w-full dark:text-headingColor-dark">
+                                <div><span>University Preferences</span></div>
+                                <svg class="transition-all duration-500 rotate-0" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#212529">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="accordion-content transition-all duration-500 overflow-hidden h-0">
+                            <div class="content-wrapper py-4 px-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label asp-for="RegistrationBudget" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="RegistrationBudget" type="number" step="0.01" min="0" class="w-full py-2 px-4 border border-borderColor rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" />
+                                        <span asp-validation-for="RegistrationBudget" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div>
+                                        <label asp-for="PreferredCity" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="PreferredCity" class="w-full py-2 px-4 border border-borderColor rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" />
+                                        <span asp-validation-for="PreferredCity" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div>
+                                        <label asp-for="MaxDistanceKm" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="MaxDistanceKm" type="number" min="1" max="200" class="w-full py-2 px-4 border border-borderColor rounded-md" />
+                                        <span asp-validation-for="MaxDistanceKm" class="text-red-500 text-sm"></span>
+                                    </div>
+
+                                    <div>
+                                        <label asp-for="PreferredLanguage" class="block mb-2 font-semibold"></label>
+                                        <select asp-for="PreferredLanguage" asp-items="Html.GetEnumSelectList<LanguageCode>()" class="w-full py-2 px-4 border border-borderColor rounded-md">
+                                        </select>
+                                    </div>
+
+                                    <div class="md:col-span-2">
+                                        <label asp-for="DesiredMajors" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="DesiredMajors" class="w-full py-2 px-4 border border-borderColor rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" placeholder="Separate majors with commas" />
+                                        <span asp-validation-for="DesiredMajors" class="text-red-500 text-sm"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Special Circumstances Accordion -->
+                    <div class="bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark mt-5">
+                        <div class="py-5 px-30px">
+                            <div class="cursor-pointer accordion-controller flex justify-between items-center text-lg text-headingColor font-semibold w-full dark:text-headingColor-dark">
+                                <div><span>Special Circumstances</span></div>
+                                <svg class="transition-all duration-500 rotate-0" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#212529">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="accordion-content transition-all duration-500 overflow-hidden h-0">
+                            <div class="content-wrapper py-4 px-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="flex items-center">
+                                        <input asp-for="HasDisability" type="checkbox" id="hasDisabilityCheck" class="mr-2" />
+                                        <label asp-for="HasDisability">I have a disability</label>
+                                    </div>
+
+                                    <div id="disabilityTypeDiv" style="display:none;">
+                                        <label asp-for="DisabilityType" class="block mb-2 font-semibold"></label>
+                                        <input asp-for="DisabilityType" class="w-full py-2 px-4 border border-borderColor rounded-md" />
+                                    </div>
+
+                                    <div class="flex items-center">
+                                        <input asp-for="IsOrphan" type="checkbox" class="mr-2" />
+                                        <label asp-for="IsOrphan">I am an orphan</label>
+                                    </div>
+
+                                    <div class="flex items-center">
+                                        <input asp-for="IsEmployeeChild" type="checkbox" class="mr-2" />
+                                        <label asp-for="IsEmployeeChild">I am a university employee's child</label>
+                                    </div>
+
+                                    <div class="flex items-center">
+                                        <input asp-for="HasFamilyConnection" type="checkbox" id="hasFamilyConnectionCheck" class="mr-2" />
+                                        <label asp-for="HasFamilyConnection">I have family working at a university</label>
+                                    </div>
+
+                                    <div id="familyUniversityDiv" style="display:none;">
+                                        <label asp-for="FamilyConnectionUniversityId" class="block mb-2 font-semibold"></label>
+                                        <select asp-for="FamilyConnectionUniversityId" class="w-full py-2 px-4 border border-borderColor rounded-md">
+                                            <option value="">-- Select University --</option>
+                                            @foreach (var university in ViewBag.Universities as List<SelectListItem>)
+                                            {
+                                                <option value="@university.Value">@university.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="px-30px py-5">
+                    <button type="submit" class="px-8 py-3 bg-primaryColor text-white rounded-md hover:bg-opacity-90 transition">
+                        <i class="icofont-check-circled"></i> Update Profile
+                    </button>
+                    <a asp-action="Index" asp-controller="Dashboard" class="px-8 py-3 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 ml-2 inline-block">
+                        <i class="icofont-close-line"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Path Type Change Handler
+            $('#pathSelect').change(function() {
+                const pathValue = $(this).val();
+                $('#academicTrackDiv').hide();
+                $('#vocationalBranchDiv').hide();
+                $('#btecDiv').hide();
+
+                if (pathValue == '1') { // Academic
+                    $('#academicTrackDiv').show();
+                } else if (pathValue == '2') { // Vocational
+                    $('#vocationalBranchDiv').show();
+                } else if (pathValue == '3') { // BTEC
+                    $('#btecDiv').show();
+                }
+            });
+
+            // Disability Checkbox Handler
+            $('#hasDisabilityCheck').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#disabilityTypeDiv').show();
+                } else {
+                    $('#disabilityTypeDiv').hide();
+                    $('#DisabilityType').val('');
+                }
+            });
+
+            // Family Connection Checkbox Handler
+            $('#hasFamilyConnectionCheck').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#familyUniversityDiv').show();
+                } else {
+                    $('#familyUniversityDiv').hide();
+                    $('#FamilyConnectionUniversityId').val('');
+                }
+            });
+
+            // Form Submission with SweetAlert
+            $('#editProfileForm').submit(function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Update Profile?',
+                    text: "Are you sure you want to save these changes?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3b82f6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, update!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            });
+
+            // Trigger path change on load
+            if ($('#pathSelect').val()) {
+                $('#pathSelect').trigger('change');
+            }
+
+            // Trigger disability check on load
+            if ($('#hasDisabilityCheck').is(':checked')) {
+                $('#disabilityTypeDiv').show();
+            }
+
+            // Trigger family connection check on load
+            if ($('#hasFamilyConnectionCheck').is(':checked')) {
+                $('#familyUniversityDiv').show();
+            }
+        });
+    </script>
+}

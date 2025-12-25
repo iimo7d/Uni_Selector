@@ -5,6 +5,7 @@ using Uni_Selector.Data;
 using Uni_Selector.Hubs;
 using Uni_Selector.Middleware;
 using Uni_Selector.Models;
+using Uni_Selector.Service;
 using Uni_Selector.Service.BackgorundService;
 using Uni_Selector.Service.Implementation;
 using Uni_Selector.Service.Interface;
@@ -63,6 +64,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+builder.Services.AddSingleton<IRecommendationUpdateQueue, RecommendationUpdateQueue>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -78,6 +80,8 @@ builder.Services.AddMemoryCache();
 builder.Services.AddSignalR();
 
 builder.Services.AddHostedService<CpuMonitoringService>();
+builder.Services.AddHostedService<SmartRecommendationService>();
+
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddControllersWithViews()
@@ -97,10 +101,9 @@ builder.Services.AddDistributedMemoryCache();
 
 
 
-//// ? Seeders
-//builder.Services.AddScoped<IdentitySeeder>();
-//builder.Services.AddScoped<AppDataSeeder>();
-//builder.Services.AddScoped<DatabaseSeeder>();
+builder.Services.AddScoped<RecommendationService>();
+
+
 
 
 var app = builder.Build();
@@ -140,10 +143,5 @@ app.MapControllerRoute(
 
 app.MapHub<NotificationHub>("/hubs/notification");
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
-//    await seeder.SeedAsync();
-//}
 
 app.Run();

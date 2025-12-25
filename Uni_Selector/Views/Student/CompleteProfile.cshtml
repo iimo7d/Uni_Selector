@@ -1,483 +1,576 @@
-﻿@using Uni_Selector.ViewModels.Student
+﻿@using Uni_Selector.Models.Enums
+@using Uni_Selector.ViewModels.Students
 @model CompleteProfileViewModel
+
 @{
-    ViewData["Title"] = "إكمال الملف الشخصي";
-    Layout = "_StudentLayout";
-    var stepTitles = new[] { "المعلومات الشخصية", "المعلومات الأكاديمية", "التفضيلات", "ولي الأمر والظروف الخاصة" };
+    ViewData["Title"] = "Complete Your Profile";
 }
 
-<!-- Banner Section -->
-<section>
-    <div class="container-fluid-2">
-        <div class="bg-primaryColor p-5 md:p-10 rounded-5">
-            <div class="text-center text-whiteColor">
-                <h5 class="text-2xl font-bold mb-2">إكمال الملف الشخصي</h5>
-                <p class="text-sm opacity-80">أكمل بياناتك للحصول على توصيات مخصصة للجامعات والبرامج</p>
-            </div>
+@section Styles {
+    <style>
+        .wizard-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+            .wizard-steps::before {
+                content: '';
+                position: absolute;
+                top: 20px;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: #e5e7eb;
+                z-index: 0;
+            }
+
+        .wizard-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .wizard-step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: #6b7280;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .wizard-step.active .wizard-step-circle {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .wizard-step.completed .wizard-step-circle {
+            background: #10b981;
+            color: white;
+        }
+
+        .wizard-content {
+            display: none;
+        }
+
+            .wizard-content.active {
+                display: block;
+            }
+
+        .required-asterisk {
+            color: #ef4444;
+            margin-left: 3px;
+        }
+    </style>
+}
+
+<!-- Breadcrumb -->
+<section class="bg-whiteColor dark:bg-whiteColor-dark py-30px">
+    <div class="container 3xl:container-secondary-lg 4xl:container mx-auto">
+        <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-blackColor dark:text-blackColor-dark">
+                Complete Your Profile
+            </h2>
+            <ul class="flex gap-1 text-sm text-contentColor dark:text-contentColor-dark">
+                <li><a asp-action="Index" asp-controller="Dashboard" class="hover:text-primaryColor">Dashboard</a></li>
+                <li>/</li>
+                <li>Complete Profile</li>
+            </ul>
         </div>
     </div>
 </section>
 
-<!-- Progress Steps -->
-<section class="pt-30px">
-    <div class="container-fluid-2">
-        <div class="bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark rounded-lg p-6">
-            <div class="flex justify-between items-center relative">
-                <!-- Progress Line -->
-                <div class="absolute top-1/2 left-0 right-0 h-1 bg-borderColor dark:bg-borderColor-dark -translate-y-1/2 z-0"></div>
-                <div class="absolute top-1/2 left-0 h-1 bg-primaryColor -translate-y-1/2 z-0 transition-all duration-500" style="width: @((Model.CurrentStep - 1) * 100.0 / (Model.TotalSteps - 1))%"></div>
+<!-- Main Content -->
+<section class="py-50px">
+    <div class="container 3xl:container-secondary-lg 4xl:container mx-auto">
+        <div class="bg-whiteColor dark:bg-whiteColor-dark shadow-md rounded-lg p-30px">
 
-                @for (int i = 1; i <= Model.TotalSteps; i++)
-                {
-                    var isCompleted = i < Model.CurrentStep;
-                    var isCurrent = i == Model.CurrentStep;
-                    <div class="relative z-10 flex flex-col items-center">
-                        <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300 @(isCompleted ? "bg-greenColor text-white" : isCurrent ? "bg-primaryColor text-white" : "bg-borderColor dark:bg-borderColor-dark text-contentColor dark:text-contentColor-dark")">
-                            @if (isCompleted)
-                            {
-                                <i class="icofont-check"></i>
-                            }
-                            else
-                            {
-                                @i
-                            }
-                        </div>
-                        <span class="mt-2 text-xs text-center @(isCurrent ? "text-primaryColor font-bold" : "text-contentColor dark:text-contentColor-dark") hidden sm:block">
-                            @stepTitles[i - 1]
-                        </span>
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Form Content -->
-<section class="py-30px pb-100px">
-    <div class="container-fluid-2">
-        <div class="max-w-4xl mx-auto">
-            <div class="bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark rounded-lg p-6 md:p-10">
-                <!-- Step Title -->
-                <div class="mb-8 pb-5 border-b-2 border-borderColor dark:border-borderColor-dark">
-                    <h2 class="text-2xl font-bold text-blackColor dark:text-blackColor-dark">
-                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primaryColor text-white text-lg ml-3">@Model.CurrentStep</span>
-                        @stepTitles[Model.CurrentStep - 1]
-                    </h2>
-                    <p class="text-contentColor dark:text-contentColor-dark mt-2">
-                        الخطوة @Model.CurrentStep من @Model.TotalSteps
-                    </p>
+            <!-- Progress Steps -->
+            <div class="wizard-steps">
+                <div class="wizard-step active" data-step="1">
+                    <div class="wizard-step-circle">1</div>
+                    <div class="text-sm font-medium">Personal Info</div>
                 </div>
+                <div class="wizard-step" data-step="2">
+                    <div class="wizard-step-circle">2</div>
+                    <div class="text-sm font-medium">Location</div>
+                </div>
+                <div class="wizard-step" data-step="3">
+                    <div class="wizard-step-circle">3</div>
+                    <div class="text-sm font-medium">Academic</div>
+                </div>
+                <div class="wizard-step" data-step="4">
+                    <div class="wizard-step-circle">4</div>
+                    <div class="text-sm font-medium">Preferences</div>
+                </div>
+                <div class="wizard-step" data-step="5">
+                    <div class="wizard-step-circle">5</div>
+                    <div class="text-sm font-medium">Special Info</div>
+                </div>
+            </div>
 
-                <form asp-action="CompleteProfile" method="post" enctype="multipart/form-data" class="text-sm text-blackColor dark:text-blackColor-dark leading-1.8">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" asp-for="CurrentStep" />
-                    <input type="hidden" asp-for="StudentId" />
+            <form asp-action="CompleteProfile" method="post" enctype="multipart/form-data" id="profileForm">
+                <div asp-validation-summary="ModelOnly" class="text-red-500 mb-4"></div>
 
-                    @switch (Model.CurrentStep)
-                    {
-                        case 1:
-                            <!-- Step 1: Personal Information -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label asp-for="PersonalInfo.NationalId" class="mb-3 block font-semibold">
-                                        الرقم الوطني <span class="text-danger">*</span>
-                                    </label>
-                                    <input asp-for="PersonalInfo.NationalId" maxlength="10" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="أدخل الرقم الوطني (10 أرقام)" />
-                                    <span asp-validation-for="PersonalInfo.NationalId" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="PersonalInfo.SeatNumber" class="mb-3 block font-semibold">
-                                        رقم الجلوس <span class="text-danger">*</span>
-                                    </label>
-                                    <input asp-for="PersonalInfo.SeatNumber" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="رقم جلوس التوجيهي" />
-                                    <span asp-validation-for="PersonalInfo.SeatNumber" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="PersonalInfo.Gender" class="mb-3 block font-semibold">
-                                        الجنس <span class="text-danger">*</span>
-                                    </label>
-                                    <select asp-for="PersonalInfo.Gender" asp-items="Model.PersonalInfo.Genders" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md">
-                                    </select>
-                                    <span asp-validation-for="PersonalInfo.Gender" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="PersonalInfo.DateOfBirth" class="mb-3 block font-semibold">
-                                        تاريخ الميلاد <span class="text-danger">*</span>
-                                    </label>
-                                    <input asp-for="PersonalInfo.DateOfBirth" type="date" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md" />
-                                    <span asp-validation-for="PersonalInfo.DateOfBirth" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="PersonalInfo.Nationality" class="mb-3 block font-semibold">
-                                        الجنسية <span class="text-danger">*</span>
-                                    </label>
-                                    <input asp-for="PersonalInfo.Nationality" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="الجنسية" />
-                                    <span asp-validation-for="PersonalInfo.Nationality" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="PersonalInfo.Province" class="mb-3 block font-semibold">
-                                        المحافظة <span class="text-danger">*</span>
-                                    </label>
-                                    <select asp-for="PersonalInfo.Province" asp-items="Model.PersonalInfo.Provinces" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md" id="provinceSelect">
-                                    </select>
-                                    <span asp-validation-for="PersonalInfo.Province" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="PersonalInfo.City" class="mb-3 block font-semibold">
-                                        المدينة <span class="text-danger">*</span>
-                                    </label>
-                                    <select asp-for="PersonalInfo.City" asp-items="Model.PersonalInfo.Cities" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md" id="citySelect">
-                                    </select>
-                                    <span asp-validation-for="PersonalInfo.City" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="PersonalInfo.Area" class="mb-3 block font-semibold">
-                                        المنطقة
-                                    </label>
-                                    <input asp-for="PersonalInfo.Area" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="اسم المنطقة أو الحي (اختياري)" />
-                                    <span asp-validation-for="PersonalInfo.Area" class="text-danger text-xs"></span>
-                                </div>
-                            </div>
-                            break;
+                <!-- Step 1: Personal Information -->
+                <div class="wizard-content active" data-step="1">
+                    <h3 class="text-xl font-semibold text-blackColor dark:text-blackColor-dark mb-4">
+                        Personal Information
+                    </h3>
 
-                        case 2:
-                            <!-- Step 2: Academic Information -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label asp-for="AcademicInfo.GPA" class="mb-3 block font-semibold">
-                                        المعدل <span class="text-danger">*</span>
-                                    </label>
-                                    <div class="relative">
-                                        <input asp-for="AcademicInfo.GPA" type="number" step="0.01" min="0" max="100" class="w-full py-10px px-5 pr-12 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="معدل التوجيهي" />
-                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-contentColor dark:text-contentColor-dark">%</span>
-                                    </div>
-                                    <span asp-validation-for="AcademicInfo.GPA" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="AcademicInfo.Path" class="mb-3 block font-semibold">
-                                        المسار التعليمي <span class="text-danger">*</span>
-                                    </label>
-                                    <select asp-for="AcademicInfo.Path" asp-items="Model.AcademicInfo.Paths" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md" id="pathSelect">
-                                    </select>
-                                    <span asp-validation-for="AcademicInfo.Path" class="text-danger text-xs"></span>
-                                </div>
-                                <div id="academicTrackDiv">
-                                    <label asp-for="AcademicInfo.AcademicTrack" class="mb-3 block font-semibold">
-                                        الفرع الأكاديمي
-                                    </label>
-                                    <select asp-for="AcademicInfo.AcademicTrack" asp-items="Model.AcademicInfo.AcademicTracks" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md">
-                                    </select>
-                                    <span asp-validation-for="AcademicInfo.AcademicTrack" class="text-danger text-xs"></span>
-                                </div>
-                                <div id="vocationalBranchDiv" class="hidden">
-                                    <label asp-for="AcademicInfo.VocationalBranch" class="mb-3 block font-semibold">
-                                        الفرع المهني
-                                    </label>
-                                    <select asp-for="AcademicInfo.VocationalBranch" asp-items="Model.AcademicInfo.VocationalBranches" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md">
-                                    </select>
-                                    <span asp-validation-for="AcademicInfo.VocationalBranch" class="text-danger text-xs"></span>
-                                </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <!-- Display Only Fields -->
+                        <div>
+                            <label class="block mb-2 font-medium">Full Name</label>
+                            <input type="text" value="@Model.FullName" disabled class="w-full py-2 px-4 bg-gray-100 border border-borderColor dark:border-borderColor-dark rounded-md" />
+                        </div>
+                        <div>
+                            <label class="block mb-2 font-medium">Email</label>
+                            <input type="text" value="@Model.Email" disabled class="w-full py-2 px-4 bg-gray-100 border border-borderColor dark:border-borderColor-dark rounded-md" />
+                        </div>
+                        <div>
+                            <label class="block mb-2 font-medium">Phone Number</label>
+                            <input type="text" value="@Model.PhoneNumber" disabled class="w-full py-2 px-4 bg-gray-100 border border-borderColor dark:border-borderColor-dark rounded-md" />
+                        </div>
 
-                                <!-- BTEC Section -->
-                                <div id="btecSection" class="md:col-span-2 hidden">
-                                    <div class="p-4 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
-                                        <h4 class="font-semibold mb-4 text-blackColor dark:text-blackColor-dark">
-                                            <i class="icofont-certificate text-primaryColor ml-2"></i>
-                                            شهادات BTEC
-                                        </h4>
-                                        <div class="flex flex-wrap gap-6">
-                                            <div class="flex items-center gap-3">
-                                                <input asp-for="AcademicInfo.BtecLevel2Completed" type="checkbox" class="w-5 h-5 text-primaryColor border-borderColor rounded focus:ring-primaryColor" />
-                                                <label asp-for="AcademicInfo.BtecLevel2Completed" class="cursor-pointer">BTEC Level 2</label>
-                                            </div>
-                                            <div class="flex items-center gap-3">
-                                                <input asp-for="AcademicInfo.BtecLevel3Completed" type="checkbox" class="w-5 h-5 text-primaryColor border-borderColor rounded focus:ring-primaryColor" />
-                                                <label asp-for="AcademicInfo.BtecLevel3Completed" class="cursor-pointer">BTEC Level 3</label>
-                                            </div>
-                                        </div>
-                                        <div class="mt-4">
-                                            <label class="block text-sm mb-2">رفع شهادة BTEC (PDF أو صورة)</label>
-                                            <input type="file" id="btecCertificate" name="btecCertificate" accept=".pdf,.jpg,.jpeg,.png" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-dashed border-borderColor dark:border-borderColor-dark rounded-md" />
-                                            <p class="text-xs text-contentColor dark:text-contentColor-dark mt-1">الحد الأقصى: 5 ميجابايت</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            break;
+                        <!-- Editable Fields -->
+                        <div>
+                            <label asp-for="NationalId" class="block mb-2 font-medium">
+                                <span asp-for="NationalId"></span><span class="required-asterisk">*</span>
+                            </label>
+                            <input asp-for="NationalId" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" placeholder="Enter 10-digit National ID" />
+                            <span asp-validation-for="NationalId" class="text-red-500 text-sm"></span>
+                        </div>
 
-                        case 3:
-                            <!-- Step 3: Preferences -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label asp-for="Preferences.RegistrationBudget" class="mb-3 block font-semibold">
-                                        ميزانية التسجيل <span class="text-danger">*</span>
-                                    </label>
-                                    <div class="relative">
-                                        <input asp-for="Preferences.RegistrationBudget" type="number" step="100" min="0" class="w-full py-10px px-5 pr-16 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="الميزانية المتاحة للتسجيل" />
-                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-contentColor dark:text-contentColor-dark">د.أ</span>
-                                    </div>
-                                    <span asp-validation-for="Preferences.RegistrationBudget" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="Preferences.MaxDistanceKm" class="mb-3 block font-semibold">
-                                        المسافة القصوى من منزلك <span class="text-danger">*</span>
-                                    </label>
-                                    <div class="relative">
-                                        <input asp-for="Preferences.MaxDistanceKm" type="number" min="1" max="500" class="w-full py-10px px-5 pr-12 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="50" />
-                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-contentColor dark:text-contentColor-dark">كم</span>
-                                    </div>
-                                    <span asp-validation-for="Preferences.MaxDistanceKm" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="Preferences.PreferredLanguage" class="mb-3 block font-semibold">
-                                        لغة الدراسة المفضلة <span class="text-danger">*</span>
-                                    </label>
-                                    <select asp-for="Preferences.PreferredLanguage" asp-items="Model.Preferences.Languages" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md">
-                                    </select>
-                                    <span asp-validation-for="Preferences.PreferredLanguage" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="Preferences.PreferredCity" class="mb-3 block font-semibold">
-                                        المدينة المفضلة للدراسة
-                                    </label>
-                                    <select asp-for="Preferences.PreferredCity" asp-items="Model.Preferences.PreferredCities" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md">
-                                    </select>
-                                    <span asp-validation-for="Preferences.PreferredCity" class="text-danger text-xs"></span>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label asp-for="Preferences.DesiredMajors" class="mb-3 block font-semibold">
-                                        التخصصات المرغوبة
-                                    </label>
-                                    <textarea asp-for="Preferences.DesiredMajors" rows="3" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="أدخل التخصصات التي تهتم بها، مفصولة بفواصل (مثال: هندسة الحاسوب، إدارة الأعمال، الطب)"></textarea>
-                                    <span asp-validation-for="Preferences.DesiredMajors" class="text-danger text-xs"></span>
-                                </div>
+                        <div>
+                            <label asp-for="SeatNumber" class="block mb-2 font-medium">
+                                <span asp-for="SeatNumber"></span><span class="required-asterisk">*</span>
+                            </label>
+                            <input asp-for="SeatNumber" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" placeholder="Enter Tawjihi Seat Number" />
+                            <span asp-validation-for="SeatNumber" class="text-red-500 text-sm"></span>
+                        </div>
 
-                                <!-- Family Connection -->
-                                <div class="md:col-span-2">
-                                    <div class="p-4 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
-                                        <div class="flex items-center gap-3 mb-3">
-                                            <input asp-for="Preferences.HasFamilyConnection" type="checkbox" id="hasFamilyConnection" class="w-5 h-5 text-primaryColor border-borderColor rounded focus:ring-primaryColor" />
-                                            <label asp-for="Preferences.HasFamilyConnection" class="font-semibold cursor-pointer">هل لديك صلة قرابة بموظف في جامعة؟</label>
-                                        </div>
-                                        <p class="text-xs text-contentColor dark:text-contentColor-dark mb-3">قد يؤهلك هذا للحصول على خصم إضافي</p>
-                                        <div id="familyConnectionUniversity" class="@(Model.Preferences.HasFamilyConnection ? "" : "hidden")">
-                                            <label asp-for="Preferences.FamilyConnectionUniversityId" class="mb-2 block text-sm">اختر الجامعة</label>
-                                            <select asp-for="Preferences.FamilyConnectionUniversityId" asp-items="Model.Preferences.Universities" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md">
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            break;
+                        <div>
+                            <label asp-for="Gender" class="block mb-2 font-medium">
+                                <span asp-for="Gender"></span><span class="required-asterisk">*</span>
+                            </label>
+                            <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor">
+                                <option value="">-- Select Gender --</option>
+                            </select>
+                            <span asp-validation-for="Gender" class="text-red-500 text-sm"></span>
+                        </div>
 
-                        case 4:
-                            <!-- Step 4: Guardian & Special Circumstances -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label asp-for="Guardian.GuardianName" class="mb-3 block font-semibold">
-                                        اسم ولي الأمر <span class="text-danger">*</span>
-                                    </label>
-                                    <input asp-for="Guardian.GuardianName" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="الاسم الكامل لولي الأمر" />
-                                    <span asp-validation-for="Guardian.GuardianName" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="Guardian.GuardianPhone" class="mb-3 block font-semibold">
-                                        رقم هاتف ولي الأمر <span class="text-danger">*</span>
-                                    </label>
-                                    <input asp-for="Guardian.GuardianPhone" type="tel" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="07XXXXXXXX" />
-                                    <span asp-validation-for="Guardian.GuardianPhone" class="text-danger text-xs"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="Guardian.GuardianRelation" class="mb-3 block font-semibold">
-                                        صلة القرابة <span class="text-danger">*</span>
-                                    </label>
-                                    <select asp-for="Guardian.GuardianRelation" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark leading-23px rounded-md">
-                                        <option value="">-- اختر صلة القرابة --</option>
-                                        <option value="الأب">الأب</option>
-                                        <option value="الأم">الأم</option>
-                                        <option value="الأخ">الأخ</option>
-                                        <option value="الأخت">الأخت</option>
-                                        <option value="العم">العم</option>
-                                        <option value="الخال">الخال</option>
-                                        <option value="الجد">الجد</option>
-                                        <option value="الجدة">الجدة</option>
-                                        <option value="أخرى">أخرى</option>
-                                    </select>
-                                    <span asp-validation-for="Guardian.GuardianRelation" class="text-danger text-xs"></span>
-                                </div>
+                        <div>
+                            <label asp-for="DateOfBirth" class="block mb-2 font-medium">
+                                <span asp-for="DateOfBirth"></span><span class="required-asterisk">*</span>
+                            </label>
+                            <input asp-for="DateOfBirth" type="date" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" />
+                            <span asp-validation-for="DateOfBirth" class="text-red-500 text-sm"></span>
+                        </div>
 
-                                <!-- Special Circumstances -->
-                                <div class="md:col-span-2">
-                                    <h4 class="font-semibold mb-4 text-blackColor dark:text-blackColor-dark">
-                                        <i class="icofont-heart text-primaryColor ml-2"></i>
-                                        الظروف الخاصة (اختياري)
-                                    </h4>
-                                    <p class="text-xs text-contentColor dark:text-contentColor-dark mb-4">قد تؤهلك هذه المعلومات للحصول على منح أو خصومات إضافية</p>
+                        <div>
+                            <label asp-for="Nationality" class="block mb-2 font-medium">
+                                <span asp-for="Nationality"></span>
+                            </label>
+                            <input asp-for="Nationality" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" value="Jordanian" />
+                            <span asp-validation-for="Nationality" class="text-red-500 text-sm"></span>
+                        </div>
 
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div class="p-4 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
-                                            <div class="flex items-center gap-3">
-                                                <input asp-for="Guardian.IsOrphan" type="checkbox" class="w-5 h-5 text-primaryColor border-borderColor rounded focus:ring-primaryColor" />
-                                                <label asp-for="Guardian.IsOrphan" class="cursor-pointer">
-                                                    <i class="icofont-heart ml-1 text-info"></i>
-                                                    يتيم
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="p-4 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
-                                            <div class="flex items-center gap-3">
-                                                <input asp-for="Guardian.IsEmployeeChild" type="checkbox" class="w-5 h-5 text-primaryColor border-borderColor rounded focus:ring-primaryColor" />
-                                                <label asp-for="Guardian.IsEmployeeChild" class="cursor-pointer">
-                                                    <i class="icofont-briefcase ml-1 text-success"></i>
-                                                    ابن موظف
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="p-4 bg-lightGrey5/50 dark:bg-whiteColor-dark/50 rounded-lg">
-                                            <div class="flex items-center gap-3">
-                                                <input asp-for="Guardian.HasDisability" type="checkbox" id="hasDisability" class="w-5 h-5 text-primaryColor border-borderColor rounded focus:ring-primaryColor" />
-                                                <label asp-for="Guardian.HasDisability" class="cursor-pointer">
-                                                    <i class="icofont-wheelchair ml-1 text-warning"></i>
-                                                    ذوي احتياجات خاصة
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <!-- Guardian Information -->
+                        <div class="md:col-span-2">
+                            <h4 class="text-lg font-semibold text-blackColor dark:text-blackColor-dark mt-4 mb-2">Guardian Information</h4>
+                        </div>
 
-                                    <div id="disabilityTypeDiv" class="mt-4 @(Model.Guardian.HasDisability ? "" : "hidden")">
-                                        <label asp-for="Guardian.DisabilityType" class="mb-3 block font-semibold">نوع الإعاقة</label>
-                                        <input asp-for="Guardian.DisabilityType" class="w-full py-10px px-5 text-sm focus:outline-none text-contentColor dark:text-contentColor-dark bg-whiteColor dark:bg-whiteColor-dark border-2 border-borderColor dark:border-borderColor-dark placeholder:text-placeholder placeholder:opacity-80 leading-23px rounded-md" placeholder="حدد نوع الإعاقة" />
-                                    </div>
-                                </div>
-                            </div>
-                            break;
-                    }
+                        <div>
+                            <label asp-for="GuardianName" class="block mb-2 font-medium">
+                                <span asp-for="GuardianName"></span><span class="required-asterisk">*</span>
+                            </label>
+                            <input asp-for="GuardianName" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" placeholder="Enter guardian's full name" />
+                            <span asp-validation-for="GuardianName" class="text-red-500 text-sm"></span>
+                        </div>
 
-                    <!-- Navigation Buttons -->
-                    <div class="mt-10 pt-6 border-t border-borderColor dark:border-borderColor-dark flex justify-between items-center">
-                        @if (Model.CurrentStep > 1)
-                        {
-                            <a asp-action="CompleteProfile" asp-route-step="@(Model.CurrentStep - 1)" class="text-size-15 text-contentColor dark:text-contentColor-dark px-25px py-10px border border-borderColor dark:border-borderColor-dark hover:text-primaryColor hover:border-primaryColor rounded flex items-center gap-2">
-                                <i class="icofont-arrow-right"></i>
-                                السابق
-                            </a>
-                        }
-                        else
-                        {
-                            <a asp-action="Dashboard" class="text-size-15 text-contentColor dark:text-contentColor-dark px-25px py-10px border border-borderColor dark:border-borderColor-dark hover:text-primaryColor hover:border-primaryColor rounded flex items-center gap-2">
-                                <i class="icofont-close"></i>
-                                إلغاء
-                            </a>
-                        }
+                        <div>
+                            <label asp-for="GuardianPhone" class="block mb-2 font-medium">
+                                <span asp-for="GuardianPhone"></span><span class="required-asterisk">*</span>
+                            </label>
+                            <input asp-for="GuardianPhone" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" placeholder="Enter guardian's phone number" />
+                            <span asp-validation-for="GuardianPhone" class="text-red-500 text-sm"></span>
+                        </div>
 
-                        <button type="submit" class="text-size-15 text-whiteColor bg-primaryColor px-25px py-10px border border-primaryColor hover:text-primaryColor hover:bg-whiteColor rounded flex items-center gap-2 dark:hover:text-whiteColor dark:hover:bg-whiteColor-dark">
-                            @if (Model.CurrentStep < Model.TotalSteps)
-                            {
-                                <span>التالي</span>
-                                <i class="icofont-arrow-left"></i>
-                            }
-                            else
-                            {
-                                <i class="icofont-check-circled"></i>
-                                <span>إكمال التسجيل</span>
-                            }
+                        <div>
+                            <label asp-for="GuardianRelation" class="block mb-2 font-medium">
+                                <span asp-for="GuardianRelation"></span><span class="required-asterisk">*</span>
+                            </label>
+                            <select asp-for="GuardianRelation" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor">
+                                <option value="">-- Select Relation --</option>
+                                @foreach (var relation in ViewBag.GuardianRelations as List<string>)
+                                {
+                                    <option value="@relation">@relation</option>
+                                }
+                            </select>
+                            <span asp-validation-for="GuardianRelation" class="text-red-500 text-sm"></span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-2 mt-6">
+                        <button type="button" class="next-btn px-6 py-2 bg-primaryColor text-white rounded-md hover:bg-opacity-90">
+                            Next <i class="icofont-rounded-right"></i>
                         </button>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <!-- Step 2: Location Information -->
+                <div class="wizard-content" data-step="2">
+                    <h3 class="text-xl font-semibold text-blackColor dark:text-blackColor-dark mb-4">
+                        Location Information
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label asp-for="Province" class="block mb-2 font-medium">
+                                <span asp-for="Province"></span><span class="required-asterisk">*</span>
+                            </label>
+                            <select asp-for="Province" id="provinceSelect" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor">
+                                <option value="">-- Select Province --</option>
+                                @foreach (var province in ViewBag.Provinces as List<string>)
+                                {
+                                    <option value="@province">@province</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Province" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="City" class="block mb-2 font-medium">
+                                <span asp-for="City"></span><span class="required-asterisk">*</span>
+                            </label>
+                            <input asp-for="City" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" placeholder="Enter your city" />
+                            <span asp-validation-for="City" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label asp-for="Area" class="block mb-2 font-medium">
+                                <span asp-for="Area"></span>
+                            </label>
+                            <input asp-for="Area" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" placeholder="Enter area or neighborhood (optional)" />
+                            <span asp-validation-for="Area" class="text-red-500 text-sm"></span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between gap-2 mt-6">
+                        <button type="button" class="prev-btn px-6 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            <i class="icofont-rounded-left"></i> Previous
+                        </button>
+                        <button type="button" class="next-btn px-6 py-2 bg-primaryColor text-white rounded-md hover:bg-opacity-90">
+                            Next <i class="icofont-rounded-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Academic Information -->
+                <div class="wizard-content" data-step="3">
+                    <h3 class="text-xl font-semibold text-blackColor dark:text-blackColor-dark mb-4">
+                        Academic Information
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label asp-for="GPA" class="block mb-2 font-medium">
+                                <span asp-for="GPA"></span><span class="required-asterisk">*</span>
+                            </label>
+                            <input asp-for="GPA" type="number" step="0.01" min="0" max="100" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" placeholder="Enter your GPA (0-100)" />
+                            <span asp-validation-for="GPA" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="Path" class="block mb-2 font-medium">
+                                <span asp-for="Path"></span><span class="required-asterisk">*</span>
+                            </label>
+                            <select asp-for="Path" id="pathSelect" asp-items="Html.GetEnumSelectList<PathType>()" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor">
+                                <option value="">-- Select Educational Path --</option>
+                            </select>
+                            <span asp-validation-for="Path" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div id="academicTrackDiv" style="display:none;">
+                            <label asp-for="AcademicTrack" class="block mb-2 font-medium">
+                                <span asp-for="AcademicTrack"></span>
+                            </label>
+                            <select asp-for="AcademicTrack" asp-items="Html.GetEnumSelectList<AcademicTrack>()" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor">
+                                <option value="">-- Select Academic Track --</option>
+                            </select>
+                            <span asp-validation-for="AcademicTrack" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div id="vocationalBranchDiv" style="display:none;">
+                            <label asp-for="VocationalBranch" class="block mb-2 font-medium">
+                                <span asp-for="VocationalBranch"></span>
+                            </label>
+                            <select asp-for="VocationalBranch" asp-items="Html.GetEnumSelectList<VocationalBranch>()" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor">
+                                <option value="">-- Select Vocational Branch --</option>
+                            </select>
+                            <span asp-validation-for="VocationalBranch" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div id="btecDiv" style="display:none;" class="md:col-span-2">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="flex items-center">
+                                    <input asp-for="BtecLevel2Completed" type="checkbox" class="mr-2" />
+                                    <label asp-for="BtecLevel2Completed" class="font-medium">BTEC Level 2 Completed</label>
+                                </div>
+
+                                <div class="flex items-center">
+                                    <input asp-for="BtecLevel3Completed" type="checkbox" class="mr-2" />
+                                    <label asp-for="BtecLevel3Completed" class="font-medium">BTEC Level 3 Completed</label>
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <label asp-for="BtecCertificateFile" class="block mb-2 font-medium">
+                                        Upload BTEC Certificate (PDF or Image)
+                                    </label>
+                                    <input asp-for="BtecCertificateFile" type="file" accept=".pdf,.jpg,.jpeg,.png" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md" />
+                                    <span asp-validation-for="BtecCertificateFile" class="text-red-500 text-sm"></span>
+                                    <small class="text-gray-500">Accepted formats: PDF, JPG, PNG (Max 5MB)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between gap-2 mt-6">
+                        <button type="button" class="prev-btn px-6 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            <i class="icofont-rounded-left"></i> Previous
+                        </button>
+                        <button type="button" class="next-btn px-6 py-2 bg-primaryColor text-white rounded-md hover:bg-opacity-90">
+                            Next <i class="icofont-rounded-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Preferences -->
+                <div class="wizard-content" data-step="4">
+                    <h3 class="text-xl font-semibold text-blackColor dark:text-blackColor-dark mb-4">
+                        University Preferences
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label asp-for="RegistrationBudget" class="block mb-2 font-medium">
+                                <span asp-for="RegistrationBudget"></span><span class="required-asterisk">*</span>
+                            </label>
+                            <input asp-for="RegistrationBudget" type="number" step="0.01" min="0" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" placeholder="Enter your budget in JOD" />
+                            <span asp-validation-for="RegistrationBudget" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="PreferredCity" class="block mb-2 font-medium">
+                                <span asp-for="PreferredCity"></span>
+                            </label>
+                            <input asp-for="PreferredCity" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" placeholder="Preferred university city (optional)" />
+                            <span asp-validation-for="PreferredCity" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="MaxDistanceKm" class="block mb-2 font-medium">
+                                <span asp-for="MaxDistanceKm"></span>
+                            </label>
+                            <input asp-for="MaxDistanceKm" type="number" min="1" max="200" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" value="50" />
+                            <span asp-validation-for="MaxDistanceKm" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="PreferredLanguage" class="block mb-2 font-medium">
+                                <span asp-for="PreferredLanguage"></span>
+                            </label>
+                            <select asp-for="PreferredLanguage" asp-items="Html.GetEnumSelectList<LanguageCode>()" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor">
+                            </select>
+                            <span asp-validation-for="PreferredLanguage" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label asp-for="DesiredMajors" class="block mb-2 font-medium">
+                                <span asp-for="DesiredMajors"></span>
+                            </label>
+                            <input asp-for="DesiredMajors" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" placeholder="Enter desired majors separated by commas (e.g., Computer Science, Engineering, Medicine)" />
+                            <span asp-validation-for="DesiredMajors" class="text-red-500 text-sm"></span>
+                            <small class="text-gray-500">Separate multiple majors with commas</small>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between gap-2 mt-6">
+                        <button type="button" class="prev-btn px-6 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            <i class="icofont-rounded-left"></i> Previous
+                        </button>
+                        <button type="button" class="next-btn px-6 py-2 bg-primaryColor text-white rounded-md hover:bg-opacity-90">
+                            Next <i class="icofont-rounded-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Special Circumstances -->
+                <div class="wizard-content" data-step="5">
+                    <h3 class="text-xl font-semibold text-blackColor dark:text-blackColor-dark mb-4">
+                        Special Circumstances & Additional Information
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="flex items-center">
+                            <input asp-for="HasDisability" type="checkbox" id="hasDisabilityCheck" class="mr-2" />
+                            <label asp-for="HasDisability" class="font-medium">I have a disability</label>
+                        </div>
+
+                        <div id="disabilityTypeDiv" style="display:none;">
+                            <label asp-for="DisabilityType" class="block mb-2 font-medium">
+                                <span asp-for="DisabilityType"></span>
+                            </label>
+                            <input asp-for="DisabilityType" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor" placeholder="Specify disability type" />
+                            <span asp-validation-for="DisabilityType" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input asp-for="IsOrphan" type="checkbox" class="mr-2" />
+                            <label asp-for="IsOrphan" class="font-medium">I am an orphan</label>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input asp-for="IsEmployeeChild" type="checkbox" class="mr-2" />
+                            <label asp-for="IsEmployeeChild" class="font-medium">I am a university employee's child</label>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input asp-for="HasFamilyConnection" type="checkbox" id="hasFamilyConnectionCheck" class="mr-2" />
+                            <label asp-for="HasFamilyConnection" class="font-medium">I have family working at a university</label>
+                        </div>
+
+                        <div id="familyUniversityDiv" style="display:none;">
+                            <label asp-for="FamilyConnectionUniversityId" class="block mb-2 font-medium">
+                                <span asp-for="FamilyConnectionUniversityId"></span>
+                            </label>
+                            <select asp-for="FamilyConnectionUniversityId" class="w-full py-2 px-4 border border-borderColor dark:border-borderColor-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primaryColor">
+                                <option value="">-- Select University --</option>
+                                @foreach (var university in ViewBag.Universities as List<SelectListItem>)
+                                {
+                                    <option value="@university.Value">@university.Text</option>
+                                }
+                            </select>
+                            <span asp-validation-for="FamilyConnectionUniversityId" class="text-red-500 text-sm"></span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between gap-2 mt-6">
+                        <button type="button" class="prev-btn px-6 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            <i class="icofont-rounded-left"></i> Previous
+                        </button>
+                        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                            <i class="icofont-check-circled"></i> Complete Profile
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        // Path selection logic (Step 2)
-        document.getElementById('pathSelect')?.addEventListener('change', function() {
-            const academicDiv = document.getElementById('academicTrackDiv');
-            const vocationalDiv = document.getElementById('vocationalBranchDiv');
-            const btecSection = document.getElementById('btecSection');
+        $(document).ready(function() {
+            let currentStep = 1;
+            const totalSteps = 5;
 
-            // Hide all
-            academicDiv?.classList.add('hidden');
-            vocationalDiv?.classList.add('hidden');
-            btecSection?.classList.add('hidden');
-
-            switch(this.value) {
-                case '1': // Academic
-                    academicDiv?.classList.remove('hidden');
-                    break;
-                case '2': // Vocational
-                    vocationalDiv?.classList.remove('hidden');
-                    break;
-                case '3': // BTEC
-                    btecSection?.classList.remove('hidden');
-                    break;
-            }
-        });
-
-        // Family connection toggle (Step 3)
-        document.getElementById('hasFamilyConnection')?.addEventListener('change', function() {
-            const universitySelect = document.getElementById('familyConnectionUniversity');
-            if (this.checked) {
-                universitySelect?.classList.remove('hidden');
-            } else {
-                universitySelect?.classList.add('hidden');
-            }
-        });
-
-        // Disability type toggle (Step 4)
-        document.getElementById('hasDisability')?.addEventListener('change', function() {
-            const disabilityTypeDiv = document.getElementById('disabilityTypeDiv');
-            if (this.checked) {
-                disabilityTypeDiv?.classList.remove('hidden');
-            } else {
-                disabilityTypeDiv?.classList.add('hidden');
-            }
-        });
-
-        // BTEC Certificate upload
-        document.getElementById('btecCertificate')?.addEventListener('change', async function() {
-            if (this.files.length > 0) {
-                const formData = new FormData();
-                formData.append('certificateFile', this.files[0]);
-
-                try {
-                    const response = await fetch('/Student/UploadBTECCertificate', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                        }
-                    });
-
-                    const result = await response.json();
-                    if (result.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'تم الرفع بنجاح',
-                            text: result.message,
-                            confirmButtonText: 'حسناً'
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'خطأ',
-                            text: result.message,
-                            confirmButtonText: 'حسناً'
-                        });
-                    }
-                } catch (error) {
-                    console.error('Upload error:', error);
+            // Wizard Navigation
+            $('.next-btn').click(function() {
+                if (currentStep < totalSteps) {
+                    $(`.wizard-content[data-step="${currentStep}"]`).removeClass('active');
+                    $(`.wizard-step[data-step="${currentStep}"]`).removeClass('active').addClass('completed');
+                    currentStep++;
+                    $(`.wizard-content[data-step="${currentStep}"]`).addClass('active');
+                    $(`.wizard-step[data-step="${currentStep}"]`).addClass('active');
+                    window.scrollTo(0, 0);
                 }
-            }
-        });
+            });
 
-        // Initialize path selection on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const pathSelect = document.getElementById('pathSelect');
-            if (pathSelect && pathSelect.value) {
-                pathSelect.dispatchEvent(new Event('change'));
+            $('.prev-btn').click(function() {
+                if (currentStep > 1) {
+                    $(`.wizard-content[data-step="${currentStep}"]`).removeClass('active');
+                    $(`.wizard-step[data-step="${currentStep}"]`).removeClass('active');
+                    currentStep--;
+                    $(`.wizard-content[data-step="${currentStep}"]`).addClass('active');
+                    $(`.wizard-step[data-step="${currentStep}"]`).removeClass('completed').addClass('active');
+                    window.scrollTo(0, 0);
+                }
+            });
+
+            // Path Type Change Handler
+            $('#pathSelect').change(function() {
+                const pathValue = $(this).val();
+                $('#academicTrackDiv').hide();
+                $('#vocationalBranchDiv').hide();
+                $('#btecDiv').hide();
+
+                if (pathValue == '1') { // Academic
+                    $('#academicTrackDiv').show();
+                } else if (pathValue == '2') { // Vocational
+                    $('#vocationalBranchDiv').show();
+                } else if (pathValue == '3') { // BTEC
+                    $('#btecDiv').show();
+                }
+            });
+
+            // Disability Checkbox Handler
+            $('#hasDisabilityCheck').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#disabilityTypeDiv').show();
+                } else {
+                    $('#disabilityTypeDiv').hide();
+                    $('#DisabilityType').val('');
+                }
+            });
+
+            // Family Connection Checkbox Handler
+            $('#hasFamilyConnectionCheck').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#familyUniversityDiv').show();
+                } else {
+                    $('#familyUniversityDiv').hide();
+                    $('#FamilyConnectionUniversityId').val('');
+                }
+            });
+
+            // Form Submission with SweetAlert
+            $('#profileForm').submit(function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Complete Profile?',
+                    text: "Are you sure all information is correct?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3b82f6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, complete!',
+                    cancelButtonText: 'Review Again'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            });
+
+            // Trigger path change on load if value exists
+            if ($('#pathSelect').val()) {
+                $('#pathSelect').trigger('change');
             }
         });
     </script>
