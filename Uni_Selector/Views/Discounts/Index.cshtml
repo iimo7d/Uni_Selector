@@ -1,0 +1,400 @@
+﻿@using Uni_Selector.Models.Enums
+@using Uni_Selector.ViewModels.Discounts
+@model DiscountsListViewModel
+@{
+    ViewData["Title"] = "My Discounts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .discount-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .discount-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .status-badge {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @@keyframes pulse-ring {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .stat-card {
+            background: linear-gradient(135deg, rgba(95, 45, 237, 0.05) 0%, rgba(242, 39, 126, 0.05) 100%);
+        }
+    </style>
+}
+
+<!-- Breadcrumb -->
+<section class="py-10 bg-gradient-to-r from-primaryColor/5 to-secondaryColor/5 dark:bg-gradient-to-r dark:from-primaryColor/10 dark:to-secondaryColor/10">
+    <div class="container">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-bold text-blackColor dark:text-whiteColor mb-2">
+                    <i class="icofont-tags mr-2 text-primaryColor"></i>My Discounts
+                </h2>
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <li class="inline-flex items-center">
+                            <a asp-controller="Home" asp-action="Index" class="text-sm font-medium text-gray-700 hover:text-primaryColor dark:text-gray-400 dark:hover:text-whiteColor">
+                                <i class="icofont-home mr-1"></i>Home
+                            </a>
+                        </li>
+                        <li aria-current="page">
+                            <div class="flex items-center">
+                                <i class="icofont-simple-right text-gray-400"></i>
+                                <span class="ml-1 text-sm font-medium text-gray-500 dark:text-gray-400">Discounts</span>
+                            </div>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Cards -->
+<section class="py-8 bg-whiteColor dark:bg-darkdeep1">
+    <div class="container">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Total Discounts -->
+            <div class="stat-card rounded-2xl p-6 border border-borderColor dark:border-borderColor hover:shadow-lg transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Discounts</p>
+                        <h3 class="text-3xl font-bold text-blackColor dark:text-whiteColor">@ViewBag.TotalDiscounts</h3>
+                    </div>
+                    <div class="w-14 h-14 bg-gradient-to-br from-primaryColor to-secondaryColor rounded-xl flex items-center justify-center">
+                        <i class="icofont-tags text-2xl text-whiteColor"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active/Issued -->
+            <div class="stat-card rounded-2xl p-6 border border-borderColor dark:border-borderColor hover:shadow-lg transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Active</p>
+                        <h3 class="text-3xl font-bold text-greencolor2">@ViewBag.IssuedCount</h3>
+                    </div>
+                    <div class="w-14 h-14 bg-greencolor2 rounded-xl flex items-center justify-center">
+                        <i class="icofont-check-circled text-2xl text-whiteColor"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Redeemed -->
+            <div class="stat-card rounded-2xl p-6 border border-borderColor dark:border-borderColor hover:shadow-lg transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Redeemed</p>
+                        <h3 class="text-3xl font-bold text-blue">@ViewBag.RedeemedCount</h3>
+                    </div>
+                    <div class="w-14 h-14 bg-blue rounded-xl flex items-center justify-center">
+                        <i class="icofont-tick-mark text-2xl text-whiteColor"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expired -->
+            <div class="stat-card rounded-2xl p-6 border border-borderColor dark:border-borderColor hover:shadow-lg transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Expired</p>
+                        <h3 class="text-3xl font-bold text-gray-600 dark:text-gray-400">@ViewBag.ExpiredCount</h3>
+                    </div>
+                    <div class="w-14 h-14 bg-gray-500 rounded-xl flex items-center justify-center">
+                        <i class="icofont-close-circled text-2xl text-whiteColor"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filter and Discounts List -->
+<section class="py-12 bg-whiteColor dark:bg-darkdeep1">
+    <div class="container">
+        <!-- Filter Tabs -->
+        <div class="mb-8">
+            <div class="flex flex-wrap gap-3 items-center justify-between">
+                <div class="flex flex-wrap gap-3">
+                    <a asp-action="Index" 
+                       class="px-6 py-3 rounded-full font-medium transition-all duration-300 @(string.IsNullOrEmpty(Model.StatusFilter) ? "bg-primaryColor text-whiteColor shadow-lg" : "bg-gray-100 dark:bg-darkdeep1 text-gray-700 dark:text-gray-300 hover:bg-primaryColor/10 dark:hover:bg-primaryColor/20")">
+                        <i class="icofont-list mr-2"></i>All (@ViewBag.TotalDiscounts)
+                    </a>
+                    <a asp-action="Index" asp-route-status="Issued" 
+                       class="px-6 py-3 rounded-full font-medium transition-all duration-300 @(Model.StatusFilter == "Issued" ? "bg-greencolor2 text-whiteColor shadow-lg" : "bg-gray-100 dark:bg-darkdeep1 text-gray-700 dark:text-gray-300 hover:bg-greencolor2/10 dark:hover:bg-greencolor2/20")">
+                        <i class="icofont-check-circled mr-2"></i>Active (@ViewBag.IssuedCount)
+                    </a>
+                    <a asp-action="Index" asp-route-status="Redeemed" 
+                       class="px-6 py-3 rounded-full font-medium transition-all duration-300 @(Model.StatusFilter == "Redeemed" ? "bg-blue text-whiteColor shadow-lg" : "bg-gray-100 dark:bg-darkdeep1 text-gray-700 dark:text-gray-300 hover:bg-blue/10 dark:hover:bg-blue/20")">
+                        <i class="icofont-tick-mark mr-2"></i>Redeemed (@ViewBag.RedeemedCount)
+                    </a>
+                    <a asp-action="Index" asp-route-status="Expired" 
+                       class="px-6 py-3 rounded-full font-medium transition-all duration-300 @(Model.StatusFilter == "Expired" ? "bg-gray-600 text-whiteColor shadow-lg" : "bg-gray-100 dark:bg-darkdeep1 text-gray-700 dark:text-gray-300 hover:bg-gray-500/10 dark:hover:bg-gray-500/20")">
+                        <i class="icofont-close-circled mr-2"></i>Expired (@ViewBag.ExpiredCount)
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.Discounts.Any())
+        {
+            <!-- Discounts Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                @foreach (var discount in Model.Discounts)
+                {
+                    <div class="discount-card bg-whiteColor dark:bg-darkdeep1 rounded-2xl shadow-lg border border-borderColor dark:border-borderColor overflow-hidden">
+                        <!-- Card Header with Status Badge -->
+                        <div class="relative bg-gradient-to-br from-primaryColor/10 to-secondaryColor/10 dark:from-primaryColor/20 dark:to-secondaryColor/20 p-6">
+                            <div class="absolute top-4 right-4">
+                                <span class="status-badge inline-flex items-center px-4 py-2 rounded-full text-xs font-bold @discount.StatusBadgeClass shadow-lg">
+                                    <i class="@discount.StatusIcon mr-2"></i>
+                                    @discount.Status.ToString()
+                                </span>
+                            </div>
+                            
+                            <!-- University Logo -->
+                            @if (!string.IsNullOrEmpty(discount.UniversityLogo))
+                            {
+                                <div class="mb-4 flex justify-center">
+                                    <div class="w-20 h-20 bg-whiteColor dark:bg-darkdeep1 rounded-xl shadow-md flex items-center justify-center p-2 ring-4 ring-whiteColor/50">
+                                        <img src="@discount.UniversityLogo" alt="@discount.UniversityName" class="max-w-full max-h-full object-contain" />
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Discount Percentage -->
+                            <div class="text-center mb-4">
+                                <div class="inline-block">
+                                    <div class="relative">
+                                        @if (discount.IsValid)
+                                        {
+                                            <div class="absolute inset-0 bg-greencolor2 rounded-full pulse-ring"></div>
+                                        }
+                                        <div class="relative bg-gradient-to-br from-greencolor2 to-greencolor3 text-whiteColor rounded-full w-24 h-24 flex items-center justify-center shadow-xl">
+                                            <div class="text-center">
+                                                <div class="text-3xl font-bold">@discount.Percentage%</div>
+                                                <div class="text-xs opacity-90">OFF</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Discount Code -->
+                            <div class="text-center">
+                                <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Discount Code</p>
+                                <div class="bg-whiteColor dark:bg-blackColor/30 rounded-lg px-4 py-2 inline-block">
+                                    <code class="text-lg font-bold text-primaryColor dark:text-secondaryColor tracking-wider">@discount.Code</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="p-6">
+                            <!-- University Name -->
+                            <h3 class="text-lg font-bold text-blackColor dark:text-whiteColor mb-2 line-clamp-1">
+                                @discount.UniversityName
+                            </h3>
+
+                            <!-- Program Name -->
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 flex items-start">
+                                <i class="icofont-book-alt mr-2 mt-1 text-primaryColor"></i>
+                                @discount.ProgramName
+                            </p>
+
+                            <!-- Details Grid -->
+                            <div class="space-y-3 mb-4">
+                                <!-- Application Number -->
+                                @if (!string.IsNullOrEmpty(discount.ApplicationNumber))
+                                {
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-600 dark:text-gray-400">Application #</span>
+                                        <span class="font-medium text-blackColor dark:text-whiteColor">@discount.ApplicationNumber</span>
+                                    </div>
+                                }
+
+                                <!-- Estimated Savings -->
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600 dark:text-gray-400">Est. Savings</span>
+                                    <span class="font-bold text-greencolor2">@discount.AmountEstimated.ToString("N2") JOD</span>
+                                </div>
+
+                                <!-- Granted Date -->
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600 dark:text-gray-400">Issued On</span>
+                                    <span class="font-medium text-blackColor dark:text-whiteColor">@discount.GrantedAt.ToString("MMM dd, yyyy")</span>
+                                </div>
+
+                                <!-- Days Remaining or Redeemed Date -->
+                                @if (discount.Status == DiscountStatus.Issued && discount.IsValid)
+                                {
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-600 dark:text-gray-400">Days Left</span>
+                                        <span class="font-bold text-greencolor2 flex items-center">
+                                            <i class="icofont-clock-time mr-1"></i>
+                                            @discount.DaysRemaining days
+                                        </span>
+                                    </div>
+                                }
+                                else if (discount.Status == DiscountStatus.Redeemed && discount.RedeemedAt.HasValue)
+                                {
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-600 dark:text-gray-400">Redeemed On</span>
+                                        <span class="font-medium text-blue">@discount.RedeemedAt.Value.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Action Button -->
+                            <a asp-action="Details" asp-route-id="@discount.Id" 
+                               class="block w-full py-3 px-4 text-center rounded-lg font-medium transition-all duration-300 @(discount.IsValid ? "bg-gradient-to-r from-primaryColor to-secondaryColor text-whiteColor hover:shadow-xl hover:scale-105" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600")">
+                                <i class="icofont-eye mr-2"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Pagination -->
+            @if (Model.TotalPages > 1)
+            {
+                <div class="flex justify-center items-center space-x-2">
+                    <!-- Previous Button -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <a asp-action="Index" 
+                           asp-route-pageNumber="@(Model.PageNumber - 1)" 
+                           asp-route-status="@Model.StatusFilter"
+                           class="px-4 py-2 bg-whiteColor dark:bg-darkdeep1 border border-borderColor dark:border-borderColor rounded-lg text-gray-700 dark:text-gray-300 hover:bg-primaryColor hover:text-whiteColor transition-all duration-300">
+                            <i class="icofont-rounded-left"></i>
+                        </a>
+                    }
+
+                    <!-- Page Numbers -->
+                    @{
+                        var startPage = Math.Max(1, Model.PageNumber - 2);
+                        var endPage = Math.Min(Model.TotalPages, Model.PageNumber + 2);
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        <a asp-action="Index" 
+                           asp-route-pageNumber="@i" 
+                           asp-route-status="@Model.StatusFilter"
+                           class="px-4 py-2 rounded-lg font-medium transition-all duration-300 @(i == Model.PageNumber ? "bg-primaryColor text-whiteColor shadow-lg" : "bg-whiteColor dark:bg-darkdeep1 border border-borderColor dark:border-borderColor text-gray-700 dark:text-gray-300 hover:bg-primaryColor/10 dark:hover:bg-primaryColor/20")">
+                            @i
+                        </a>
+                    }
+
+                    <!-- Next Button -->
+                    @if (Model.PageNumber < Model.TotalPages)
+                    {
+                        <a asp-action="Index" 
+                           asp-route-pageNumber="@(Model.PageNumber + 1)" 
+                           asp-route-status="@Model.StatusFilter"
+                           class="px-4 py-2 bg-whiteColor dark:bg-darkdeep1 border border-borderColor dark:border-borderColor rounded-lg text-gray-700 dark:text-gray-300 hover:bg-primaryColor hover:text-whiteColor transition-all duration-300">
+                            <i class="icofont-rounded-right"></i>
+                        </a>
+                    }
+                </div>
+
+                <!-- Page Info -->
+                <div class="text-center mt-4">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Showing @((Model.PageNumber - 1) * Model.PageSize + 1) to @Math.Min(Model.PageNumber * Model.PageSize, Model.TotalCount) of @Model.TotalCount discounts
+                    </p>
+                </div>
+            }
+        }
+        else
+        {
+            <!-- Empty State -->
+            <div class="text-center py-20">
+                <div class="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-primaryColor/10 to-secondaryColor/10 dark:from-primaryColor/20 dark:to-secondaryColor/20 rounded-full mb-6">
+                    <i class="icofont-tags text-6xl text-primaryColor"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-blackColor dark:text-whiteColor mb-4">
+                    @if (!string.IsNullOrEmpty(Model.StatusFilter))
+                    {
+                        <text>No @Model.StatusFilter Discounts Found</text>
+                    }
+                    else
+                    {
+                        <text>No Discounts Yet</text>
+                    }
+                </h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                    @if (!string.IsNullOrEmpty(Model.StatusFilter))
+                    {
+                        <text>You don't have any @Model.StatusFilter.ToLower() discounts at the moment. Try viewing all discounts or apply to more programs.</text>
+                    }
+                    else
+                    {
+                        <text>Start applying to university programs to receive exclusive discount codes and save on your tuition fees!</text>
+                    }
+                </p>
+                <a asp-controller="Applications" asp-action="Index" 
+                   class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-primaryColor to-secondaryColor text-whiteColor rounded-full font-medium hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <i class="icofont-plus mr-2"></i>Browse Programs
+                </a>
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Show success/error messages from TempData
+        @if (TempData["Success"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '@TempData["Success"]',
+                confirmButtonColor: '#5f2ded',
+                timer: 3000,
+                timerProgressBar: true
+            });
+            </text>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '@TempData["Error"]',
+                confirmButtonColor: '#5f2ded'
+            });
+            </text>
+        }
+
+        @if (TempData["Warning"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'warning',
+                title: 'Attention',
+                text: '@TempData["Warning"]',
+                confirmButtonColor: '#5f2ded'
+            });
+            </text>
+        }
+    </script>
+}

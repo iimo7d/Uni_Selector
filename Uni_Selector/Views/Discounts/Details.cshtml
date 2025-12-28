@@ -1,0 +1,644 @@
+﻿@using Uni_Selector.Models.Enums
+@using Uni_Selector.ViewModels.Discounts
+@model DiscountDetailsViewModel
+@{
+    ViewData["Title"] = $"Discount - {Model.Code}";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .detail-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+            .detail-card:hover {
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+
+        .code-display {
+            position: relative;
+            background: linear-gradient(135deg, rgba(95, 45, 237, 0.1) 0%, rgba(242, 39, 126, 0.1) 100%);
+            border: 2px dashed rgba(95, 45, 237, 0.3);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @@keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(95, 45, 237, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(242, 39, 126, 0.4);
+            }
+        }
+
+        .pulse-dot {
+            animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @@keyframes pulse-dot {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .info-item {
+            border-left: 3px solid var(--primaryColor);
+            transition: all 0.3s;
+        }
+
+            .info-item:hover {
+                border-left-color: var(--secondaryColor);
+                transform: translateX(4px);
+            }
+
+        .qr-code-container {
+            background: radial-gradient(circle at center, rgba(255,255,255,1) 0%, rgba(240,240,240,1) 100%);
+        }
+    </style>
+}
+
+<!-- Breadcrumb -->
+<section class="py-10 bg-gradient-to-r from-primaryColor/5 to-secondaryColor/5 dark:bg-gradient-to-r dark:from-primaryColor/10 dark:to-secondaryColor/10">
+    <div class="container">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-bold text-blackColor dark:text-whiteColor mb-2">
+                    <i class="icofont-ticket mr-2 text-primaryColor"></i>Discount Details
+                </h2>
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <li class="inline-flex items-center">
+                            <a asp-controller="Home" asp-action="Index" class="text-sm font-medium text-gray-700 hover:text-primaryColor dark:text-gray-400 dark:hover:text-whiteColor">
+                                <i class="icofont-home mr-1"></i>Home
+                            </a>
+                        </li>
+                        <li>
+                            <div class="flex items-center">
+                                <i class="icofont-simple-right text-gray-400"></i>
+                                <a asp-action="Index" class="ml-1 text-sm font-medium text-gray-700 hover:text-primaryColor dark:text-gray-400 dark:hover:text-whiteColor">
+                                    Discounts
+                                </a>
+                            </div>
+                        </li>
+                        <li aria-current="page">
+                            <div class="flex items-center">
+                                <i class="icofont-simple-right text-gray-400"></i>
+                                <span class="ml-1 text-sm font-medium text-gray-500 dark:text-gray-400">@Model.Code</span>
+                            </div>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="flex gap-3">
+                <a asp-action="Index" class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-300">
+                    <i class="icofont-arrow-left mr-2"></i>Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Status Banner -->
+<section class="py-8 @Model.BannerGradientClass border-b-4 @Model.BannerBorderClass">
+    <div class="container">
+        <div class="flex items-center justify-between flex-wrap gap-6">
+            <div class="flex items-center space-x-6">
+                <!-- Status Icon -->
+                <div class="@Model.IconCircleClass w-20 h-20 rounded-full flex items-center justify-center relative">
+                    @if (Model.ShouldPulse)
+                    {
+                        <span class="absolute inline-flex h-full w-full rounded-full @Model.AccentBgSolidClass opacity-75 animate-ping"></span>
+                    }
+                    <i class="@Model.StatusIcon text-3xl text-whiteColor relative"></i>
+                </div>
+
+                <!-- Status Info -->
+                <div>
+                    <h3 class="text-2xl font-bold @Model.AccentTextClass mb-2">
+                        @Model.StatusTitle Discount
+                    </h3>
+                    <p class="text-gray-700 dark:text-gray-300 text-lg">
+                        @Model.ValidityMessage
+                    </p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3 flex-wrap">
+                @if (Model.IsValid)
+                {
+                    <button onclick="verifyDiscount(@Model.Id)"
+                            class="px-6 py-3 bg-greencolor2 text-whiteColor rounded-lg font-medium hover:bg-greencolor3 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <i class="icofont-check-circled mr-2"></i>Verify Code
+                    </button>
+                    <a asp-action="Download" asp-route-id="@Model.Id"
+                       class="px-6 py-3 bg-blue text-whiteColor rounded-lg font-medium hover:bg-blue/90 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <i class="icofont-download mr-2"></i>Download Certificate
+                    </a>
+                }
+                else
+                {
+                    <button disabled
+                            class="px-6 py-3 bg-gray-400 text-gray-200 rounded-lg font-medium cursor-not-allowed opacity-60">
+                        <i class="icofont-ban mr-2"></i>Not Available
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="py-12 bg-whiteColor dark:bg-darkdeep1">
+    <div class="container">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Main Info -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Discount Code Card -->
+                <div class="detail-card bg-whiteColor dark:bg-darkdeep1 rounded-2xl shadow-lg border border-borderColor dark:border-borderColor p-8">
+                    <div class="text-center mb-8">
+                        <h3 class="text-xl font-bold text-blackColor dark:text-whiteColor mb-4">Your Discount Code</h3>
+                        <div class="code-display rounded-xl p-8 mb-4">
+                            <div class="flex items-center justify-center gap-4">
+                                <code id="discountCode" class="text-4xl md:text-5xl font-bold text-primaryColor dark:text-secondaryColor tracking-widest">
+                                    @Model.Code
+                                </code>
+                                <button onclick="copyCode()"
+                                        class="p-3 bg-primaryColor text-whiteColor rounded-lg hover:bg-secondaryColor transition-all duration-300 shadow-lg hover:shadow-xl">
+                                    <i class="icofont-copy text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="inline-flex items-center justify-center">
+                            <div class="bg-gradient-to-br from-greencolor2 to-greencolor3 text-whiteColor rounded-full px-8 py-4 text-center shadow-xl">
+                                <div class="text-4xl font-bold">@Model.Percentage%</div>
+                                <div class="text-sm opacity-90 mt-1">Discount</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estimated Savings -->
+                    @if (Model.EstimatedRegistrationFee.HasValue)
+                    {
+                        <div class="bg-gradient-to-r from-greencolor2/10 to-greencolor3/10 dark:from-greencolor2/20 dark:to-greencolor3/20 rounded-xl p-6 border-2 border-greencolor2/30">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Estimated Savings</p>
+                                    <p class="text-3xl font-bold text-greencolor2">@Model.AmountEstimated.ToString("N2") JOD</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Original Fee</p>
+                                    <p class="text-xl font-semibold text-gray-700 dark:text-gray-300">@Model.EstimatedRegistrationFee.Value.ToString("N2") JOD</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- University Information -->
+                <div class="detail-card bg-whiteColor dark:bg-darkdeep1 rounded-2xl shadow-lg border border-borderColor dark:border-borderColor p-8">
+                    <h3 class="text-2xl font-bold text-blackColor dark:text-whiteColor mb-6 flex items-center">
+                        <i class="icofont-building-alt mr-3 text-primaryColor"></i>University Information
+                    </h3>
+
+                    <!-- University Logo and Name -->
+                    <div class="flex items-center gap-6 mb-6 pb-6 border-b border-borderColor dark:border-borderColor">
+                        @if (!string.IsNullOrEmpty(Model.UniversityLogo))
+                        {
+                            <div class="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-xl shadow-md flex items-center justify-center p-3 ring-4 ring-whiteColor/50">
+                                <img src="@Model.UniversityLogo" alt="@Model.UniversityName" class="max-w-full max-h-full object-contain" />
+                            </div>
+                        }
+                        <div>
+                            <h4 class="text-xl font-bold text-blackColor dark:text-whiteColor mb-1">@Model.UniversityName</h4>
+                            @if (!string.IsNullOrEmpty(Model.UniversityNameArabic))
+                            {
+                                <p class="text-lg text-gray-600 dark:text-gray-400 font-arabic">@Model.UniversityNameArabic</p>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Contact Details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @if (!string.IsNullOrEmpty(Model.UniversityAddress))
+                        {
+                            <div class="info-item pl-4 py-3">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Address</p>
+                                <p class="text-sm font-medium text-blackColor dark:text-whiteColor flex items-start">
+                                    <i class="icofont-location-pin mr-2 mt-1 text-primaryColor"></i>
+                                    @Model.UniversityAddress
+                                </p>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.UniversityPhone))
+                        {
+                            <div class="info-item pl-4 py-3">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Phone</p>
+                                <p class="text-sm font-medium text-blackColor dark:text-whiteColor flex items-center">
+                                    <i class="icofont-phone mr-2 text-primaryColor"></i>
+                                    <a href="tel:@Model.UniversityPhone" class="hover:text-primaryColor">@Model.UniversityPhone</a>
+                                </p>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.UniversityEmail))
+                        {
+                            <div class="info-item pl-4 py-3">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Email</p>
+                                <p class="text-sm font-medium text-blackColor dark:text-whiteColor flex items-center">
+                                    <i class="icofont-envelope mr-2 text-primaryColor"></i>
+                                    <a href="mailto:@Model.UniversityEmail" class="hover:text-primaryColor">@Model.UniversityEmail</a>
+                                </p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Program Information -->
+                <div class="detail-card bg-whiteColor dark:bg-darkdeep1 rounded-2xl shadow-lg border border-borderColor dark:border-borderColor p-8">
+                    <h3 class="text-2xl font-bold text-blackColor dark:text-whiteColor mb-6 flex items-center">
+                        <i class="icofont-graduate-alt mr-3 text-primaryColor"></i>Program Details
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div class="info-item pl-4 py-3">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Program Name</p>
+                            <p class="text-lg font-bold text-blackColor dark:text-whiteColor">@Model.ProgramName</p>
+                            @if (!string.IsNullOrEmpty(Model.ProgramNameArabic))
+                            {
+                                <p class="text-md text-gray-600 dark:text-gray-400 font-arabic mt-1">@Model.ProgramNameArabic</p>
+                            }
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.ApplicationNumber))
+                        {
+                            <div class="info-item pl-4 py-3">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Application Number</p>
+                                <p class="text-sm font-medium text-blackColor dark:text-whiteColor flex items-center">
+                                    <i class="icofont-id mr-2 text-primaryColor"></i>
+                                    @Model.ApplicationNumber
+                                </p>
+                            </div>
+                        }
+
+                        <div class="info-item pl-4 py-3">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Application Status</p>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue/10 text-blue">
+                                <i class="icofont-info-circle mr-2"></i>
+                                @Model.ApplicationStatus.ToString()
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How to Use Instructions -->
+                <div class="detail-card bg-gradient-to-br from-primaryColor/5 to-secondaryColor/5 dark:from-primaryColor/10 dark:to-secondaryColor/10 rounded-2xl shadow-lg border border-borderColor dark:border-borderColor p-8">
+                    <h3 class="text-2xl font-bold text-blackColor dark:text-whiteColor mb-6 flex items-center">
+                        <i class="icofont-info-circle mr-3 text-primaryColor"></i>How to Use This Discount
+                    </h3>
+
+                    <ol class="space-y-4">
+                        <li class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 bg-primaryColor text-whiteColor rounded-full flex items-center justify-center font-bold shadow-lg">1</div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-blackColor dark:text-whiteColor mb-1">Visit the University</h4>
+                                <p class="text-gray-600 dark:text-gray-400">Go to the university admissions office during registration period</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 bg-primaryColor text-whiteColor rounded-full flex items-center justify-center font-bold shadow-lg">2</div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-blackColor dark:text-whiteColor mb-1">Present Your Code</h4>
+                                <p class="text-gray-600 dark:text-gray-400">Show this page or your downloaded certificate with the discount code</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 bg-primaryColor text-whiteColor rounded-full flex items-center justify-center font-bold shadow-lg">3</div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-blackColor dark:text-whiteColor mb-1">Verification</h4>
+                                <p class="text-gray-600 dark:text-gray-400">The university will verify your discount code in their system</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 bg-greencolor2 text-whiteColor rounded-full flex items-center justify-center font-bold shadow-lg">4</div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-blackColor dark:text-whiteColor mb-1">Enjoy Your Savings!</h4>
+                                <p class="text-gray-600 dark:text-gray-400">The @Model.Percentage% discount will be applied to your tuition fees</p>
+                            </div>
+                        </li>
+                    </ol>
+
+                    <div class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 rounded">
+                        <div class="flex">
+                            <i class="icofont-warning text-yellow-600 dark:text-yellow-400 text-xl mr-3"></i>
+                            <div>
+                                <h4 class="font-bold text-yellow-800 dark:text-yellow-300 mb-1">Important Notes</h4>
+                                <ul class="text-sm text-yellow-700 dark:text-yellow-400 space-y-1">
+                                    <li>• This discount is valid for 90 days from the issue date</li>
+                                    <li>• Can only be used once for registration</li>
+                                    <li>• Must be presented during the official registration period</li>
+                                    <li>• Non-transferable and cannot be exchanged for cash</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Timeline & Info -->
+            <div class="space-y-8">
+                <!-- Quick Stats Card -->
+                <div class="detail-card bg-whiteColor dark:bg-darkdeep1 rounded-2xl shadow-lg border border-borderColor dark:border-borderColor p-6">
+                    <h3 class="text-xl font-bold text-blackColor dark:text-whiteColor mb-6 flex items-center">
+                        <i class="icofont-chart-bar-graph mr-3 text-primaryColor"></i>Quick Stats
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-primaryColor/10 rounded-lg flex items-center justify-center">
+                                    <i class="icofont-tag text-primaryColor"></i>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Discount Rate</span>
+                            </div>
+                            <span class="text-lg font-bold text-blackColor dark:text-whiteColor">@Model.Percentage%</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-greencolor2/10 rounded-lg flex items-center justify-center">
+                                    <i class="icofont-money text-greencolor2"></i>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">You Save</span>
+                            </div>
+                            <span class="text-lg font-bold text-greencolor2">@Model.AmountEstimated.ToString("N0") JOD</span>
+                        </div>
+
+                        @if (Model.IsValid)
+                        {
+                            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-blue/10 rounded-lg flex items-center justify-center">
+                                        <i class="icofont-clock-time text-blue"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Days Left</span>
+                                </div>
+                                <span class="text-lg font-bold text-blue">@Model.DaysUntilExpiry</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Timeline Card -->
+                <div class="detail-card bg-whiteColor dark:bg-darkdeep1 rounded-2xl shadow-lg border border-borderColor dark:border-borderColor p-6">
+                    <h3 class="text-xl font-bold text-blackColor dark:text-whiteColor mb-6 flex items-center">
+                        <i class="icofont-history mr-3 text-primaryColor"></i>Timeline
+                    </h3>
+
+                    <div class="relative">
+                        <!-- Timeline Line -->
+                        <div class="absolute left-5 top-0 bottom-0 w-0.5 bg-gradient-to-b from-greencolor2 via-blue to-gray-400"></div>
+
+                        <!-- Timeline Items -->
+                        <div class="space-y-6 relative">
+                            <!-- Issued -->
+                            <div class="flex items-start gap-4">
+                                <div class="relative z-10 w-10 h-10 bg-greencolor2 rounded-full flex items-center justify-center shadow-lg ring-4 ring-whiteColor dark:ring-darkdeep1">
+                                    <i class="icofont-check text-whiteColor"></i>
+                                </div>
+                                <div class="flex-1 pt-1">
+                                    <h4 class="font-bold text-blackColor dark:text-whiteColor">Discount Issued</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">@Model.GrantedAt.ToString("MMMM dd, yyyy")</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">@Model.GrantedAt.ToString("hh:mm tt")</p>
+                                </div>
+                            </div>
+
+                            @if (Model.Status == DiscountStatus.Redeemed && Model.RedeemedAt.HasValue)
+                            {
+                                <!-- Redeemed -->
+                                <div class="flex items-start gap-4">
+                                    <div class="relative z-10 w-10 h-10 bg-blue rounded-full flex items-center justify-center shadow-lg ring-4 ring-whiteColor dark:ring-darkdeep1">
+                                        <i class="icofont-tick-mark text-whiteColor"></i>
+                                    </div>
+                                    <div class="flex-1 pt-1">
+                                        <h4 class="font-bold text-blackColor dark:text-whiteColor">Redeemed</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">@Model.RedeemedAt.Value.ToString("MMMM dd, yyyy")</p>
+                                        @if (!string.IsNullOrEmpty(Model.RedeemedBy))
+                                        {
+                                            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">By: @Model.RedeemedBy</p>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <!-- Expiry -->
+                                <div class="flex items-start gap-4">
+                                    <div class="relative z-10 w-10 h-10 @(Model.IsValid ? "bg-gray-300 dark:bg-gray-600" : "bg-gray-500") rounded-full flex items-center justify-center shadow-lg ring-4 ring-whiteColor dark:ring-darkdeep1">
+                                        <i class="icofont-clock-time text-whiteColor"></i>
+                                    </div>
+                                    <div class="flex-1 pt-1">
+                                        <h4 class="font-bold text-blackColor dark:text-whiteColor">
+                                            @(Model.IsValid ? "Expires On" : "Expired")
+                                        </h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">@Model.ExpiryDate.ToString("MMMM dd, yyyy")</p>
+                                        @if (Model.IsValid)
+                                        {
+                                            <p class="text-xs text-greencolor2 font-medium mt-1">@Model.DaysUntilExpiry days remaining</p>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Info Card -->
+                <div class="detail-card bg-gradient-to-br from-primaryColor/5 to-secondaryColor/5 dark:from-primaryColor/10 dark:to-secondaryColor/10 rounded-2xl shadow-lg border border-borderColor dark:border-borderColor p-6">
+                    <h3 class="text-xl font-bold text-blackColor dark:text-whiteColor mb-4 flex items-center">
+                        <i class="icofont-user-alt-4 mr-3 text-primaryColor"></i>Student Information
+                    </h3>
+
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Full Name</p>
+                            <p class="text-sm font-medium text-blackColor dark:text-whiteColor">@Model.StudentFullName</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Email</p>
+                            <p class="text-sm font-medium text-blackColor dark:text-whiteColor">@Model.StudentEmail</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Support Card -->
+                <div class="detail-card bg-whiteColor dark:bg-darkdeep1 rounded-2xl shadow-lg border border-borderColor dark:border-borderColor p-6">
+                    <h3 class="text-lg font-bold text-blackColor dark:text-whiteColor mb-4 flex items-center">
+                        <i class="icofont-question-circle mr-3 text-primaryColor"></i>Need Help?
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        If you have any questions about using your discount code, our support team is here to help.
+                    </p>
+                    <a href="mailto:support@uniselector.jo"
+                       class="block w-full py-3 px-4 text-center bg-gradient-to-r from-primaryColor to-secondaryColor text-whiteColor rounded-lg font-medium hover:shadow-xl transition-all duration-300">
+                        <i class="icofont-envelope mr-2"></i>Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Copy discount code to clipboard
+        function copyCode() {
+            const code = document.getElementById('discountCode').textContent.trim();
+            navigator.clipboard.writeText(code).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Copied!',
+                    text: 'Discount code copied to clipboard',
+                    confirmButtonColor: '#5f2ded',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false
+                });
+            }).catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed to copy',
+                    text: 'Please copy the code manually',
+                    confirmButtonColor: '#5f2ded'
+                });
+            });
+        }
+
+        // Verify discount code
+        function verifyDiscount(discountId) {
+            Swal.fire({
+                title: 'Verifying Discount Code...',
+                html: 'Please wait while we verify your discount code',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            fetch(`/Discounts/${discountId}/Verify`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.isValid) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Valid Discount Code!',
+                            html: `
+                                <div class="text-left space-y-3 mt-4">
+                                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-600 font-medium">Code:</span>
+                                        <span class="font-bold text-primaryColor">${data.code}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-600 font-medium">Discount:</span>
+                                        <span class="font-bold text-greencolor2">${data.percentage}%</span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-600 font-medium">University:</span>
+                                        <span class="font-medium">${data.university}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-600 font-medium">Days Remaining:</span>
+                                        <span class="font-bold text-blue">${data.daysRemaining} days</span>
+                                    </div>
+                                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-600 font-medium">Expires:</span>
+                                        <span class="font-medium">${data.expiresAt}</span>
+                                    </div>
+                                </div>
+                            `,
+                            confirmButtonColor: '#5f2ded',
+                            confirmButtonText: 'Great!'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: `Discount ${data.status}`,
+                            text: data.message,
+                            confirmButtonColor: '#5f2ded'
+                        });
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Verification Failed',
+                        text: data.message || 'Unable to verify discount code',
+                        confirmButtonColor: '#5f2ded'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while verifying the discount code',
+                    confirmButtonColor: '#5f2ded'
+                });
+            });
+        }
+
+        // Show success/error messages from TempData
+        @if (TempData["Success"] != null)
+        {
+                <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '@TempData["Success"]',
+                    confirmButtonColor: '#5f2ded',
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                </text>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+                <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: '@TempData["Error"]',
+                    confirmButtonColor: '#5f2ded'
+                });
+                </text>
+        }
+
+        @if (TempData["Warning"] != null)
+        {
+                <text>
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Attention',
+                    text: '@TempData["Warning"]',
+                    confirmButtonColor: '#5f2ded'
+                });
+                </text>
+        }
+    </script>
+}

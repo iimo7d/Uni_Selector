@@ -7,8 +7,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Smart University Platform - Find the perfect private university in Jordan based on your academic profile and preferences.">
+    <meta name="keywords" content="university, jordan, education, private university, btec, student, admission">
+    <meta name="author" content="Smart University Platform">
+    <meta name="csrf-token" content="@Html.AntiForgeryToken()">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="@ViewData["Title"] - Smart University Platform">
+    <meta property="og:description" content="Find your perfect university in Jordan">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="@ViewData["Title"] - Smart University Platform">
+    
     <title>@ViewData["Title"] - Smart University Platform</title>
     <link rel="shortcut icon" type="image/x-icon" href="~/assets/images/favicon.ico">
+    <link rel="apple-touch-icon" href="~/assets/images/apple-touch-icon.png">
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="~/assets/css/icofont.min.css">
@@ -19,28 +34,75 @@
     <link rel="stylesheet" href="~/assets/css/style.css">
 
     <style>
-        /* Notification Toast Styles */
+        /* Enhanced Notification Toast Styles */
         .notification-toast {
             position: fixed;
             top: 80px;
             right: -400px;
             width: 350px;
+            max-width: calc(100vw - 40px);
             background: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-radius: 12px;
             padding: 16px;
             z-index: 9999;
-            transition: right 0.3s ease-in-out;
+            transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-left: 4px solid #5f2ded;
         }
 
-            .notification-toast.show {
-                right: 20px;
-            }
+        .notification-toast.show {
+            right: 20px;
+        }
+
+        .notification-toast-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .notification-toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #5f2ded 0%, #f2277e 100%);
+            color: white;
+            font-size: 18px;
+        }
+
+        .notification-toast-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .notification-toast-close:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .notification-toast-content {
+            padding-left: 50px;
+        }
 
         .notification-toast-content strong {
             display: block;
             color: #1e293b;
             font-size: 14px;
+            font-weight: 600;
             margin-bottom: 4px;
         }
 
@@ -48,57 +110,349 @@
             color: #64748b;
             font-size: 13px;
             margin: 0;
+            line-height: 1.5;
         }
 
+        .notification-toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #5f2ded 0%, #f2277e 100%);
+            border-radius: 0 0 0 12px;
+            animation: toast-progress 5s linear forwards;
+        }
+
+        @@keyframes toast-progress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        /* Enhanced Dropdown Menu */
         .dropdown-menu {
             position: absolute;
-            top: 100%;
+            top: calc(100% + 10px);
             right: 0;
             background: white;
             min-width: 320px;
-            max-height: 400px;
+            max-width: 400px;
+            max-height: 500px;
             overflow-y: auto;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border-radius: 8px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-radius: 12px;
             display: none;
             z-index: 1000;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            border: 1px solid #e2e8f0;
         }
 
-            .dropdown-menu.show {
-                display: block;
+        .dropdown-menu.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            right: 20px;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            border-top: 1px solid #e2e8f0;
+            transform: rotate(45deg);
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .dropdown-header strong {
+            font-size: 16px;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .dropdown-menu ul {
+            list-style: none;
+            padding: 8px 0;
+            margin: 0;
+        }
+
+        .dropdown-menu ul li {
+            border-bottom: 1px solid #f8fafc;
+        }
+
+        .dropdown-menu ul li:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-menu ul li a {
+            display: block;
+            padding: 12px 16px;
+            color: #475569;
+            text-decoration: none;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .dropdown-menu ul li a:hover {
+            background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
+            color: #5f2ded;
+            padding-left: 20px;
+        }
+
+        .dropdown-menu ul li a.unread {
+            background: linear-gradient(90deg, #ede9fe 0%, #f3e8ff 100%);
+            font-weight: 600;
+        }
+
+        .dropdown-menu ul li a.unread::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: #5f2ded;
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @@keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+            50% { opacity: 0.5; transform: translateY(-50%) scale(1.2); }
+        }
+
+        .dropdown-menu ul li a strong {
+            display: block;
+            font-size: 13px;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .dropdown-menu ul li a small {
+            display: block;
+            color: #94a3b8;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .dropdown-footer {
+            padding: 12px 16px;
+            border-top: 1px solid #f1f5f9;
+            text-align: center;
+            background: #f8fafc;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .dropdown-footer a {
+            font-size: 13px;
+            color: #5f2ded;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .dropdown-footer a:hover {
+            color: #f2277e;
+        }
+
+        .empty-notifications {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .empty-notifications i {
+            font-size: 48px;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+        }
+
+        .empty-notifications p {
+            color: #94a3b8;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Notification Badge Animation */
+        .notification-badge {
+            animation: badge-bounce 0.5s ease-in-out;
+        }
+
+        @@keyframes badge-bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Loading State */
+        .dropdown-loading {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .dropdown-loading::after {
+            content: '';
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #5f2ded;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @@keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Dark Mode Enhancements */
+        .dark .notification-toast {
+            background: #1e293b;
+            border-left-color: #5f2ded;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .dark .notification-toast-content strong {
+            color: #f1f5f9;
+        }
+
+        .dark .notification-toast-content p {
+            color: #94a3b8;
+        }
+
+        .dark .dropdown-menu {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .dark .dropdown-menu::before {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .dark .dropdown-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-bottom-color: #334155;
+        }
+
+        .dark .dropdown-header strong {
+            color: #f1f5f9;
+        }
+
+        .dark .dropdown-menu ul li {
+            border-bottom-color: #334155;
+        }
+
+        .dark .dropdown-menu ul li a {
+            color: #cbd5e1;
+        }
+
+        .dark .dropdown-menu ul li a:hover {
+            background: linear-gradient(90deg, #334155 0%, #475569 100%);
+            color: #f2277e;
+        }
+
+        .dark .dropdown-menu ul li a.unread {
+            background: linear-gradient(90deg, #4c1d95 0%, #5b21b6 100%);
+        }
+
+        .dark .dropdown-menu ul li a strong {
+            color: #f1f5f9;
+        }
+
+        .dark .dropdown-footer {
+            background: #0f172a;
+            border-top-color: #334155;
+        }
+
+        /* Mobile Responsive Improvements */
+        @@media (max-width: 768px) {
+            .notification-toast {
+                width: calc(100vw - 40px);
+                right: -100%;
             }
 
-            .dropdown-menu ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
+            .notification-toast.show {
+                right: 20px;
             }
 
-                .dropdown-menu ul li {
-                    border-bottom: 1px solid #f1f5f9;
-                }
+            .dropdown-menu {
+                right: -10px;
+                min-width: calc(100vw - 20px);
+                max-width: calc(100vw - 20px);
+            }
+        }
 
-                    .dropdown-menu ul li:last-child {
-                        border-bottom: none;
-                    }
+        /* Accessibility Improvements */
+        .dropdown-menu:focus-within {
+            outline: 2px solid #5f2ded;
+            outline-offset: 2px;
+        }
 
-                    .dropdown-menu ul li a {
-                        display: block;
-                        padding: 12px 16px;
-                        color: #1e293b;
-                        text-decoration: none;
-                        transition: background 0.2s;
-                    }
+        button:focus-visible,
+        a:focus-visible {
+            outline: 2px solid #5f2ded;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
 
-                        .dropdown-menu ul li a:hover {
-                            background: #f8fafc;
-                        }
+        /* Smooth Transitions */
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
-                        .dropdown-menu ul li a small {
-                            display: block;
-                            color: #94a3b8;
-                            font-size: 11px;
-                        }
+        /* Connection Status Indicator */
+        .connection-status {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            z-index: 9998;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .connection-status.show {
+            display: flex;
+        }
+
+        .connection-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .connection-status.disconnected .connection-status-dot {
+            background: #ef4444;
+            animation: blink 1s infinite;
+        }
+
+        @@keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .dark .connection-status {
+            background: #1e293b;
+            color: #94a3b8;
+        }
     </style>
 
     @await RenderSectionAsync("Styles", required: false)
@@ -113,6 +467,12 @@
         </div>
     </div>
 
+    <!-- Connection Status Indicator -->
+    <div id="connectionStatus" class="connection-status">
+        <span class="connection-status-dot"></span>
+        <span id="connectionStatusText">Connected</span>
+    </div>
+
     <!-- Theme fixed shadow -->
     <div>
         <div class="fixed-shadow left-[-250px]"></div>
@@ -121,12 +481,12 @@
 
     <!-- Theme controller -->
     <div class="fixed top-[100px] 2xl:top-[300px] transition-all duration-300 right-[-50px] hover:right-0 z-xl">
-        <button class="theme-controller w-90px h-10 bg-primaryColor dark:bg-whiteColor-dark rounded-l-lg2 text-whiteColor px-10px flex items-center dark:shadow-theme-controller">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mr-10px w-5 block dark:hidden" viewBox="0 0 512 512">
+        <button class="theme-controller w-90px h-10 bg-primaryColor dark:bg-whiteColor-dark rounded-l-lg2 text-whiteColor px-10px flex items-center dark:shadow-theme-controller" aria-label="Toggle dark mode">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mr-10px w-5 block dark:hidden" viewBox="0 0 512 512" aria-hidden="true">
                 <path d="M160 136c0-30.62 4.51-61.61 16-88C99.57 81.27 48 159.32 48 248c0 119.29 96.71 216 216 216 88.68 0 166.73-51.57 200-128-26.39 11.49-57.38 16-88 16-119.29 0-216-96.71-216-216z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"></path>
             </svg>
             <span class="text-base block dark:hidden">Dark</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="hidden mr-10px w-5 dark:block" viewBox="0 0 512 512">
+            <svg xmlns="http://www.w3.org/2000/svg" class="hidden mr-10px w-5 dark:block" viewBox="0 0 512 512" aria-hidden="true">
                 <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M256 48v48M256 416v48M403.08 108.92l-33.94 33.94M142.86 369.14l-33.94 33.94M464 256h-48M96 256H48M403.08 403.08l-33.94-33.94M142.86 142.86l-33.94-33.94"></path>
                 <circle cx="256" cy="256" r="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32"></circle>
             </svg>
@@ -136,7 +496,7 @@
 
     <!-- Scroll up button -->
     <div>
-        <button class="scroll-up w-50px h-50px leading-50px text-center text-primaryColor bg-white hover:text-whiteColor hover:bg-primaryColor rounded-full fixed right-5 bottom-[60px] shadow-scroll-up z-medium text-xl dark:text-whiteColor dark:bg-primaryColor dark:hover:text-whiteColor-dark hidden">
+        <button class="scroll-up w-50px h-50px leading-50px text-center text-primaryColor bg-white hover:text-whiteColor hover:bg-primaryColor rounded-full fixed right-5 bottom-[60px] shadow-scroll-up z-medium text-xl dark:text-whiteColor dark:bg-primaryColor dark:hover:text-whiteColor-dark hidden" aria-label="Scroll to top">
             <i class="icofont-rounded-up"></i>
         </button>
     </div>
@@ -149,23 +509,23 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <p>
-                            <i class="icofont-phone text-primaryColor text-size-15 mr-5px"></i>
+                            <i class="icofont-phone text-primaryColor text-size-15 mr-5px" aria-hidden="true"></i>
                             <span>Contact Support: +962 6 123 4567</span>
                         </p>
                     </div>
                     <div class="flex gap-37px items-center">
                         <div>
                             <p>
-                                <i class="icofont-location-pin text-primaryColor text-size-15 mr-5px"></i>
+                                <i class="icofont-location-pin text-primaryColor text-size-15 mr-5px" aria-hidden="true"></i>
                                 <span>Amman, Jordan</span>
                             </p>
                         </div>
                         <div>
                             <ul class="flex gap-13px text-size-15">
-                                <li><a class="hover:text-primaryColor" href="#"><i class="icofont-facebook"></i></a></li>
-                                <li><a class="hover:text-primaryColor" href="#"><i class="icofont-twitter"></i></a></li>
-                                <li><a class="hover:text-primaryColor" href="#"><i class="icofont-instagram"></i></a></li>
-                                <li><a class="hover:text-primaryColor" href="#"><i class="icofont-linkedin"></i></a></li>
+                                <li><a class="hover:text-primaryColor" href="#" aria-label="Facebook"><i class="icofont-facebook"></i></a></li>
+                                <li><a class="hover:text-primaryColor" href="#" aria-label="Twitter"><i class="icofont-twitter"></i></a></li>
+                                <li><a class="hover:text-primaryColor" href="#" aria-label="Instagram"><i class="icofont-instagram"></i></a></li>
+                                <li><a class="hover:text-primaryColor" href="#" aria-label="LinkedIn"><i class="icofont-linkedin"></i></a></li>
                             </ul>
                         </div>
                     </div>
@@ -173,34 +533,35 @@
             </div>
         </div>
         <!-- Header top end -->
+        
         <!-- Navbar start -->
         <div class="transition-all duration-500 sticky-header z-medium dark:bg-whiteColor-dark">
-            <nav>
+            <nav role="navigation" aria-label="Main navigation">
                 <div class="py-15px lg:py-0 px-15px lg:container 3xl:container-secondary-lg 4xl:container mx-auto relative">
                     <div class="grid grid-cols-2 lg:grid-cols-12 items-center gap-15px">
                         <!-- Navbar left -->
                         <div class="lg:col-start-1 lg:col-span-2">
                             <a asp-controller="Home" asp-action="Index" class="block">
-                                <img src="~/assets/images/logo/logo_1.png" alt="Uni Selector" class="w-logo-sm lg:w-auto py-2">
+                                <img src="~/assets/images/logo/logo_1.png" alt="Uni Selector Logo" class="w-logo-sm lg:w-auto py-2">
                             </a>
                         </div>
 
                         <!-- Main menu -->
                         <div class="hidden lg:block lg:col-start-3 lg:col-span-7">
-                            <ul class="nav-list flex justify-center">
+                            <ul class="nav-list flex justify-center" role="menubar">
                                 <!-- Public Links -->
-                                <li class="nav-item">
-                                    <a asp-controller="Home" asp-action="Index" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                <li class="nav-item" role="none">
+                                    <a asp-controller="Home" asp-action="Index" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
                                         Home
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a asp-controller="Home" asp-action="About" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                <li class="nav-item" role="none">
+                                    <a asp-controller="Home" asp-action="About" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
                                         About
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a asp-controller="Home" asp-action="Universities" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                <li class="nav-item" role="none">
+                                    <a asp-controller="Home" asp-action="Universities" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
                                         Universities
                                     </a>
                                 </li>
@@ -210,19 +571,24 @@
                                     <!-- Student Links -->
                                     @if (User.IsInRole("Student"))
                                     {
-                                        <li class="nav-item">
-                                            <a asp-controller="Student" asp-action="Dashboard" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
-                                                <i class="icofont-dashboard-web mr-1"></i> Dashboard
+                                        <li class="nav-item" role="none">
+                                            <a asp-controller="Student" asp-action="Dashboard" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                                <i class="icofont-dashboard-web mr-1" aria-hidden="true"></i> Dashboard
                                             </a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a asp-controller="Student" asp-action="Recommendations" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
-                                                <i class="icofont-star mr-1"></i> Recommendations
+                                        <li class="nav-item" role="none">
+                                            <a asp-controller="Student" asp-action="Recommendations" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                                <i class="icofont-star mr-1" aria-hidden="true"></i> Recommendations
                                             </a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a asp-controller="Student" asp-action="Applications" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
-                                                <i class="icofont-paper mr-1"></i> My Applications
+                                        <li class="nav-item" role="none">
+                                            <a asp-controller="Student" asp-action="Applications" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                                <i class="icofont-paper mr-1" aria-hidden="true"></i> My Applications
+                                            </a>
+                                        </li>
+                                        <li class="nav-item" role="none">
+                                            <a asp-controller="Discounts" asp-action="Index" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                                <i class="icofont-tags mr-1" aria-hidden="true"></i> Discounts
                                             </a>
                                         </li>
                                     }
@@ -230,42 +596,41 @@
                                     <!-- University Representative Links -->
                                     @if (User.IsInRole("UniversityRep"))
                                     {
-                                        <li class="nav-item">
-                                            <a asp-controller="UniversityRep" asp-action="Dashboard" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
-                                                <i class="icofont-dashboard-web mr-1"></i> Dashboard
+                                        <li class="nav-item" role="none">
+                                            <a asp-controller="UniversityRep" asp-action="Dashboard" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                                <i class="icofont-dashboard-web mr-1" aria-hidden="true"></i> Dashboard
                                             </a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a asp-controller="UniversityRep" asp-action="Programs" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
-                                                <i class="icofont-graduate mr-1"></i> Programs
+                                        <li class="nav-item" role="none">
+                                            <a asp-controller="UniversityRep" asp-action="Programs" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                                <i class="icofont-graduate mr-1" aria-hidden="true"></i> Programs
                                             </a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a asp-controller="UniversityRep" asp-action="Applications" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
-                                                <i class="icofont-tasks mr-1"></i> Applications
+                                        <li class="nav-item" role="none">
+                                            <a asp-controller="UniversityRep" asp-action="Applications" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                                <i class="icofont-tasks mr-1" aria-hidden="true"></i> Applications
                                             </a>
                                         </li>
                                     }
 
-
                                     <!-- BTEC Authority Links -->
                                     @if (User.IsInRole("BtecAuthority"))
                                     {
-                                        <li class="nav-item">
-                                            <a asp-controller="BTECAuthority" asp-action="Dashboard" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
-                                                <i class="icofont-dashboard-web mr-1"></i> BTEC Dashboard
+                                        <li class="nav-item" role="none">
+                                            <a asp-controller="BTECAuthority" asp-action="Dashboard" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                                <i class="icofont-dashboard-web mr-1" aria-hidden="true"></i> BTEC Dashboard
                                             </a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a asp-controller="BTECAuthority" asp-action="Programs" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
-                                                <i class="icofont-verification-check mr-1"></i> BTEC Programs
+                                        <li class="nav-item" role="none">
+                                            <a asp-controller="BTECAuthority" asp-action="Programs" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                                <i class="icofont-verification-check mr-1" aria-hidden="true"></i> BTEC Programs
                                             </a>
                                         </li>
                                     }
                                 }
 
-                                <li class="nav-item">
-                                    <a asp-controller="Home" asp-action="Contact" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
+                                <li class="nav-item" role="none">
+                                    <a asp-controller="Home" asp-action="Contact" role="menuitem" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block hover:text-primaryColor dark:text-whiteColor">
                                         Contact
                                     </a>
                                 </li>
@@ -279,53 +644,70 @@
                                 {
                                     <!-- Notifications Dropdown -->
                                     <li class="px-5 lg:px-10px 2xl:px-5 lg:py-4 2xl:py-26px 3xl:py-9 group relative">
-                                        <button onclick="toggleNotifications()" class="relative block notification-trigger">
+                                        <button onclick="toggleNotifications()" 
+                                                class="relative block notification-trigger" 
+                                                aria-label="View notifications"
+                                                aria-expanded="false"
+                                                aria-haspopup="true">
                                             <i class="icofont-notification text-2xl text-blackColor group-hover:text-primaryColor transition-all duration-300 dark:text-blackColor-dark"></i>
-                                            <span id="notificationCount" class="absolute -top-1 2xl:-top-[5px] -right-[10px] lg:right-3/4 2xl:-right-[10px] text-[10px] font-medium text-white dark:text-whiteColor-dark bg-secondaryColor px-1 py-[2px] leading-1 rounded-full z-50" style="display:none;">0</span>
+                                            <span id="notificationCount" 
+                                                  class="notification-badge absolute -top-1 2xl:-top-[5px] -right-[10px] lg:right-3/4 2xl:-right-[10px] text-[10px] font-medium text-white dark:text-whiteColor-dark bg-secondaryColor px-1 py-[2px] leading-1 rounded-full z-50" 
+                                                  style="display:none;"
+                                                  role="status"
+                                                  aria-live="polite">0</span>
                                         </button>
-                                        <div id="notificationDropdown" class="dropdown-menu">
-                                            <div style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
-                                                <strong style="font-size: 14px;">Notifications</strong>
+                                        <div id="notificationDropdown" class="dropdown-menu" role="menu" aria-label="Notifications menu">
+                                            <div class="dropdown-header">
+                                                <strong>Notifications</strong>
                                             </div>
-                                            <ul id="notificationList">
-                                                <li><a href="#" class="text-center">Loading...</a></li>
-                                            </ul>
-                                            <div style="padding: 8px 16px; border-top: 1px solid #f1f5f9; text-align: center;">
-                                                <a asp-controller="Notification" asp-action="Index" style="font-size: 13px; color: #3b82f6; text-decoration: none;">View All</a>
+                                            <div id="notificationList">
+                                                <div class="dropdown-loading"></div>
+                                            </div>
+                                            <div class="dropdown-footer">
+                                                <a asp-controller="Notification" asp-action="Index">View All Notifications</a>
                                             </div>
                                         </div>
                                     </li>
 
                                     <!-- User Profile Dropdown -->
                                     <li class="px-5 lg:px-10px 2xl:px-5 lg:py-4 2xl:py-26px 3xl:py-9 group relative">
-                                        <button onclick="toggleUserMenu()" class="flex items-center gap-2">
+                                        <button onclick="toggleUserMenu()" 
+                                                class="flex items-center gap-2"
+                                                aria-label="User menu"
+                                                aria-expanded="false"
+                                                aria-haspopup="true">
                                             <i class="icofont-user-alt-5 text-2xl text-blackColor group-hover:text-primaryColor transition-all duration-300 dark:text-blackColor-dark"></i>
                                             <span class="hidden lg:block text-sm font-medium text-blackColor dark:text-whiteColor">@UserManager.GetUserName(User)</span>
+                                            <i class="icofont-simple-down text-xs text-blackColor dark:text-whiteColor hidden lg:block"></i>
                                         </button>
-                                        <div id="userMenuDropdown" class="dropdown-menu">
+                                        <div id="userMenuDropdown" class="dropdown-menu" role="menu" aria-label="User menu">
                                             <ul>
-                                                <li>
-                                                    <a asp-controller="Account" asp-action="Me">
-                                                        <i class="icofont-user mr-2"></i> My Profile
+                                                <li role="none">
+                                                    <a asp-controller="Account" asp-action="Me" role="menuitem">
+                                                        <i class="icofont-user mr-2" aria-hidden="true"></i> My Profile
                                                     </a>
                                                 </li>
-                                                @{
-                                                    if (User.IsInRole("PlatformAdmin"))
-
-                                                    {
-
-                                                        <li>
-                                                            <a asp-controller="Admin" asp-action="Dashboard">
-                                                                <i class="icofont-gear mr-2"></i> Dashboard
-                                                            </a>
-                                                        </li>
-
-                                                    }
+                                                @if (User.IsInRole("PlatformAdmin"))
+                                                {
+                                                    <li role="none">
+                                                        <a asp-controller="Admin" asp-action="Dashboard" role="menuitem">
+                                                            <i class="icofont-dashboard-web mr-2" aria-hidden="true"></i> Admin Dashboard
+                                                        </a>
+                                                    </li>
                                                 }
-                                                <li>
+                                                @if (User.IsInRole("Student"))
+                                                {
+                                                    <li role="none">
+                                                        <a asp-controller="Student" asp-action="Settings" role="menuitem">
+                                                            <i class="icofont-settings-alt mr-2" aria-hidden="true"></i> Settings
+                                                        </a>
+                                                    </li>
+                                                }
+                                                <li role="none" style="border-top: 1px solid #f1f5f9; margin-top: 4px; padding-top: 4px;">
                                                     <form asp-controller="Account" asp-action="Logout" method="post" style="margin:0;">
-                                                        <button type="submit" style="width:100%; text-align:left; background:none; border:none; cursor:pointer; padding: 12px 16px; color: #1e293b;">
-                                                            <i class="icofont-logout mr-2"></i> Logout
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" style="width:100%; text-align:left; background:none; border:none; cursor:pointer; padding: 12px 16px; color: #ef4444; font-weight: 600; transition: all 0.2s;">
+                                                            <i class="icofont-logout mr-2" aria-hidden="true"></i> Logout
                                                         </button>
                                                     </form>
                                                 </li>
@@ -337,21 +719,21 @@
                                 {
                                     <!-- Login Button -->
                                     <li class="hidden lg:block">
-                                        <a asp-controller="Account" asp-action="Login" class="text-size-12 2xl:text-size-15 px-15px py-2 text-blackColor hover:text-whiteColor bg-whiteColor block hover:bg-primaryColor border border-borderColor1 rounded-standard font-semibold mr-[7px] 2xl:mr-15px dark:text-blackColor-dark dark:bg-whiteColor-dark dark:hover:bg-primaryColor dark:hover:text-whiteColor dark:hover:border-primaryColor">
-                                            <i class="icofont-login mr-1"></i> Login
+                                        <a asp-controller="Account" asp-action="Login" class="text-size-12 2xl:text-size-15 px-15px py-2 text-blackColor hover:text-whiteColor bg-whiteColor block hover:bg-primaryColor border border-borderColor1 rounded-standard font-semibold mr-[7px] 2xl:mr-15px dark:text-blackColor-dark dark:bg-whiteColor-dark dark:hover:bg-primaryColor dark:hover:text-whiteColor dark:hover:border-primaryColor transition-all duration-300">
+                                            <i class="icofont-login mr-1" aria-hidden="true"></i> Login
                                         </a>
                                     </li>
                                     <!-- Register Button -->
                                     <li class="hidden lg:block">
-                                        <a asp-controller="Account" asp-action="Register" class="text-size-12 2xl:text-size-15 text-whiteColor bg-primaryColor block border-primaryColor border hover:text-primaryColor hover:bg-white px-15px py-2 rounded-standard dark:hover:bg-whiteColor-dark dark:hover:text-whiteColor">
-                                            <i class="icofont-user-alt-7 mr-1"></i> Register
+                                        <a asp-controller="Account" asp-action="Register" class="text-size-12 2xl:text-size-15 text-whiteColor bg-primaryColor block border-primaryColor border hover:text-primaryColor hover:bg-white px-15px py-2 rounded-standard dark:hover:bg-whiteColor-dark dark:hover:text-whiteColor transition-all duration-300">
+                                            <i class="icofont-user-alt-7 mr-1" aria-hidden="true"></i> Register
                                         </a>
                                     </li>
                                 }
 
                                 <!-- Mobile Menu Toggle -->
                                 <li class="block lg:hidden">
-                                    <button class="open-mobile-menu text-3xl text-darkdeep1 hover:text-secondaryColor dark:text-whiteColor dark:hover:text-secondaryColor">
+                                    <button class="open-mobile-menu text-3xl text-darkdeep1 hover:text-secondaryColor dark:text-whiteColor dark:hover:text-secondaryColor" aria-label="Open mobile menu" aria-expanded="false">
                                         <i class="icofont-navigation-menu"></i>
                                     </button>
                                 </li>
@@ -365,12 +747,12 @@
     </header>
 
     <!-- Main body -->
-    <main class="bg-transparent">
+    <main class="bg-transparent" role="main">
         @RenderBody()
     </main>
 
     <!-- Footer -->
-    <footer class="bg-darkblack">
+    <footer class="bg-darkblack" role="contentinfo">
         <div class="container-fluid-2 pt-65px pb-5 lg:pb-10">
             <!-- Footer subscription -->
             <section>
@@ -388,7 +770,7 @@
                         {
                             <div class="ml-auto max-w-form-xl md:max-w-form-md lg:max-w-form-lg xl:max-w-form-xl">
                                 <a asp-controller="Account" asp-action="Register" class="inline-block px-30px py-15px bg-primaryColor hover:bg-secondaryColor text-whiteColor font-semibold rounded text-lg transition-all duration-300">
-                                    <i class="icofont-user-alt-7 mr-2"></i> Get Started Now
+                                    <i class="icofont-user-alt-7 mr-2" aria-hidden="true"></i> Get Started Now
                                 </a>
                             </div>
                         }
@@ -407,7 +789,7 @@
                         </p>
                         <div class="flex items-center">
                             <div>
-                                <i class="icofont-support text-3xl text-whiteColor h-78px w-78px bg-primaryColor leading-78px mr-22px block text-center rounded"></i>
+                                <i class="icofont-support text-3xl text-whiteColor h-78px w-78px bg-primaryColor leading-78px mr-22px block text-center rounded" aria-hidden="true"></i>
                             </div>
                             <div>
                                 <h6 class="text-lg text-whiteColor font-medium leading-29px">SUPPORT HOURS</h6>
@@ -421,11 +803,11 @@
                     <div class="col-start-1 col-span-12 md:col-start-7 lg:col-start-5 md:col-span-6 lg:col-span-2" data-aos="fade-up">
                         <h4 class="text-size-22 font-bold text-whiteColor mb-3">Quick Links</h4>
                         <ul class="flex flex-col gap-y-3">
-                            <li><a asp-controller="Home" asp-action="About" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> About Us</a></li>
-                            <li><a asp-controller="Home" asp-action="Universities" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> Universities</a></li>
-                            <li><a asp-controller="Home" asp-action="Programs" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> Programs</a></li>
-                            <li><a asp-controller="Home" asp-action="HowItWorks" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> How It Works</a></li>
-                            <li><a asp-controller="Home" asp-action="FAQ" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> FAQ</a></li>
+                            <li><a asp-controller="Home" asp-action="About" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> About Us</a></li>
+                            <li><a asp-controller="Home" asp-action="Universities" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> Universities</a></li>
+                            <li><a asp-controller="Home" asp-action="Programs" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> Programs</a></li>
+                            <li><a asp-controller="Home" asp-action="HowItWorks" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> How It Works</a></li>
+                            <li><a asp-controller="Home" asp-action="FAQ" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> FAQ</a></li>
                         </ul>
                     </div>
 
@@ -435,19 +817,19 @@
                         <ul class="flex flex-col gap-y-3">
                             @if (SignInManager.IsSignedIn(User) && User.IsInRole("Student"))
                             {
-                                <li><a asp-controller="Student" asp-action="Dashboard" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> My Dashboard</a></li>
-                                <li><a asp-controller="Student" asp-action="Recommendations" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> Get Recommendations</a></li>
-                                <li><a asp-controller="Student" asp-action="Applications" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> My Applications</a></li>
-                                <li><a asp-controller="Student" asp-action="Discounts" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> My Discounts</a></li>
+                                <li><a asp-controller="Student" asp-action="Dashboard" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> My Dashboard</a></li>
+                                <li><a asp-controller="Student" asp-action="Recommendations" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> Get Recommendations</a></li>
+                                <li><a asp-controller="Student" asp-action="Applications" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> My Applications</a></li>
+                                <li><a asp-controller="Discounts" asp-action="Index" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> My Discounts</a></li>
                             }
                             else
                             {
-                                <li><a asp-controller="Account" asp-action="Register" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> Student Registration</a></li>
-                                <li><a asp-controller="Home" asp-action="StudentGuide" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> Student Guide</a></li>
-                                <li><a asp-controller="Home" asp-action="Scholarships" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> Scholarships</a></li>
-                                <li><a asp-controller="Home" asp-action="BTECPrograms" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> BTEC Programs</a></li>
+                                <li><a asp-controller="Account" asp-action="Register" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> Student Registration</a></li>
+                                <li><a asp-controller="Home" asp-action="StudentGuide" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> Student Guide</a></li>
+                                <li><a asp-controller="Home" asp-action="Scholarships" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> Scholarships</a></li>
+                                <li><a asp-controller="Home" asp-action="BTECPrograms" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> BTEC Programs</a></li>
                             }
-                            <li><a asp-controller="Home" asp-action="Contact" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1"></i> Contact Support</a></li>
+                            <li><a asp-controller="Home" asp-action="Contact" class="text-darkgray relative hover:text-primaryColor"><i class="icofont-simple-right mr-1" aria-hidden="true"></i> Contact Support</a></li>
                         </ul>
                     </div>
 
@@ -456,21 +838,21 @@
                         <h4 class="text-size-22 font-bold text-whiteColor mb-3">Contact Info</h4>
                         <ul class="flex flex-col gap-y-4">
                             <li class="flex items-start gap-3">
-                                <i class="icofont-location-pin text-primaryColor text-xl mt-1"></i>
+                                <i class="icofont-location-pin text-primaryColor text-xl mt-1" aria-hidden="true"></i>
                                 <div>
                                     <h6 class="text-size-15 text-whiteColor font-semibold">Address</h6>
                                     <p class="text-sm text-darkgray">Amman, Jordan</p>
                                 </div>
                             </li>
                             <li class="flex items-start gap-3">
-                                <i class="icofont-phone text-primaryColor text-xl mt-1"></i>
+                                <i class="icofont-phone text-primaryColor text-xl mt-1" aria-hidden="true"></i>
                                 <div>
                                     <h6 class="text-size-15 text-whiteColor font-semibold">Phone</h6>
                                     <p class="text-sm text-darkgray">+962 6 123 4567</p>
                                 </div>
                             </li>
                             <li class="flex items-start gap-3">
-                                <i class="icofont-email text-primaryColor text-xl mt-1"></i>
+                                <i class="icofont-email text-primaryColor text-xl mt-1" aria-hidden="true"></i>
                                 <div>
                                     <h6 class="text-size-15 text-whiteColor font-semibold">Email</h6>
                                     <p class="text-sm text-darkgray">support@@uniselector.jo</p>
@@ -494,10 +876,10 @@
                     </div>
                     <div class="lg:col-start-10 lg:col-span-3">
                         <ul class="flex gap-3 lg:gap-2 2xl:gap-3 lg:justify-end">
-                            <li><a href="#" class="w-40.19px lg:w-35px 2xl:w-40.19px h-37px lg:h-35px 2xl:h-37px leading-37px lg:leading-35px 2xl:leading-37px text-whiteColor bg-whiteColor bg-opacity-10 hover:bg-primaryColor text-center rounded transition-all duration-300"><i class="icofont-facebook"></i></a></li>
-                            <li><a href="#" class="w-40.19px lg:w-35px 2xl:w-40.19px h-37px lg:h-35px 2xl:h-37px leading-37px lg:leading-35px 2xl:leading-37px text-whiteColor bg-whiteColor bg-opacity-10 hover:bg-primaryColor text-center rounded transition-all duration-300"><i class="icofont-twitter"></i></a></li>
-                            <li><a href="#" class="w-40.19px lg:w-35px 2xl:w-40.19px h-37px lg:h-35px 2xl:h-37px leading-37px lg:leading-35px 2xl:leading-37px text-whiteColor bg-whiteColor bg-opacity-10 hover:bg-primaryColor text-center rounded transition-all duration-300"><i class="icofont-instagram"></i></a></li>
-                            <li><a href="#" class="w-40.19px lg:w-35px 2xl:w-40.19px h-37px lg:h-35px 2xl:h-37px leading-37px lg:leading-35px 2xl:leading-37px text-whiteColor bg-whiteColor bg-opacity-10 hover:bg-primaryColor text-center rounded transition-all duration-300"><i class="icofont-linkedin"></i></a></li>
+                            <li><a href="#" class="w-40.19px lg:w-35px 2xl:w-40.19px h-37px lg:h-35px 2xl:h-37px leading-37px lg:leading-35px 2xl:leading-37px text-whiteColor bg-whiteColor bg-opacity-10 hover:bg-primaryColor text-center rounded transition-all duration-300" aria-label="Facebook"><i class="icofont-facebook"></i></a></li>
+                            <li><a href="#" class="w-40.19px lg:w-35px 2xl:w-40.19px h-37px lg:h-35px 2xl:h-37px leading-37px lg:leading-35px 2xl:leading-37px text-whiteColor bg-whiteColor bg-opacity-10 hover:bg-primaryColor text-center rounded transition-all duration-300" aria-label="Twitter"><i class="icofont-twitter"></i></a></li>
+                            <li><a href="#" class="w-40.19px lg:w-35px 2xl:w-40.19px h-37px lg:h-35px 2xl:h-37px leading-37px lg:leading-35px 2xl:leading-37px text-whiteColor bg-whiteColor bg-opacity-10 hover:bg-primaryColor text-center rounded transition-all duration-300" aria-label="Instagram"><i class="icofont-instagram"></i></a></li>
+                            <li><a href="#" class="w-40.19px lg:w-35px 2xl:w-40.19px h-37px lg:h-35px 2xl:h-37px leading-37px lg:leading-35px 2xl:leading-37px text-whiteColor bg-whiteColor bg-opacity-10 hover:bg-primaryColor text-center rounded transition-all duration-300" aria-label="LinkedIn"><i class="icofont-linkedin"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -532,125 +914,240 @@
 
     <!-- SignalR -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Dropdown Toggle Functions
+        // Enhanced Dropdown Toggle Functions with Accessibility
         function toggleNotifications() {
             const dropdown = document.getElementById('notificationDropdown');
             const userMenu = document.getElementById('userMenuDropdown');
+            const button = document.querySelector('.notification-trigger');
+            
+            const isShowing = dropdown.classList.contains('show');
             dropdown.classList.toggle('show');
             userMenu.classList.remove('show');
+            
+            // Update ARIA attributes
+            button.setAttribute('aria-expanded', !isShowing);
+            
+            if (!isShowing) {
+                // Mark notifications as read when dropdown is opened
+                setTimeout(() => markNotificationsAsRead(), 1000);
+            }
         }
 
         function toggleUserMenu() {
             const dropdown = document.getElementById('userMenuDropdown');
             const notificationMenu = document.getElementById('notificationDropdown');
+            const button = document.querySelector('button[onclick="toggleUserMenu()"]');
+            
+            const isShowing = dropdown.classList.contains('show');
             dropdown.classList.toggle('show');
             notificationMenu.classList.remove('show');
+            
+            // Update ARIA attributes
+            button.setAttribute('aria-expanded', !isShowing);
         }
 
         // Close dropdowns when clicking outside
         document.addEventListener('click', function(event) {
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            const userMenuDropdown = document.getElementById('userMenuDropdown');
+            
             if (!event.target.closest('.notification-trigger') && !event.target.closest('#notificationDropdown')) {
-                document.getElementById('notificationDropdown').classList.remove('show');
+                notificationDropdown.classList.remove('show');
+                document.querySelector('.notification-trigger')?.setAttribute('aria-expanded', 'false');
             }
             if (!event.target.closest('button[onclick="toggleUserMenu()"]') && !event.target.closest('#userMenuDropdown')) {
-                document.getElementById('userMenuDropdown').classList.remove('show');
+                userMenuDropdown.classList.remove('show');
+                document.querySelector('button[onclick="toggleUserMenu()"]')?.setAttribute('aria-expanded', 'false');
             }
         });
+
+        // Close dropdowns on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.getElementById('notificationDropdown').classList.remove('show');
+                document.getElementById('userMenuDropdown').classList.remove('show');
+                document.querySelector('.notification-trigger')?.setAttribute('aria-expanded', 'false');
+                document.querySelector('button[onclick="toggleUserMenu()"]')?.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Mark notifications as read
+        function markNotificationsAsRead() {
+            fetch('/api/notification/mark-all-read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                }
+            }).catch(err => console.error('Error marking notifications as read:', err));
+        }
     </script>
 
     @if (SignInManager.IsSignedIn(User))
     {
         <script>
-            // SignalR Notification Hub Connection
+            // Enhanced SignalR Notification Hub Connection
             const connection = new signalR.HubConnectionBuilder()
                 .withUrl("/notificationHub")
-                .withAutomaticReconnect()
+                .withAutomaticReconnect([0, 2000, 5000, 10000, 30000]) // Retry intervals
+                .configureLogging(signalR.LogLevel.Information)
                 .build();
+
+            // Connection state management
+            const connectionStatus = document.getElementById('connectionStatus');
+            const connectionStatusText = document.getElementById('connectionStatusText');
 
             connection.on("ReceiveNotification", function (notification) {
                 updateNotificationBadge();
-                showNotificationToast(notification);
-                loadRecentNotifications(); // Refresh the dropdown list
+                showEnhancedNotificationToast(notification);
+                loadRecentNotifications();
             });
 
             connection.on("UnreadCountUpdated", function (count) {
+                updateBadgeCount(count);
+            });
+
+            // Connection lifecycle events
+            connection.onclose(() => {
+                console.log("SignalR Disconnected");
+                showConnectionStatus('Disconnected', false);
+            });
+
+            connection.onreconnecting(() => {
+                console.log("SignalR Reconnecting...");
+                showConnectionStatus('Reconnecting...', false);
+            });
+
+            connection.onreconnected(() => {
+                console.log("SignalR Reconnected");
+                showConnectionStatus('Connected', true);
+                updateNotificationBadge();
+                loadRecentNotifications();
+            });
+
+            // Start connection
+            async function startConnection() {
+                try {
+                    await connection.start();
+                    console.log("SignalR Connected");
+                    showConnectionStatus('Connected', true);
+                    updateNotificationBadge();
+                    loadRecentNotifications();
+                } catch (err) {
+                    console.error("SignalR Connection Error: ", err);
+                    showConnectionStatus('Connection Failed', false);
+                    // Retry after 5 seconds
+                    setTimeout(startConnection, 5000);
+                }
+            }
+
+            startConnection();
+
+            function showConnectionStatus(text, isConnected) {
+                connectionStatusText.textContent = text;
+                connectionStatus.classList.toggle('disconnected', !isConnected);
+                connectionStatus.classList.add('show');
+                
+                if (isConnected) {
+                    setTimeout(() => {
+                        connectionStatus.classList.remove('show');
+                    }, 3000);
+                }
+            }
+
+            function updateBadgeCount(count) {
                 const badge = document.getElementById('notificationCount');
                 if (count > 0) {
                     badge.textContent = count > 99 ? '99+' : count;
                     badge.style.display = 'inline-block';
+                    badge.classList.add('notification-badge');
                 } else {
                     badge.style.display = 'none';
                 }
-            });
-
-            connection.start().then(function () {
-                console.log("SignalR Connected");
-                updateNotificationBadge();
-                loadRecentNotifications();
-            }).catch(function (err) {
-                console.error("SignalR Connection Error: ", err);
-            });
+            }
 
             function updateNotificationBadge() {
                 fetch('/api/notification/unread-count')
                     .then(response => response.json())
-                    .then(data => {
-                        const badge = document.getElementById('notificationCount');
-                        if (data.count > 0) {
-                            badge.textContent = data.count > 99 ? '99+' : data.count;
-                            badge.style.display = 'inline-block';
-                        } else {
-                            badge.style.display = 'none';
-                        }
-                    })
+                    .then(data => updateBadgeCount(data.count))
                     .catch(err => console.error('Error fetching notification count:', err));
             }
 
-            function showNotificationToast(notification) {
+            function showEnhancedNotificationToast(notification) {
                 const toast = document.createElement('div');
                 toast.className = 'notification-toast';
                 toast.innerHTML = `
-                    <div class="notification-toast-content">
-                        <strong>${notification.title || 'Notification'}</strong>
-                        <p>${notification.message || ''}</p>
+                    <div class="notification-toast-header">
+                        <div class="notification-toast-icon">
+                            <i class="icofont-bell"></i>
+                        </div>
+                        <button class="notification-toast-close" onclick="this.closest('.notification-toast').remove()" aria-label="Close notification">
+                            ×
+                        </button>
                     </div>
+                    <div class="notification-toast-content">
+                        <strong>${escapeHtml(notification.title || 'Notification')}</strong>
+                        <p>${escapeHtml(notification.message || '')}</p>
+                    </div>
+                    <div class="notification-toast-progress"></div>
                 `;
                 document.body.appendChild(toast);
 
-                setTimeout(() => {
-                    toast.classList.add('show');
-                }, 100);
+                // Show toast
+                setTimeout(() => toast.classList.add('show'), 100);
 
+                // Auto-hide after 5 seconds
                 setTimeout(() => {
                     toast.classList.remove('show');
-                    setTimeout(() => toast.remove(), 300);
+                    setTimeout(() => toast.remove(), 400);
                 }, 5000);
+
+                // Play notification sound (optional)
+                playNotificationSound();
             }
 
             function loadRecentNotifications() {
+                const list = document.getElementById('notificationList');
+                list.innerHTML = '<div class="dropdown-loading"></div>';
+
                 fetch('/api/notification/recent?count=5')
                     .then(response => response.json())
                     .then(data => {
-                        const list = document.getElementById('notificationList');
                         if (data.notifications && data.notifications.length > 0) {
                             list.innerHTML = data.notifications.map(n => `
-                                <li>
-                                    <a href="${n.actionUrl || '#'}" ${n.isRead ? '' : 'style="background:#f8fafc;font-weight:600;"'}>
-                                        <strong style="display:block;font-size:13px;color:#1e293b;">${n.title}</strong>
-                                        <small style="display:block;font-size:12px;color:#64748b;margin-top:2px;">${n.message}</small>
-                                        <small style="display:block;font-size:11px;color:#94a3b8;margin-top:4px;">${formatDate(n.createdAt)}</small>
+                                <li role="none">
+                                    <a href="${escapeHtml(n.actionUrl || '#')}" 
+                                       role="menuitem"
+                                       class="${n.isRead ? '' : 'unread'}"
+                                       ${n.isRead ? '' : 'style="padding-left:24px;"'}>
+                                        <strong>${escapeHtml(n.title)}</strong>
+                                        <span style="display:block;font-size:12px;color:#64748b;margin-top:2px;">${escapeHtml(n.message)}</span>
+                                        <small>${formatDate(n.createdAt)}</small>
                                     </a>
                                 </li>
                             `).join('');
                         } else {
-                            list.innerHTML = '<li><a href="#" class="text-center" style="color:#94a3b8;">No new notifications</a></li>';
+                            list.innerHTML = `
+                                <div class="empty-notifications">
+                                    <i class="icofont-bell"></i>
+                                    <p>No new notifications</p>
+                                </div>
+                            `;
                         }
                     })
                     .catch(err => {
                         console.error('Error loading notifications:', err);
-                        document.getElementById('notificationList').innerHTML = '<li><a href="#" class="text-center" style="color:#ef4444;">Error loading notifications</a></li>';
+                        list.innerHTML = `
+                            <div class="empty-notifications">
+                                <i class="icofont-warning"></i>
+                                <p style="color:#ef4444;">Error loading notifications</p>
+                            </div>
+                        `;
                     });
             }
 
@@ -660,16 +1157,31 @@
                 const diff = Math.floor((now - date) / 1000);
 
                 if (diff < 60) return 'Just now';
-                if (diff < 3600) return Math.floor(diff / 60) + ' minutes ago';
-                if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
+                if (diff < 3600) return Math.floor(diff / 60) + ' min ago';
+                if (diff < 86400) return Math.floor(diff / 3600) + ' hr ago';
                 if (diff < 604800) return Math.floor(diff / 86400) + ' days ago';
                 return date.toLocaleDateString();
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function playNotificationSound() {
+                // Optional: Add notification sound
+                // const audio = new Audio('/assets/sounds/notification.mp3');
+                // audio.play().catch(() => {});
             }
 
             // Load notifications on page load
             document.addEventListener('DOMContentLoaded', function() {
                 loadRecentNotifications();
             });
+
+            // Refresh notifications every 30 seconds
+            setInterval(updateNotificationBadge, 30000);
         </script>
     }
 

@@ -375,7 +375,9 @@ namespace Uni_Selector.Data
                 CreatedAt = SeedNow,
                 PasswordHash = AdminPasswordHash, //Pre-hashed password => Admin@123
                 SecurityStamp = "ADMIN-SEC-0001",
-                ConcurrencyStamp = "ADMIN-CONC-0001"
+                ConcurrencyStamp = "ADMIN-CONC-0001",
+                PhoneNumber = "+962790000001"
+
             };
 
             var btecUser = new ApplicationUser
@@ -391,7 +393,9 @@ namespace Uni_Selector.Data
                 CreatedAt = SeedNow,
                 SecurityStamp = "BTEC-SEC-0001",
                 PasswordHash = BtexPasswordHash, //Pre-hashed password => Btec@123
-                ConcurrencyStamp = "BTEC-CONC-0001"
+                ConcurrencyStamp = "BTEC-CONC-0001",
+                PhoneNumber = "+962790000001"
+
             };
 
             var germanRepUser = new ApplicationUser
@@ -407,7 +411,9 @@ namespace Uni_Selector.Data
                 CreatedAt = SeedNow,
                 SecurityStamp = "REP-001-SEC-0001",
                 PasswordHash = RepPasswordHash, //Pre-hashed password => Rep@1234
-                ConcurrencyStamp = "REP-001-CONC-0001"
+                ConcurrencyStamp = "REP-001-CONC-0001",
+                PhoneNumber = "+962790000001"
+
             };
 
             var meuRepUser = new ApplicationUser
@@ -423,7 +429,9 @@ namespace Uni_Selector.Data
                 CreatedAt = SeedNow,
                 SecurityStamp = "REP-002-SEC-0001",
                 PasswordHash = RepPasswordHash,//Pre-hashed password => Rep@1234
-                ConcurrencyStamp = "REP-002-CONC-0001"
+                ConcurrencyStamp = "REP-002-CONC-0001",
+                PhoneNumber = "+962790000001"
+
             };
 
             var student1User = new ApplicationUser
@@ -439,7 +447,8 @@ namespace Uni_Selector.Data
                 CreatedAt = SeedNow,
                 SecurityStamp = "STUDENT-001-SEC-0001",
                 PasswordHash = StdPasswordHash, // Pre-hashed password => Student@123
-                ConcurrencyStamp = "STUDENT-001-CONC-0001"
+                ConcurrencyStamp = "STUDENT-001-CONC-0001",
+                PhoneNumber = "+962790000001"
             };
 
             var student2User = new ApplicationUser
@@ -455,7 +464,9 @@ namespace Uni_Selector.Data
                 CreatedAt = SeedNow,
                 SecurityStamp = "STUDENT-002-SEC-0001",
                 PasswordHash = StdPasswordHash, // Pre-hashed password => Student@123
-                ConcurrencyStamp = "STUDENT-002-CONC-0001"
+                ConcurrencyStamp = "STUDENT-002-CONC-0001",
+                PhoneNumber = "+962790000001"
+
             };
 
             var student3User = new ApplicationUser
@@ -471,7 +482,9 @@ namespace Uni_Selector.Data
                 CreatedAt = SeedNow,
                 SecurityStamp = "STUDENT-003-SEC-0001",
                 PasswordHash = StdPasswordHash, // Pre-hashed password => Student@123
-                ConcurrencyStamp = "STUDENT-003-CONC-0001"
+                ConcurrencyStamp = "STUDENT-003-CONC-0001",
+                PhoneNumber = "+962790000001"
+
             };
 
             var student4User = new ApplicationUser
@@ -487,7 +500,9 @@ namespace Uni_Selector.Data
                 CreatedAt = SeedNow,
                 SecurityStamp = "STUDENT-004-SEC-0001",
                 PasswordHash = StdPasswordHash, // Pre-hashed password => Student@123
-                ConcurrencyStamp = "STUDENT-004-CONC-0001"
+                ConcurrencyStamp = "STUDENT-004-CONC-0001",
+                PhoneNumber = "+962790000001"
+
             };
 
             modelBuilder.Entity<ApplicationUser>().HasData(
@@ -1541,7 +1556,11 @@ namespace Uni_Selector.Data
                     HasDisability = false,
                     DisabilityType = null,
                     IsOrphan = false,
-                    IsEmployeeChild = false
+                    IsEmployeeChild = false,
+                    IsActive = true,
+                    ProfileCompleted = true,
+                    
+                    
                     // ❌ REMOVED: IsActive (doesn't exist)
                     // ❌ REMOVED: ProfileCompleted (doesn't exist)
                 },

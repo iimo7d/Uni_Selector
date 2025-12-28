@@ -10,7 +10,8 @@ namespace Uni_Selector.Models
         [Required] public int ApplicationId { get; set; }
         [ForeignKey("ApplicationId")]
         public StudentApplication Application { get; set; }
-        [Required, StringLength(100)] public string Code { get; set; }
+        [Required, StringLength(100)]
+        public string Code { get; set; }
         [Required] public int UniversityId { get; set; }
         [ForeignKey("UniversityId")]
         public University University { get; set; }
