@@ -22,7 +22,6 @@ namespace Uni_Selector.ViewModels.Discounts
         // =========================================================
 
         public int DaysRemaining => IsValid ? Math.Max(0, (GrantedAt.AddDays(90) - DateTime.UtcNow).Days) : 0;
-
         public DateTime ExpiryDate => GrantedAt.AddDays(90);
 
         // Effective status accounting for expired-but-not-marked discounts

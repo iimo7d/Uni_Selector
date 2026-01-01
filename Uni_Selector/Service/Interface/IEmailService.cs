@@ -1,4 +1,7 @@
-﻿namespace Uni_Selector.Service.Interface
+﻿using Uni_Selector.Models;
+using Uni_Selector.ViewModels.BTECAuthority;
+
+namespace Uni_Selector.Service.Interface
 {
     public interface IEmailService
     {
@@ -11,5 +14,15 @@
         Task SendWelcomeEmailAsync(string email, string fullName);
         Task SendAccountLockedNotificationAsync(string email, string fullName, DateTime unlockTime);
         Task SendPasswordChangedNotificationAsync(string email, string fullName);
+
+        Task SendApplicationApprovedEmailAsync(string email, string studentName, string programName, string universityName, string admissionNumber, string discountCode, decimal discountAmount);
+        Task SendApplicationRejectedEmailAsync(string email, string studentName, string programName, string universityName, string rejectionReason);
+        Task SendHourDiscountAppliedEmailAsync(string email, string studentName, string programName, string universityName, decimal discountPercentage);
+
+
+        Task SendProgramRejectedEmailAsync(string email, string recipientName, string programName, string universityName, string level, string rejectionReason);
+        Task SendProgramApprovedEmailAsync(string email, string recipientName, string programName, string universityName, string level, string approvalNotes);
+
+        Task SendStandardsUpdateEmailAsync(string email, string recipientName, string updateDescription, DateTime effectiveDate, string customMessage);
     }
 }

@@ -13,7 +13,7 @@
                 University Recommendations
             </h2>
             <ul class="flex gap-1 text-sm text-contentColor dark:text-contentColor-dark">
-                <li><a asp-controller="Dashboard" asp-action="Index" class="hover:text-primaryColor">Dashboard</a></li>
+                <li><a asp-controller="Account" asp-action="Me" class="hover:text-primaryColor">Profile</a></li>
                 <li>/</li>
                 <li>Recommendations</li>
             </ul>
@@ -28,7 +28,7 @@
         <!-- Action Buttons -->
         <div class="flex flex-wrap justify-between items-center mb-8 gap-4">
             <div class="flex gap-3">
-                <a asp-action="Generate" class="px-6 py-3 bg-primaryColor text-white rounded-md hover:bg-opacity-90 transition">
+                <a asp-action="Generate" asp-controller="Recommendations" class="px-6 py-3 bg-primaryColor text-white rounded-md hover:bg-opacity-90 transition">
                     <i class="icofont-refresh"></i> Generate New Recommendations
                 </a>
                 @if (Model.Recommendations.Any())

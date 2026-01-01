@@ -1,5 +1,6 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,8 @@ using Uni_Selector.ViewModels.Discounts;
 
 namespace Uni_Selector.Controllers
 {
+    [Authorize(Roles = UserRoles.Student)]
+    [Route("[controller]")]
     public class DiscountsController : Controller
     {
         private readonly AppDbContext _context;
@@ -28,7 +31,7 @@ namespace Uni_Selector.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("")]
         public async Task<IActionResult> Index(string status, int pageNumber = 1, int pageSize = 12)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -111,7 +114,6 @@ namespace Uni_Selector.Controllers
 
             return View(model);
         }
-
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)

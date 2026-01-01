@@ -15,7 +15,7 @@
                 </h1>
                 <ul class="flex gap-1 justify-center">
                     <li>
-                        <a asp-controller="Dashboard" asp-action="Index" class="text-lg text-blackColor2 dark:text-blackColor2-dark">
+                        <a asp-controller="Home" asp-action="Index" class="text-lg text-blackColor2 dark:text-blackColor2-dark">
                             Home <i class="icofont-simple-right"></i>
                         </a>
                     </li>
@@ -319,8 +319,8 @@
                             }
                             else
                             {
-                                <a href="/Applications/Details/@Model.ApplicationStatus" class="w-full text-center block text-size-15 text-whiteColor bg-secondaryColor px-25px py-10px border mb-10px leading-1.8 border-secondaryColor hover:text-secondaryColor hover:bg-whiteColor rounded">
-                                    <i class="icofont-eye"></i> View Application
+                                <a href="@Url.Action("Index", "Applications")" class="w-full text-center block text-size-15 text-whiteColor bg-secondaryColor px-25px py-10px border mb-10px leading-1.8 border-secondaryColor hover:text-secondaryColor hover:bg-whiteColor rounded">
+                                    <i class="icofont-eye"></i> View Applications
                                 </a>
                             }
                             <a asp-action="Index" class="w-full text-center block text-size-15 text-blackColor bg-whiteColor px-25px py-10px border mb-10px leading-1.8 border-borderColor hover:bg-primaryColor hover:text-whiteColor hover:border-primaryColor rounded">
@@ -448,33 +448,42 @@
     </div>
 </section>
 
+<form id="antiForgeryForm" method="post" style="display:none">
+    @Html.AntiForgeryToken()
+</form>
+
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        // Mark as viewed
-        $(document).ready(function() {
-            $.ajax({
-                url: '/Recommendations/@Model.RecommendationId/View',
-                type: 'POST',
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                }
-            });
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Mark as viewed (no jQuery)
+            const tokenInput = document.querySelector('#antiForgeryForm input[name="__RequestVerificationToken"]');
+            const token = tokenInput ? tokenInput.value : null;
+
+            try {
+                await fetch('@Url.Action("View", "Recommendations", new { id = Model.RecommendationId })', {
+                    method: 'POST',
+                    headers: token ? { 'RequestVerificationToken': token } : {}
+                });
+            } catch (e) {
+                // ignore (shouldn't break Apply button)
+            }
         });
 
         function applyNow() {
             Swal.fire({
                 title: 'Apply to This Program?',
-                html: '<p class="text-sm mb-3">You are about to apply to <strong>@Model.ProgramName</strong> at <strong>@Model.UniversityName</strong>.</p><p class="text-sm">You will be redirected to the application form.</p>',
+                html: `<p class="text-sm mb-3">You are about to apply to <strong>@Model.ProgramName</strong> at <strong>@Model.UniversityName</strong>.</p>
+                       <p class="text-sm">You will be redirected to the application form.</p>`,
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#3b82f6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: '<i class="icofont-check-circled"></i> Yes, Apply Now!',
+                confirmButtonText: 'Yes, Apply Now!',
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = '/Applications/Create?recommendationId=@Model.RecommendationId';
+                    window.location.href =
+                        '@Url.Action("Create", "Applications", new { recommendationId = Model.RecommendationId })';
                 }
             });
         }

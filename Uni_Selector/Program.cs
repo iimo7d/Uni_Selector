@@ -65,6 +65,8 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 builder.Services.AddSingleton<IRecommendationUpdateQueue, RecommendationUpdateQueue>();
+builder.Services.AddScoped<IBtecStandardsNotifier, BtecStandardsNotifier>();
+
 
 builder.Services.AddHttpContextAccessor();
 

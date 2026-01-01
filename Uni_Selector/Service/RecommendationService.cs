@@ -1,500 +1,1325 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿//using Microsoft.EntityFrameworkCore;
+//using Microsoft.Extensions.Logging;
+//using Uni_Selector.Data;
+//using Uni_Selector.Models;
+//using Uni_Selector.Models.Enums;
+
+//namespace Uni_Selector.Service
+//{
+//    public class RecommendationService
+//    {
+//        private readonly AppDbContext _context;
+//        private readonly ILogger<RecommendationService>? _logger;
+
+//        public RecommendationService(AppDbContext context, ILogger<RecommendationService>? logger = null)
+//        {
+//            _context = context;
+//            _logger = logger;
+//        }
+//        public async Task<List<Recommendation>> GenerateRecommendationsAsync(
+//            int studentId,
+//            int top = 50,
+//            CancellationToken ct = default)
+//        {
+//            var strategy = _context.Database.CreateExecutionStrategy();
+
+//            return await strategy.ExecuteAsync(async () =>
+//            {
+//                await using var tx = await _context.Database.BeginTransactionAsync(ct);
+
+//                try
+//                {
+//                    var student = await _context.Students
+//                        .AsNoTracking()
+//                        .Include(s => s.User)
+//                        .FirstOrDefaultAsync(s => s.Id == studentId, ct);
+
+//                    if (student == null || student.ProfileCompleted != true)
+//                    {
+//                        await tx.RollbackAsync(ct);
+//                        return new List<Recommendation>();
+//                    }
+
+//                    var existing = await _context.Recommendations
+//                        .Where(r => r.StudentId == studentId)
+//                        .ToListAsync(ct);
+
+//                    if (existing.Count > 0)
+//                    {
+//                        _context.Recommendations.RemoveRange(existing);
+//                        await _context.SaveChangesAsync(ct);
+//                    }
+
+//                    var generated = student.Path == PathType.BTEC
+//                        ? await GenerateBtecRecommendationsAsync(student, ct)
+//                        : await GenerateRegularProgramRecommendationsAsync(student, ct);
+
+//                    generated = generated
+//                        .OrderByDescending(r => r.Score)
+//                        .Take(top)
+//                        .ToList();
+
+//                    if (generated.Count > 0)
+//                    {
+//                        _context.Recommendations.AddRange(generated);
+//                        await _context.SaveChangesAsync(ct);
+//                    }
+
+//                    await tx.CommitAsync(ct);
+//                    return generated;
+//                }
+//                catch (Exception ex)
+//                {
+//                    await tx.RollbackAsync(ct);
+//                    _logger?.LogError(ex, "GenerateRecommendationsAsync failed for StudentId={StudentId}", studentId);
+//                    return new List<Recommendation>();
+//                }
+//            });
+//        }
+
+//        // ----------------------------
+//        // REGULAR PROGRAMS
+//        // ----------------------------
+//        private async Task<List<Recommendation>> GenerateRegularProgramRecommendationsAsync(Student student, CancellationToken ct)
+//        {
+//            var now = DateTime.UtcNow;
+//            var studentGpa = NormalizeGpa(student.GPA);
+
+//            var programs = await _context.UniversityPrograms
+//                .AsNoTracking()
+//                .Include(up => up.University)
+//                .Include(up => up.Program)
+//                .Include(up => up.EntryRequirements)
+//                .Where(up => up.IsActive && up.University.IsActive)
+//                .ToListAsync(ct);
+
+//            var recommendations = new List<Recommendation>();
+
+//            foreach (var program in programs)
+//            {
+//                // Requirement check
+//                if (!MeetsEntryRequirements(student, studentGpa, program, now))
+//                    continue;
+
+//                // Distance filter (simple)
+//                var distance = CalculateDistance(student, program.University);
+//                if (distance.HasValue && student.MaxDistanceKm > 0 && distance.Value > student.MaxDistanceKm)
+//                    continue;
+
+//                var score = CalculateProgramScore(student, studentGpa, program);
+//                var cost = CalculateEstimatedCost(program);
+
+//                var reasons = GenerateRecommendationReasons(student, studentGpa, program, score, cost, distance);
+
+//                recommendations.Add(new Recommendation
+//                {
+//                    StudentId = student.Id,
+//                    UniversityProgramId = program.Id,
+//                    Score = score,
+//                    DistanceInKm = distance,
+//                    EstimatedTotalCost = cost,
+//                    ReasonsJson = System.Text.Json.JsonSerializer.Serialize(reasons),
+//                    CreatedAt = DateTime.UtcNow,
+//                    IsViewed = false
+//                });
+//            }
+
+//            return recommendations.OrderByDescending(r => r.Score).ToList();
+//        }
+
+//        // ----------------------------
+//        // BTEC PROGRAMS
+//        // ----------------------------
+//        private async Task<List<Recommendation>> GenerateBtecRecommendationsAsync(Student student, CancellationToken ct)
+//        {
+//            var now = DateTime.UtcNow;
+//            var studentGpa = NormalizeGpa(student.GPA);
+
+//            var programs = await _context.BtecPrograms
+//                .AsNoTracking()
+//                .Include(bp => bp.University)
+//                .Include(bp => bp.EntryRequirements)
+//                .Where(bp => bp.IsActive && bp.University.IsActive && bp.IsApprovedByBtecAuthority)
+//                .ToListAsync(ct);
+
+//            var recommendations = new List<Recommendation>();
+
+//            foreach (var program in programs)
+//            {
+//                if (!MeetsBtecEntryRequirements(student, studentGpa, program, now))
+//                    continue;
+
+//                var distance = CalculateDistance(student, program.University);
+//                if (distance.HasValue && student.MaxDistanceKm > 0 && distance.Value > student.MaxDistanceKm)
+//                    continue;
+
+//                var score = CalculateBtecProgramScore(student, studentGpa, program);
+//                var cost = CalculateBtecEstimatedCost(program);
+
+//                var reasons = GenerateBtecRecommendationReasons(student, studentGpa, program, score, cost, distance);
+
+//                recommendations.Add(new Recommendation
+//                {
+//                    StudentId = student.Id,
+//                    BtecProgramId = program.Id,
+//                    Score = score,
+//                    DistanceInKm = distance,
+//                    EstimatedTotalCost = cost,
+//                    ReasonsJson = System.Text.Json.JsonSerializer.Serialize(reasons),
+//                    CreatedAt = DateTime.UtcNow,
+//                    IsViewed = false
+//                });
+//            }
+
+//            return recommendations.OrderByDescending(r => r.Score).ToList();
+//        }
+
+//        // ----------------------------
+//        // REQUIREMENTS (FIXED)
+//        // ----------------------------
+//        private bool MeetsEntryRequirements(Student student, double studentGpa, UniversityProgram program, DateTime nowUtc)
+//        {
+//            var reqs = program.EntryRequirements ?? new List<EntryRequirement>();
+//            if (!reqs.Any()) return true;
+
+//            // only active by date (if you use them)
+//            reqs = reqs.Where(r =>
+//                    (!r.EffectiveFrom.HasValue || r.EffectiveFrom.Value <= nowUtc) &&
+//                    (!r.EffectiveTo.HasValue || r.EffectiveTo.Value >= nowUtc))
+//                .ToList();
+
+//            if (!reqs.Any()) return true;
+
+//            // If there is no requirement matching student's path => don't block everything
+//            if (!reqs.Any(r => r.Path == student.Path))
+//                return true;
+
+//            foreach (var req in reqs.Where(r => r.Path == student.Path))
+//            {
+//                if (studentGpa < req.MinGPA)
+//                    continue;
+
+//                // Academic track check ONLY if both sides have values
+//                if (req.Path == PathType.Academic && req.AcademicTrack.HasValue && student.AcademicTrack.HasValue)
+//                {
+//                    if (req.AcademicTrack.Value != student.AcademicTrack.Value)
+//                        continue;
+//                }
+
+//                // Vocational branch check ONLY if both sides have values
+//                if (req.Path == PathType.Vocational && req.VocationalBranch.HasValue && student.VocationalBranch.HasValue)
+//                {
+//                    if (req.VocationalBranch.Value != student.VocationalBranch.Value)
+//                        continue;
+//                }
+
+//                return true;
+//            }
+
+//            return false;
+//        }
+
+//        private bool MeetsBtecEntryRequirements(Student student, double studentGpa, BtecProgram program, DateTime nowUtc)
+//        {
+//            var reqs = program.EntryRequirements ?? new List<BtecEntryRequirement>();
+//            if (!reqs.Any()) return true;
+
+//            reqs = reqs.Where(r =>
+//                    (!r.EffectiveFrom.HasValue || r.EffectiveFrom.Value <= nowUtc) &&
+//                    (!r.EffectiveTo.HasValue || r.EffectiveTo.Value >= nowUtc))
+//                .ToList();
+
+//            if (!reqs.Any()) return true;
+
+//            foreach (var req in reqs)
+//            {
+//                if (studentGpa < req.MinGPA)
+//                    continue;
+
+//                if (req.RequiresBtecL2 && !student.BtecLevel2Completed)
+//                    continue;
+
+//                if (req.RequiresBtecL3 && !student.BtecLevel3Completed)
+//                    continue;
+
+//                return true;
+//            }
+
+//            return false;
+//        }
+
+//        // ----------------------------
+//        // SCORING (FIXED NORMALIZATION)
+//        // ----------------------------
+//        private double CalculateProgramScore(Student student, double studentGpa, UniversityProgram program)
+//        {
+//            // each component is 0..100
+//            var requirementScore = CalculateRequirementMatchScore(studentGpa, program);
+//            var budgetScore = CalculateBudgetScore(student, program);
+//            var locationScore = CalculateLocationScore(student, program.University);
+//            var majorScore = CalculateMajorScore(student, program);
+//            var languageScore = CalculateLanguageScore(student, program);
+//            var bonusScore = CalculateSpecialCircumstancesBonus(student, program);
+
+//            // Weighted sum (still 0..100)
+//            var total =
+//                (requirementScore * 0.40) +
+//                (budgetScore * 0.20) +
+//                (locationScore * 0.15) +
+//                (majorScore * 0.15) +
+//                (languageScore * 0.05) +
+//                (bonusScore * 0.05);
+
+//            return Math.Clamp(total, 0, 100);
+//        }
+
+//        private double CalculateBtecProgramScore(Student student, double studentGpa, BtecProgram program)
+//        {
+//            double total = 0;
+
+//            // GPA base
+//            total += studentGpa >= 75 ? 25 : studentGpa >= 65 ? 18 : studentGpa >= 60 ? 12 : 6;
+
+//            // BTEC completion
+//            total += student.BtecLevel2Completed ? 15 : 0;
+//            total += student.BtecLevel3Completed ? 15 : 0;
+
+//            // Budget
+//            var firstSemesterCost = program.RegistrationFeeFirstSemester + (program.HourPriceBase * 15m);
+//            if (firstSemesterCost <= student.RegistrationBudget) total += 20;
+//            else if (firstSemesterCost <= student.RegistrationBudget * 1.2m) total += 10;
+
+//            // Location
+//            if (!string.IsNullOrWhiteSpace(student.PreferredCity) &&
+//                !string.IsNullOrWhiteSpace(program.University.City) &&
+//                program.University.City.Contains(student.PreferredCity, StringComparison.OrdinalIgnoreCase))
+//                total += 15;
+
+//            // Language
+//            if (program.Language == student.PreferredLanguage || program.Language == LanguageCode.Both)
+//                total += 10;
+
+//            // Family connection
+//            if (student.HasFamilyConnection && student.FamilyConnectionUniversityId == program.UniversityId)
+//                total += 15;
+
+//            return Math.Clamp(total, 0, 100);
+//        }
+
+//        private double CalculateRequirementMatchScore(double studentGpa, UniversityProgram program)
+//        {
+//            var reqs = program.EntryRequirements ?? new List<EntryRequirement>();
+//            var min = reqs.Any() ? reqs.Min(r => r.MinGPA) : 0;
+
+//            if (studentGpa >= min + 10) return 100;
+//            if (studentGpa >= min + 5) return 85;
+//            if (studentGpa >= min) return 70;
+
+//            return 50;
+//        }
+
+//        private double CalculateBudgetScore(Student student, UniversityProgram program)
+//        {
+//            var firstSemesterCost = program.RegistrationFeeFirstSemester + (program.HourPriceBase * 15m);
+
+//            if (firstSemesterCost <= student.RegistrationBudget) return 100;
+//            if (firstSemesterCost <= student.RegistrationBudget * 1.1m) return 80;
+//            if (firstSemesterCost <= student.RegistrationBudget * 1.2m) return 60;
+//            if (firstSemesterCost <= student.RegistrationBudget * 1.3m) return 40;
+
+//            return 20;
+//        }
+
+//        private double CalculateLocationScore(Student student, University university)
+//        {
+//            if (!string.IsNullOrWhiteSpace(student.City) &&
+//                !string.IsNullOrWhiteSpace(university.City) &&
+//                string.Equals(student.City, university.City, StringComparison.OrdinalIgnoreCase))
+//                return 100;
+
+//            if (!string.IsNullOrWhiteSpace(student.PreferredCity) &&
+//                !string.IsNullOrWhiteSpace(university.City) &&
+//                university.City.Contains(student.PreferredCity, StringComparison.OrdinalIgnoreCase))
+//                return 90;
+
+//            if (!string.IsNullOrWhiteSpace(student.Province) &&
+//                !string.IsNullOrWhiteSpace(university.Province) &&
+//                string.Equals(student.Province, university.Province, StringComparison.OrdinalIgnoreCase))
+//                return 70;
+
+//            return 50;
+//        }
+
+//        private double CalculateMajorScore(Student student, UniversityProgram program)
+//        {
+//            var desired = ParseDesiredMajors(student.DesiredMajors);
+//            if (desired.Count == 0) return 50;
+
+//            var nameEn = program.Program?.NameEnglish ?? "";
+//            var nameAr = program.Program?.NameArabic ?? "";
+
+//            foreach (var m in desired)
+//            {
+//                if (nameEn.Contains(m, StringComparison.OrdinalIgnoreCase) ||
+//                    nameAr.Contains(m, StringComparison.OrdinalIgnoreCase))
+//                    return 100;
+//            }
+
+//            return 40;
+//        }
+
+//        private double CalculateLanguageScore(Student student, UniversityProgram program)
+//        {
+//            if (program.Program.Language == student.PreferredLanguage) return 100;
+//            if (program.Program.Language == LanguageCode.Both) return 90;
+//            return 50;
+//        }
+
+//        private double CalculateSpecialCircumstancesBonus(Student student, UniversityProgram program)
+//        {
+//            double bonus = 0;
+
+//            if (student.HasFamilyConnection && student.FamilyConnectionUniversityId == program.UniversityId)
+//                bonus += 40;
+
+//            if (student.IsEmployeeChild) bonus += 20;
+//            if (student.IsOrphan) bonus += 20;
+//            if (student.HasDisability) bonus += 20;
+
+//            return Math.Clamp(bonus, 0, 100);
+//        }
+
+//        // ----------------------------
+//        // COST
+//        // ----------------------------
+//        private decimal CalculateEstimatedCost(UniversityProgram program)
+//        {
+//            var registrationFee = program.RegistrationFeeFirstSemester;
+//            var creditHoursCost = program.HourPriceBase * 15m;
+//            var total = registrationFee + creditHoursCost;
+//            var discount = total * 0.05m;
+//            return total - discount;
+//        }
+
+//        private decimal CalculateBtecEstimatedCost(BtecProgram program)
+//        {
+//            var registrationFee = program.RegistrationFeeFirstSemester;
+//            var creditHoursCost = program.HourPriceBase * 15m;
+//            var total = registrationFee + creditHoursCost;
+//            var discount = total * 0.05m;
+//            return total - discount;
+//        }
+
+//        // ----------------------------
+//        // DISTANCE (SIMPLE)
+//        // ----------------------------
+//        private double? CalculateDistance(Student student, University university)
+//        {
+//            if (!string.IsNullOrWhiteSpace(student.City) &&
+//                !string.IsNullOrWhiteSpace(university.City) &&
+//                string.Equals(student.City, university.City, StringComparison.OrdinalIgnoreCase))
+//                return 5.0;
+
+//            if (!string.IsNullOrWhiteSpace(student.Province) &&
+//                !string.IsNullOrWhiteSpace(university.Province) &&
+//                string.Equals(student.Province, university.Province, StringComparison.OrdinalIgnoreCase))
+//                return 25.0;
+
+//            return 75.0;
+//        }
+
+//        // ----------------------------
+//        // REASONS
+//        // ----------------------------
+//        private List<string> GenerateRecommendationReasons(
+//            Student student,
+//            double studentGpa,
+//            UniversityProgram program,
+//            double score,
+//            decimal cost,
+//            double? distance)
+//        {
+//            var reasons = new List<string>();
+
+//            var min = (program.EntryRequirements?.Any() == true)
+//                ? program.EntryRequirements.Min(r => r.MinGPA)
+//                : 0;
+
+//            if (studentGpa >= min + 10) reasons.Add("Your GPA significantly exceeds the minimum requirement");
+//            else if (studentGpa >= min) reasons.Add("You meet the GPA requirement");
+
+//            if (cost <= student.RegistrationBudget) reasons.Add("Fits within your budget");
+
+//            if (distance.HasValue)
+//            {
+//                if (distance.Value <= 5) reasons.Add("Located in your city");
+//                else if (distance.Value <= 25) reasons.Add("Located in your province");
+//            }
+
+//            if (program.Program.Language == student.PreferredLanguage) reasons.Add("Taught in your preferred language");
+//            else if (program.Program.Language == LanguageCode.Both) reasons.Add("Available in both Arabic and English");
+
+//            if (student.HasFamilyConnection && student.FamilyConnectionUniversityId == program.UniversityId)
+//                reasons.Add("You have a family connection at this university");
+
+//            var desired = ParseDesiredMajors(student.DesiredMajors);
+//            if (desired.Count > 0)
+//            {
+//                var nameEn = program.Program?.NameEnglish ?? "";
+//                var nameAr = program.Program?.NameArabic ?? "";
+//                foreach (var m in desired)
+//                {
+//                    if (nameEn.Contains(m, StringComparison.OrdinalIgnoreCase) ||
+//                        nameAr.Contains(m, StringComparison.OrdinalIgnoreCase))
+//                        reasons.Add($"Matches your desired major: {m}");
+//                }
+//            }
+
+//            if (score >= 80) reasons.Add("Highly recommended based on your profile");
+
+//            return reasons;
+//        }
+
+//        private List<string> GenerateBtecRecommendationReasons(
+//            Student student,
+//            double studentGpa,
+//            BtecProgram program,
+//            double score,
+//            decimal cost,
+//            double? distance)
+//        {
+//            var reasons = new List<string>();
+
+//            if (studentGpa >= 70) reasons.Add("Strong GPA for BTEC admission requirements");
+//            if (student.BtecLevel2Completed) reasons.Add("You have completed BTEC Level 2");
+//            if (student.BtecLevel3Completed) reasons.Add("You have completed BTEC Level 3");
+
+//            if (program.Language == student.PreferredLanguage) reasons.Add("Taught in your preferred language");
+//            else if (program.Language == LanguageCode.Both) reasons.Add("Available in both Arabic and English");
+
+//            if (cost <= student.RegistrationBudget) reasons.Add("Fits within your budget");
+
+//            if (distance.HasValue)
+//            {
+//                if (distance.Value <= 5) reasons.Add("Located in your city");
+//                else if (distance.Value <= 25) reasons.Add("Located in your province");
+//            }
+
+//            if (student.HasFamilyConnection && student.FamilyConnectionUniversityId == program.UniversityId)
+//                reasons.Add("You have a family connection at this university");
+
+//            if (score >= 80) reasons.Add("Highly recommended based on your profile");
+
+//            return reasons;
+//        }
+
+//        // ----------------------------
+//        // HELPERS
+//        // ----------------------------
+//        private static double NormalizeGpa(double gpa)
+//        {
+//            // If some students store GPA on 4.0 scale, normalize to 0..100
+//            // 4.0 * 25 = 100
+//            if (gpa <= 4.0) return gpa * 25.0;
+//            return gpa;
+//        }
+
+//        private static List<string> ParseDesiredMajors(string? desiredMajors)
+//        {
+//            if (string.IsNullOrWhiteSpace(desiredMajors))
+//                return new List<string>();
+
+//            return desiredMajors
+//                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+//                .Select(x => x.Trim())
+//                .Where(x => !string.IsNullOrWhiteSpace(x))
+//                .Distinct(StringComparer.OrdinalIgnoreCase)
+//                .ToList();
+//        }
+//    }
+//}
+
+
+
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Uni_Selector.Data;
 using Uni_Selector.Models;
 using Uni_Selector.Models.Enums;
 
 namespace Uni_Selector.Service
 {
+    /// <summary>
+    /// EF Core 9 Enhanced Recommendation Algorithm
+    /// - Bulk delete old recommendations (ExecuteDeleteAsync)
+    /// - Requirements: pick min GPA relevant to student's Path/Track/Branch + effective dates
+    /// - Location: if lat/long exist -> real KM (Haversine). Otherwise -> proximity bands (PreferredCity/City/Province)
+    /// - Scoring: smooth requirement + budget, capped bonus, better ranking
+    /// - Optional diversity cap: limit results per University (works via DB mapping)
+    /// </summary>
     public class RecommendationService
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<RecommendationService>? _logger;
 
-        public RecommendationService(AppDbContext context)
+        // You can move this to configuration later
+        private const int DefaultFirstSemesterHours = 15;
+
+        public RecommendationService(AppDbContext context, ILogger<RecommendationService>? logger = null)
         {
             _context = context;
+            _logger = logger;
         }
 
-        public async Task<List<Recommendation>> GenerateRecommendationsAsync(int studentId)
+        public async Task<List<Recommendation>> GenerateRecommendationsAsync(
+            int studentId,
+            int top = 50,
+            int maxPerUniversity = 0, // 0 = disabled
+            CancellationToken ct = default)
         {
-            var student = await _context.Students
-                .Include(s => s.User)
-                .FirstOrDefaultAsync(s => s.Id == studentId);
+            var strategy = _context.Database.CreateExecutionStrategy();
 
-            if (student == null || student.ProfileCompleted != true)
-                return new List<Recommendation>();
-
-            // Delete existing recommendations for this student
-            var existingRecs = await _context.Recommendations
-                .Where(r => r.StudentId == studentId)
-                .ToListAsync();
-            _context.Recommendations.RemoveRange(existingRecs);
-
-            var recommendations = new List<Recommendation>();
-
-            // Generate recommendations based on student path
-            if (student.Path == PathType.BTEC)
+            return await strategy.ExecuteAsync(async () =>
             {
-                recommendations.AddRange(await GenerateBtecRecommendationsAsync(student));
-            }
-            else
-            {
-                recommendations.AddRange(await GenerateRegularProgramRecommendationsAsync(student));
-            }
+                await using var tx = await _context.Database.BeginTransactionAsync(ct);
 
-            // Save recommendations to database
-            _context.Recommendations.AddRange(recommendations);
-            await _context.SaveChangesAsync();
+                try
+                {
+                    var student = await _context.Students
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.Id == studentId, ct);
 
-            return recommendations;
+                    if (student == null || student.ProfileCompleted != true || !student.IsActive)
+                    {
+                        await tx.RollbackAsync(ct);
+                        return new List<Recommendation>();
+                    }
+
+                    // EF Core 9: fast bulk delete
+                    await _context.Recommendations
+                        .Where(r => r.StudentId == studentId)
+                        .ExecuteDeleteAsync(ct);
+
+                    var generated = student.Path == PathType.BTEC
+                        ? await GenerateBtecRecommendationsAsync(student, ct)
+                        : await GenerateRegularProgramRecommendationsAsync(student, ct);
+
+                    generated = generated
+                        .OrderByDescending(r => r.Score)
+                        .ToList();
+
+                    if (maxPerUniversity > 0)
+                        generated = await ApplyDiversityCapAsync(generated, maxPerUniversity, ct);
+
+                    generated = generated
+                        .OrderByDescending(r => r.Score)
+                        .Take(top)
+                        .ToList();
+
+                    if (generated.Count > 0)
+                    {
+                        _context.Recommendations.AddRange(generated);
+                        await _context.SaveChangesAsync(ct);
+                    }
+
+                    await tx.CommitAsync(ct);
+                    return generated;
+                }
+                catch (Exception ex)
+                {
+                    await tx.RollbackAsync(ct);
+                    _logger?.LogError(ex, "GenerateRecommendationsAsync failed for StudentId={StudentId}", studentId);
+                    return new List<Recommendation>();
+                }
+            });
         }
 
-        private async Task<List<Recommendation>> GenerateRegularProgramRecommendationsAsync(Student student)
+        // ==========================================================
+        // REGULAR PROGRAMS
+        // ==========================================================
+        private async Task<List<Recommendation>> GenerateRegularProgramRecommendationsAsync(Student student, CancellationToken ct)
         {
-            var recommendations = new List<Recommendation>();
+            var nowUtc = DateTime.UtcNow;
+            var studentGpa = NormalizeGpa(student.GPA);
 
-            // Get all active university programs with their requirements
             var programs = await _context.UniversityPrograms
+                .AsNoTracking()
                 .Include(up => up.University)
                 .Include(up => up.Program)
                 .Include(up => up.EntryRequirements)
                 .Where(up => up.IsActive && up.University.IsActive)
-                .ToListAsync();
+                .ToListAsync(ct);
+
+            var result = new List<Recommendation>();
 
             foreach (var program in programs)
             {
-                // Check if student meets entry requirements
-                var meetsRequirements = CheckEntryRequirements(student, program);
-                if (!meetsRequirements)
+                // ---- Requirements (min GPA relevant to the student)
+                var minGpa = GetMinGpaForStudent(program, student, nowUtc);
+
+                // Hard reject only if clearly not eligible (small tolerance)
+                if (minGpa.HasValue && studentGpa < (minGpa.Value - 0.5))
                     continue;
 
-                // Calculate recommendation score
-                double score = CalculateProgramScore(student, program);
+                // ---- Location (real KM if possible, otherwise proximity bands)
+                var (distanceKm, locationScore, band) = GetLocationSignals(student, program.University);
 
-                // Calculate distance (simplified - using city match)
-                double? distanceInKm = CalculateDistance(student, program.University);
+                // Apply MaxDistanceKm
+                if (!PassDistanceConstraint(student, distanceKm, band))
+                    continue;
 
-                // Calculate estimated cost
-                decimal estimatedCost = CalculateEstimatedCost(program, student);
+                // ---- Cost
+                var firstSemesterHours = DefaultFirstSemesterHours;
+                var firstSemesterCost = program.RegistrationFeeFirstSemester + (program.HourPriceBase * firstSemesterHours);
 
-                // Generate recommendation reasons
-                var reasons = GenerateRecommendationReasons(student, program, score);
+                // ---- Score (0..100)
+                var score = CalculateProgramScoreV2(
+                    student: student,
+                    program: program,
+                    studentGpa: studentGpa,
+                    minGpa: minGpa,
+                    locationScore: locationScore,
+                    firstSemesterCost: firstSemesterCost);
 
-                recommendations.Add(new Recommendation
+                // ---- UI cost (first semester estimate)
+                var estimatedCost = CalculateEstimatedCost(program, firstSemesterHours);
+
+                // ---- Reasons
+                var reasons = GenerateRecommendationReasonsV2(
+                    student: student,
+                    studentGpa: studentGpa,
+                    program: program,
+                    minGpa: minGpa,
+                    score: score,
+                    firstSemesterCost: firstSemesterCost,
+                    distanceKm: distanceKm,
+                    band: band);
+
+                result.Add(new Recommendation
                 {
                     StudentId = student.Id,
                     UniversityProgramId = program.Id,
+                    BtecProgramId = null,
                     Score = score,
-                    ReasonsJson = System.Text.Json.JsonSerializer.Serialize(reasons),
-                    DistanceInKm = distanceInKm,
+                    DistanceInKm = distanceKm, // null now if lat/long not filled
                     EstimatedTotalCost = estimatedCost,
+                    ReasonsJson = JsonSerializer.Serialize(reasons),
                     CreatedAt = DateTime.UtcNow,
                     IsViewed = false
                 });
             }
 
-            // Return top recommendations sorted by score
-            return recommendations.OrderByDescending(r => r.Score).ToList();
+            return result;
         }
 
-        private async Task<List<Recommendation>> GenerateBtecRecommendationsAsync(Student student)
+        // ==========================================================
+        // BTEC PROGRAMS
+        // ==========================================================
+        private async Task<List<Recommendation>> GenerateBtecRecommendationsAsync(Student student, CancellationToken ct)
         {
-            var recommendations = new List<Recommendation>();
+            var nowUtc = DateTime.UtcNow;
+            var studentGpa = NormalizeGpa(student.GPA);
 
-            // Get all active BTEC programs with their requirements
             var programs = await _context.BtecPrograms
+                .AsNoTracking()
                 .Include(bp => bp.University)
                 .Include(bp => bp.EntryRequirements)
                 .Where(bp => bp.IsActive && bp.University.IsActive && bp.IsApprovedByBtecAuthority)
-                .ToListAsync();
+                .ToListAsync(ct);
+
+            var result = new List<Recommendation>();
 
             foreach (var program in programs)
             {
-                // Check if student meets BTEC entry requirements
-                var meetsRequirements = CheckBtecEntryRequirements(student, program);
-                if (!meetsRequirements)
+                var (eligible, minGpa) = EvaluateBtecEligibility(program, student, studentGpa, nowUtc);
+                if (!eligible) continue;
+
+                var (distanceKm, locationScore, band) = GetLocationSignals(student, program.University);
+
+                if (!PassDistanceConstraint(student, distanceKm, band))
                     continue;
 
-                // Calculate recommendation score
-                double score = CalculateBtecProgramScore(student, program);
+                var firstSemesterHours = DefaultFirstSemesterHours;
+                var firstSemesterCost = program.RegistrationFeeFirstSemester + (program.HourPriceBase * firstSemesterHours);
 
-                // Calculate distance
-                double? distanceInKm = CalculateDistance(student, program.University);
+                var score = CalculateBtecProgramScoreV2(
+                    student: student,
+                    program: program,
+                    studentGpa: studentGpa,
+                    minGpa: minGpa,
+                    locationScore: locationScore,
+                    firstSemesterCost: firstSemesterCost);
 
-                // Calculate estimated cost
-                decimal estimatedCost = CalculateBtecEstimatedCost(program, student);
+                var estimatedCost = CalculateBtecEstimatedCost(program, firstSemesterHours);
 
-                // Generate recommendation reasons
-                var reasons = GenerateBtecRecommendationReasons(student, program, score);
+                var reasons = GenerateBtecRecommendationReasonsV2(
+                    student: student,
+                    studentGpa: studentGpa,
+                    program: program,
+                    minGpa: minGpa,
+                    score: score,
+                    firstSemesterCost: firstSemesterCost,
+                    distanceKm: distanceKm,
+                    band: band);
 
-                recommendations.Add(new Recommendation
+                result.Add(new Recommendation
                 {
                     StudentId = student.Id,
+                    UniversityProgramId = null,
                     BtecProgramId = program.Id,
                     Score = score,
-                    ReasonsJson = System.Text.Json.JsonSerializer.Serialize(reasons),
-                    DistanceInKm = distanceInKm,
+                    DistanceInKm = distanceKm,
                     EstimatedTotalCost = estimatedCost,
+                    ReasonsJson = JsonSerializer.Serialize(reasons),
                     CreatedAt = DateTime.UtcNow,
                     IsViewed = false
                 });
             }
 
-            return recommendations.OrderByDescending(r => r.Score).ToList();
+            return result;
         }
 
-        #region Entry Requirements Checking
-
-        private bool CheckEntryRequirements(Student student, UniversityProgram program)
+        // ==========================================================
+        // REQUIREMENTS (REGULAR)
+        // ==========================================================
+        private static double? GetMinGpaForStudent(UniversityProgram program, Student student, DateTime nowUtc)
         {
-            var requirements = program.EntryRequirements;
-            if (requirements == null || !requirements.Any())
-                return true; // No specific requirements
+            var reqs = program.EntryRequirements ?? new List<EntryRequirement>();
+            if (!reqs.Any()) return null;
 
-            foreach (var req in requirements)
+            // active by date
+            reqs = reqs.Where(r =>
+                    (!r.EffectiveFrom.HasValue || r.EffectiveFrom.Value <= nowUtc) &&
+                    (!r.EffectiveTo.HasValue || r.EffectiveTo.Value >= nowUtc))
+                .ToList();
+
+            if (!reqs.Any()) return null;
+
+            var pathReqs = reqs.Where(r => r.Path == student.Path).ToList();
+
+            // If there are no requirements for student's path => don't block.
+            if (!pathReqs.Any()) return null;
+
+            // Tighten by track/branch if student has them
+            if (student.Path == PathType.Academic && student.AcademicTrack.HasValue)
             {
-                // Check GPA
-                if (student.GPA < req.MinGPA)
-                    continue;
-
-                // Check Path
-                if (req.Path != student.Path)
-                    continue;
-
-                // Check Academic Track (if Academic path)
-                if (req.Path == PathType.Academic)
-                {
-                    if (req.AcademicTrack.HasValue && req.AcademicTrack != student.AcademicTrack)
-                        continue;
-                }
-
-                // Check Vocational Branch (if Vocational path)
-                if (req.Path == PathType.Vocational)
-                {
-                    if (req.VocationalBranch.HasValue && req.VocationalBranch != student.VocationalBranch)
-                        continue;
-                }
-
-                // If we reach here, student meets at least one requirement
-                return true;
+                var filtered = pathReqs
+                    .Where(r => !r.AcademicTrack.HasValue || r.AcademicTrack == student.AcademicTrack)
+                    .ToList();
+                if (filtered.Any()) pathReqs = filtered;
             }
 
-            return false;
-        }
-
-        private bool CheckBtecEntryRequirements(Student student, BtecProgram program)
-        {
-            var requirements = program.EntryRequirements;
-            if (requirements == null || !requirements.Any())
-                return true;
-
-            foreach (var req in requirements)
+            if (student.Path == PathType.Vocational && student.VocationalBranch.HasValue)
             {
-                // Check GPA
-                if (student.GPA < req.MinGPA)
-                    continue;
-
-                // Check BTEC Level 2 requirement
-                if (req.RequiresBtecL2 && !student.BtecLevel2Completed)
-                    continue;
-
-                // Check BTEC Level 3 requirement
-                if (req.RequiresBtecL3 && !student.BtecLevel3Completed)
-                    continue;
-
-                // If we reach here, student meets at least one requirement
-                return true;
+                var filtered = pathReqs
+                    .Where(r => !r.VocationalBranch.HasValue || r.VocationalBranch == student.VocationalBranch)
+                    .ToList();
+                if (filtered.Any()) pathReqs = filtered;
             }
 
-            return false;
+            return pathReqs.Min(r => r.MinGPA);
         }
 
-        #endregion
-
-        #region Scoring Algorithms
-
-        private double CalculateProgramScore(Student student, UniversityProgram program)
+        // ==========================================================
+        // REQUIREMENTS (BTEC)
+        // ==========================================================
+        private static (bool Eligible, double? MinGpa) EvaluateBtecEligibility(
+            BtecProgram program, Student student, double studentGpa, DateTime nowUtc)
         {
-            double totalScore = 0;
+            var reqs = program.EntryRequirements ?? new List<BtecEntryRequirement>();
+            if (!reqs.Any())
+                return (true, null);
 
-            // 1. Entry Requirements Match (40 points)
-            var requirementScore = CalculateRequirementMatchScore(student, program);
-            totalScore += requirementScore * 0.40;
+            reqs = reqs.Where(r =>
+                    (!r.EffectiveFrom.HasValue || r.EffectiveFrom.Value <= nowUtc) &&
+                    (!r.EffectiveTo.HasValue || r.EffectiveTo.Value >= nowUtc))
+                .ToList();
 
-            // 2. Budget Match (20 points)
-            var budgetScore = CalculateBudgetScore(student, program);
-            totalScore += budgetScore * 0.20;
+            if (!reqs.Any())
+                return (true, null);
 
-            // 3. Location Match (15 points)
-            var locationScore = CalculateLocationScore(student, program.University);
-            totalScore += locationScore * 0.15;
+            var minGpa = reqs.Min(r => r.MinGPA);
 
-            // 4. Major Match (15 points)
-            var majorScore = CalculateMajorScore(student, program);
-            totalScore += majorScore * 0.15;
-
-            // 5. Language Preference (5 points)
-            var languageScore = CalculateLanguageScore(student, program);
-            totalScore += languageScore * 0.05;
-
-            // 6. Special Circumstances Bonus (5 points)
-            var bonusScore = CalculateSpecialCircumstancesBonus(student, program);
-            totalScore += bonusScore * 0.05;
-
-            return Math.Min(totalScore * 100, 100); // Normalize to 100
-        }
-
-        private double CalculateBtecProgramScore(Student student, BtecProgram program)
-        {
-            double totalScore = 0;
-
-            // Similar scoring for BTEC programs
-            totalScore += (student.BtecLevel2Completed ? 20 : 0);
-            totalScore += (student.BtecLevel3Completed ? 20 : 0);
-
-            // Budget match
-            decimal firstSemesterCost = program.RegistrationFeeFirstSemester + (program.HourPriceBase * 15); // Assume 15 hours
-            if (firstSemesterCost <= student.RegistrationBudget)
-                totalScore += 20;
-            else if (firstSemesterCost <= student.RegistrationBudget * 1.2m)
-                totalScore += 10;
-
-            // Location
-            if (student.PreferredCity != null && program.University.City.Contains(student.PreferredCity, StringComparison.OrdinalIgnoreCase))
-                totalScore += 15;
-
-            // Language
-            if (program.Language == student.PreferredLanguage || program.Language == LanguageCode.Both)
-                totalScore += 10;
-
-            // Special circumstances
-            if (student.HasFamilyConnection && student.FamilyConnectionUniversityId == program.UniversityId)
-                totalScore += 15;
-
-            return totalScore;
-        }
-
-        private double CalculateRequirementMatchScore(Student student, UniversityProgram program)
-        {
-            // Perfect match if GPA significantly exceeds minimum
-            var minGPA = program.EntryRequirements.Any() ? program.EntryRequirements.Min(r => r.MinGPA) : 0;
-
-            if (student.GPA >= minGPA + 10)
-                return 100;
-            else if (student.GPA >= minGPA + 5)
-                return 85;
-            else if (student.GPA >= minGPA)
-                return 70;
-
-            return 50;
-        }
-
-        private double CalculateBudgetScore(Student student, UniversityProgram program)
-        {
-            // Calculate first semester cost
-            decimal firstSemesterCost = program.RegistrationFeeFirstSemester + (program.HourPriceBase * 15); // Assume 15 hours
-
-            if (firstSemesterCost <= student.RegistrationBudget)
-                return 100;
-            else if (firstSemesterCost <= student.RegistrationBudget * 1.1m)
-                return 80;
-            else if (firstSemesterCost <= student.RegistrationBudget * 1.2m)
-                return 60;
-            else if (firstSemesterCost <= student.RegistrationBudget * 1.3m)
-                return 40;
-
-            return 20;
-        }
-
-        private double CalculateLocationScore(Student student, University university)
-        {
-            // City match
-            if (student.City.Equals(university.City, StringComparison.OrdinalIgnoreCase))
-                return 100;
-
-            // Preferred city match
-            if (!string.IsNullOrEmpty(student.PreferredCity) &&
-                university.City.Contains(student.PreferredCity, StringComparison.OrdinalIgnoreCase))
-                return 90;
-
-            // Same province
-            if (student.Province.Equals(university.Province, StringComparison.OrdinalIgnoreCase))
-                return 70;
-
-            return 50;
-        }
-
-        private double CalculateMajorScore(Student student, UniversityProgram program)
-        {
-            if (string.IsNullOrEmpty(student.DesiredMajors))
-                return 50;
-
-            var desiredMajors = student.DesiredMajors.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                                      .Select(m => m.Trim().ToLower()).ToList();
-
-            var programName = program.Program.NameEnglish.ToLower();
-
-            foreach (var major in desiredMajors)
+            foreach (var req in reqs)
             {
-                if (programName.Contains(major))
+                if (studentGpa < req.MinGPA) continue;
+                if (req.RequiresBtecL2 && !student.BtecLevel2Completed) continue;
+                if (req.RequiresBtecL3 && !student.BtecLevel3Completed) continue;
+
+                return (true, minGpa);
+            }
+
+            return (false, minGpa);
+        }
+
+        // ==========================================================
+        // LOCATION (NOW: BANDS, LATER: REAL KM)
+        // ==========================================================
+        private enum ProximityBand
+        {
+            PreferredCity,
+            SameCity,
+            SameProvince,
+            Other,
+            Unknown
+        }
+
+        private static (double? distanceKm, double locationScore, ProximityBand band) GetLocationSignals(Student student, University university)
+        {
+            // Future: if you fill lat/long later, it will auto-switch to real KM
+            var distanceKm = CalculateDistanceKmIfAvailable(student, university);
+            if (distanceKm.HasValue)
+            {
+                var max = student.MaxDistanceKm > 0 ? student.MaxDistanceKm : 80;
+                var score = 100 - (distanceKm.Value / max) * 80; // 0km=100, max=20
+                score = Math.Clamp(score, 20, 100);
+                return (distanceKm, score, ProximityBand.Unknown);
+            }
+
+            // Current: proximity bands (no fake km)
+            var band = GetProximityBand(student, university);
+            var scoreFromBand = LocationScoreFromBand(band);
+            return (null, scoreFromBand, band);
+        }
+
+        private static ProximityBand GetProximityBand(Student s, University u)
+        {
+            if (!string.IsNullOrWhiteSpace(s.PreferredCity) &&
+                !string.IsNullOrWhiteSpace(u.City) &&
+                u.City.Contains(s.PreferredCity, StringComparison.OrdinalIgnoreCase))
+                return ProximityBand.PreferredCity;
+
+            if (!string.IsNullOrWhiteSpace(s.City) &&
+                !string.IsNullOrWhiteSpace(u.City) &&
+                string.Equals(s.City, u.City, StringComparison.OrdinalIgnoreCase))
+                return ProximityBand.SameCity;
+
+            if (!string.IsNullOrWhiteSpace(s.Province) &&
+                !string.IsNullOrWhiteSpace(u.Province) &&
+                string.Equals(s.Province, u.Province, StringComparison.OrdinalIgnoreCase))
+                return ProximityBand.SameProvince;
+
+            if (string.IsNullOrWhiteSpace(s.City) && string.IsNullOrWhiteSpace(s.Province))
+                return ProximityBand.Unknown;
+
+            return ProximityBand.Other;
+        }
+
+        private static double LocationScoreFromBand(ProximityBand band) => band switch
+        {
+            ProximityBand.PreferredCity => 100,
+            ProximityBand.SameCity => 95,
+            ProximityBand.SameProvince => 70,
+            ProximityBand.Other => 40,
+            _ => 50
+        };
+
+        private static bool PassDistanceConstraint(Student s, double? distanceKm, ProximityBand band)
+        {
+            if (s.MaxDistanceKm <= 0) return true;
+
+            // If we have real distance, enforce it
+            if (distanceKm.HasValue)
+                return distanceKm.Value <= s.MaxDistanceKm;
+
+            // Fallback interpretation (no GPS):
+            // <=20 => only same city / preferred city
+            // <=60 => allow same province too
+            if (s.MaxDistanceKm <= 20)
+                return band is ProximityBand.SameCity or ProximityBand.PreferredCity;
+
+            if (s.MaxDistanceKm <= 60)
+                return band is ProximityBand.SameCity or ProximityBand.PreferredCity or ProximityBand.SameProvince;
+
+            // >60 => allow all, ranking will handle
+            return true;
+        }
+
+        private static double? CalculateDistanceKmIfAvailable(Student s, University u)
+        {
+            if (!s.Latitude.HasValue || !s.Longitude.HasValue || !u.Latitude.HasValue || !u.Longitude.HasValue)
+                return null;
+
+            return HaversineKm(s.Latitude.Value, s.Longitude.Value, u.Latitude.Value, u.Longitude.Value);
+        }
+
+        private static double HaversineKm(double lat1, double lon1, double lat2, double lon2)
+        {
+            const double R = 6371.0;
+            var dLat = DegreesToRadians(lat2 - lat1);
+            var dLon = DegreesToRadians(lon2 - lon1);
+
+            var a =
+                Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                Math.Cos(DegreesToRadians(lat1)) * Math.Cos(DegreesToRadians(lat2)) *
+                Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            return R * c;
+        }
+
+        private static double DegreesToRadians(double deg) => deg * (Math.PI / 180.0);
+
+        // ==========================================================
+        // SCORING (REGULAR)
+        // ==========================================================
+        private double CalculateProgramScoreV2(
+            Student student,
+            UniversityProgram program,
+            double studentGpa,
+            double? minGpa,
+            double locationScore,
+            decimal firstSemesterCost)
+        {
+            var reqScore = minGpa.HasValue ? RequirementScore(studentGpa, minGpa.Value) : 55;
+            var budScore = BudgetScore(student, firstSemesterCost);
+            var majScore = MajorScore(student, program);
+            var langScore = LanguageScore(student, program);
+            var bonus = BonusPoints(student, program.UniversityId); // 0..15
+
+            var total =
+                (reqScore * 0.35) +
+                (budScore * 0.20) +
+                (locationScore * 0.20) +
+                (majScore * 0.15) +
+                (langScore * 0.10) +
+                bonus;
+
+            return Math.Clamp(total, 0, 100);
+        }
+
+        private static double RequirementScore(double studentGpa, double minGpa)
+        {
+            // Smooth: -10 margin => 0, 0 margin => 40, +15 margin => 100
+            var margin = studentGpa - minGpa;
+            var normalized = (margin + 10) / 25.0;
+            return Math.Clamp(normalized * 100.0, 0, 100);
+        }
+
+        private static double BudgetScore(Student student, decimal firstSemesterCost)
+        {
+            if (student.RegistrationBudget <= 0) return 50;
+
+            var ratio = (double)(firstSemesterCost / student.RegistrationBudget);
+            if (ratio <= 1.0) return 100;
+            if (ratio <= 1.2) return 70;
+            if (ratio <= 1.5) return 40;
+            return 15;
+        }
+
+        private static double MajorScore(Student student, UniversityProgram program)
+        {
+            var desired = ParseDesiredMajors(student.DesiredMajors);
+            if (desired.Count == 0) return 55;
+
+            var nameEn = program.Program?.NameEnglish ?? "";
+            var nameAr = program.Program?.NameArabic ?? "";
+            var cls = program.Program?.AcademicClassification ?? "";
+
+            foreach (var m in desired)
+            {
+                if (nameEn.Contains(m, StringComparison.OrdinalIgnoreCase) ||
+                    nameAr.Contains(m, StringComparison.OrdinalIgnoreCase) ||
+                    cls.Contains(m, StringComparison.OrdinalIgnoreCase))
                     return 100;
             }
 
             return 40;
         }
 
-        private double CalculateLanguageScore(Student student, UniversityProgram program)
+        private static double LanguageScore(Student student, UniversityProgram program)
         {
-            if (program.Program.Language == student.PreferredLanguage)
-                return 100;
+            var lang = program.Program?.Language;
+            if (!lang.HasValue) return 50;
 
-            if (program.Program.Language == LanguageCode.Both)
-                return 90;
-
-            return 50;
+            if (lang.Value == student.PreferredLanguage) return 100;
+            if (lang.Value == LanguageCode.Both) return 90;
+            return 55;
         }
 
-        private double CalculateSpecialCircumstancesBonus(Student student, UniversityProgram program)
+        private static double BonusPoints(Student student, int universityId)
         {
             double bonus = 0;
-
-            // Family connection bonus
-            if (student.HasFamilyConnection && student.FamilyConnectionUniversityId == program.UniversityId)
-                bonus += 40;
-
-            // Employee child bonus
-            if (student.IsEmployeeChild)
-                bonus += 20;
-
-            // Orphan bonus
-            if (student.IsOrphan)
-                bonus += 20;
-
-            // Disability bonus (universities with accessibility)
-            if (student.HasDisability)
-                bonus += 20;
-
-            return Math.Min(bonus, 100);
+            if (student.HasFamilyConnection && student.FamilyConnectionUniversityId == universityId) bonus += 7;
+            if (student.IsEmployeeChild) bonus += 3;
+            if (student.IsOrphan) bonus += 3;
+            if (student.HasDisability) bonus += 2;
+            return Math.Clamp(bonus, 0, 15);
         }
 
-        #endregion
-
-        #region Cost Calculation
-
-        private decimal CalculateEstimatedCost(UniversityProgram program, Student student)
+        // ==========================================================
+        // SCORING (BTEC)
+        // ==========================================================
+        private double CalculateBtecProgramScoreV2(
+            Student student,
+            BtecProgram program,
+            double studentGpa,
+            double? minGpa,
+            double locationScore,
+            decimal firstSemesterCost)
         {
-            // Estimate first semester cost with 5% discount
-            decimal registrationFee = program.RegistrationFeeFirstSemester;
-            decimal creditHoursCost = program.HourPriceBase * 15; // Assume 15 hours first semester
-            decimal totalBeforeDiscount = registrationFee + creditHoursCost;
+            var reqScore = minGpa.HasValue ? RequirementScore(studentGpa, minGpa.Value) : 55;
+            var budScore = BudgetScore(student, firstSemesterCost);
+            var langScore = LanguageScore(student, program);
 
-            // Apply 5% platform discount
-            decimal discount = totalBeforeDiscount * 0.05m;
+            var completionScore = 40
+                + (student.BtecLevel2Completed ? 30 : 0)
+                + (student.BtecLevel3Completed ? 30 : 0);
+            completionScore = Math.Clamp(completionScore, 0, 100);
 
-            return totalBeforeDiscount - discount;
+            var bonus = BonusPoints(student, program.UniversityId);
+
+            var total =
+                (reqScore * 0.25) +
+                (completionScore * 0.25) +
+                (budScore * 0.20) +
+                (locationScore * 0.20) +
+                (langScore * 0.10) +
+                bonus;
+
+            return Math.Clamp(total, 0, 100);
         }
 
-        private decimal CalculateBtecEstimatedCost(BtecProgram program, Student student)
+        private static double LanguageScore(Student student, BtecProgram program)
         {
-            decimal registrationFee = program.RegistrationFeeFirstSemester;
-            decimal creditHoursCost = program.HourPriceBase * 15; // Assume 15 hours
-            decimal totalBeforeDiscount = registrationFee + creditHoursCost;
-
-            decimal discount = totalBeforeDiscount * 0.05m;
-
-            return totalBeforeDiscount - discount;
+            if (program.Language == student.PreferredLanguage) return 100;
+            if (program.Language == LanguageCode.Both) return 90;
+            return 55;
         }
 
-        #endregion
-
-        #region Distance Calculation
-
-        private double? CalculateDistance(Student student, University university)
+        // ==========================================================
+        // COST (first semester estimate)
+        // ==========================================================
+        private static decimal CalculateEstimatedCost(UniversityProgram program, int firstSemesterHours)
         {
-            // Simplified distance calculation based on city match
-            // In production, use actual GPS coordinates and Haversine formula
-
-            if (student.City.Equals(university.City, StringComparison.OrdinalIgnoreCase))
-                return 5.0; // Same city
-
-            if (student.Province.Equals(university.Province, StringComparison.OrdinalIgnoreCase))
-                return 25.0; // Same province
-
-            return 75.0; // Different province
+            var total = program.RegistrationFeeFirstSemester + (program.HourPriceBase * firstSemesterHours);
+            var discount = total * 0.05m; // optional assumption
+            return total - discount;
         }
 
-        #endregion
+        private static decimal CalculateBtecEstimatedCost(BtecProgram program, int firstSemesterHours)
+        {
+            var total = program.RegistrationFeeFirstSemester + (program.HourPriceBase * firstSemesterHours);
+            var discount = total * 0.05m;
+            return total - discount;
+        }
 
-        #region Reason Generation
-
-        private List<string> GenerateRecommendationReasons(Student student, UniversityProgram program, double score)
+        // ==========================================================
+        // REASONS (REGULAR)
+        // ==========================================================
+        private static List<string> GenerateRecommendationReasonsV2(
+            Student student,
+            double studentGpa,
+            UniversityProgram program,
+            double? minGpa,
+            double score,
+            decimal firstSemesterCost,
+            double? distanceKm,
+            ProximityBand band)
         {
             var reasons = new List<string>();
 
-            // GPA Match
-            var minGPA = program.EntryRequirements.Any() ? program.EntryRequirements.Min(r => r.MinGPA) : 0;
-            if (student.GPA >= minGPA + 10)
-                reasons.Add("Your GPA significantly exceeds the minimum requirement");
-            else if (student.GPA >= minGPA)
-                reasons.Add("You meet the GPA requirement");
-
-            // Budget Match
-            decimal cost = CalculateEstimatedCost(program, student);
-            if (cost <= student.RegistrationBudget)
-                reasons.Add("Fits within your budget");
-
-            // Location
-            if (student.City.Equals(program.University.City, StringComparison.OrdinalIgnoreCase))
-                reasons.Add("Located in your city");
-
-            // Language
-            if (program.Program.Language == student.PreferredLanguage)
-                reasons.Add("Taught in your preferred language");
-
-            // Special circumstances
-            if (student.HasFamilyConnection && student.FamilyConnectionUniversityId == program.UniversityId)
-                reasons.Add("You have family connection at this university");
-
-            // Major match
-            if (!string.IsNullOrEmpty(student.DesiredMajors))
+            if (minGpa.HasValue)
             {
-                var majors = student.DesiredMajors.Split(',').Select(m => m.Trim());
-                foreach (var major in majors)
+                var margin = studentGpa - minGpa.Value;
+                if (margin >= 10) reasons.Add("Your GPA significantly exceeds the minimum requirement.");
+                else if (margin >= 0) reasons.Add("You meet the GPA requirement.");
+                else reasons.Add("GPA is slightly below the minimum requirement (lower priority).");
+            }
+
+            if (student.RegistrationBudget > 0)
+            {
+                if (firstSemesterCost <= student.RegistrationBudget) reasons.Add("Estimated first-semester cost fits within your budget.");
+                else reasons.Add("Estimated first-semester cost is above your budget (lower priority).");
+            }
+
+            if (distanceKm.HasValue)
+                reasons.Add($"Estimated distance is about {Math.Round(distanceKm.Value, 1)} km.");
+            else
+                reasons.Add(band switch
                 {
-                    if (program.Program.NameEnglish.Contains(major, StringComparison.OrdinalIgnoreCase))
-                        reasons.Add($"Matches your desired major: {major}");
+                    ProximityBand.PreferredCity => "Located in your preferred city.",
+                    ProximityBand.SameCity => "Located in your city.",
+                    ProximityBand.SameProvince => "Located in your province.",
+                    ProximityBand.Other => "Located outside your province.",
+                    _ => "Location is based on city/province (coordinates not provided yet)."
+                });
+
+            var lang = program.Program?.Language;
+            if (lang.HasValue)
+            {
+                if (lang.Value == student.PreferredLanguage) reasons.Add("Taught in your preferred language.");
+                else if (lang.Value == LanguageCode.Both) reasons.Add("Available in both Arabic and English.");
+            }
+
+            if (student.HasFamilyConnection && student.FamilyConnectionUniversityId == program.UniversityId)
+                reasons.Add("You have a family connection at this university.");
+
+            var desired = ParseDesiredMajors(student.DesiredMajors);
+            if (desired.Count > 0)
+            {
+                var nameEn = program.Program?.NameEnglish ?? "";
+                var nameAr = program.Program?.NameArabic ?? "";
+                foreach (var m in desired)
+                {
+                    if (nameEn.Contains(m, StringComparison.OrdinalIgnoreCase) ||
+                        nameAr.Contains(m, StringComparison.OrdinalIgnoreCase))
+                        reasons.Add($"Matches your desired major: {m}");
                 }
             }
 
-            if (score >= 80)
-                reasons.Add("Highly recommended based on your profile");
+            if (score >= 85) reasons.Add("Highly recommended based on your profile.");
+            else if (score >= 70) reasons.Add("Good match based on your profile.");
 
-            return reasons;
+            return reasons.Distinct().ToList();
         }
 
-        private List<string> GenerateBtecRecommendationReasons(Student student, BtecProgram program, double score)
+        // ==========================================================
+        // REASONS (BTEC)
+        // ==========================================================
+        private static List<string> GenerateBtecRecommendationReasonsV2(
+            Student student,
+            double studentGpa,
+            BtecProgram program,
+            double? minGpa,
+            double score,
+            decimal firstSemesterCost,
+            double? distanceKm,
+            ProximityBand band)
         {
             var reasons = new List<string>();
 
-            if (student.BtecLevel2Completed)
-                reasons.Add("You have completed BTEC Level 2");
+            if (minGpa.HasValue)
+            {
+                var margin = studentGpa - minGpa.Value;
+                if (margin >= 10) reasons.Add("Your GPA is strong relative to BTEC entry requirements.");
+                else if (margin >= 0) reasons.Add("You meet the BTEC GPA requirement.");
+                else reasons.Add("GPA is slightly below the minimum requirement (lower priority).");
+            }
 
-            if (student.BtecLevel3Completed)
-                reasons.Add("You have completed BTEC Level 3");
+            if (student.BtecLevel2Completed) reasons.Add("You have completed BTEC Level 2.");
+            if (student.BtecLevel3Completed) reasons.Add("You have completed BTEC Level 3.");
 
-            if (program.Language == student.PreferredLanguage)
-                reasons.Add("Taught in your preferred language");
+            if (program.Language == student.PreferredLanguage) reasons.Add("Taught in your preferred language.");
+            else if (program.Language == LanguageCode.Both) reasons.Add("Available in both Arabic and English.");
 
-            decimal cost = CalculateBtecEstimatedCost(program, student);
-            if (cost <= student.RegistrationBudget)
-                reasons.Add("Fits within your budget");
+            if (student.RegistrationBudget > 0)
+            {
+                if (firstSemesterCost <= student.RegistrationBudget) reasons.Add("Estimated first-semester cost fits within your budget.");
+                else reasons.Add("Estimated first-semester cost is above your budget (lower priority).");
+            }
+
+            if (distanceKm.HasValue)
+                reasons.Add($"Estimated distance is about {Math.Round(distanceKm.Value, 1)} km.");
+            else
+                reasons.Add(band switch
+                {
+                    ProximityBand.PreferredCity => "Located in your preferred city.",
+                    ProximityBand.SameCity => "Located in your city.",
+                    ProximityBand.SameProvince => "Located in your province.",
+                    ProximityBand.Other => "Located outside your province.",
+                    _ => "Location is based on city/province (coordinates not provided yet)."
+                });
 
             if (student.HasFamilyConnection && student.FamilyConnectionUniversityId == program.UniversityId)
-                reasons.Add("You have family connection at this university");
+                reasons.Add("You have a family connection at this university.");
 
-            return reasons;
+            if (score >= 85) reasons.Add("Highly recommended based on your profile.");
+            else if (score >= 70) reasons.Add("Good match based on your profile.");
+
+            return reasons.Distinct().ToList();
         }
 
-        #endregion
+        // ==========================================================
+        // DIVERSITY CAP (works in EF Core 9)
+        // - limits how many recommendations per University
+        // ==========================================================
+        private async Task<List<Recommendation>> ApplyDiversityCapAsync(
+            List<Recommendation> generated,
+            int maxPerUniversity,
+            CancellationToken ct)
+        {
+            if (maxPerUniversity <= 0) return generated;
+
+            var upIds = generated
+                .Where(r => r.UniversityProgramId.HasValue)
+                .Select(r => r.UniversityProgramId!.Value)
+                .Distinct()
+                .ToList();
+
+            var btecIds = generated
+                .Where(r => r.BtecProgramId.HasValue)
+                .Select(r => r.BtecProgramId!.Value)
+                .Distinct()
+                .ToList();
+
+            var upUniMap = upIds.Count == 0
+                ? new Dictionary<int, int>()
+                : await _context.UniversityPrograms.AsNoTracking()
+                    .Where(x => upIds.Contains(x.Id))
+                    .Select(x => new { x.Id, x.UniversityId })
+                    .ToDictionaryAsync(x => x.Id, x => x.UniversityId, ct);
+
+            var btecUniMap = btecIds.Count == 0
+                ? new Dictionary<int, int>()
+                : await _context.BtecPrograms.AsNoTracking()
+                    .Where(x => btecIds.Contains(x.Id))
+                    .Select(x => new { x.Id, x.UniversityId })
+                    .ToDictionaryAsync(x => x.Id, x => x.UniversityId, ct);
+
+            var counts = new Dictionary<int, int>();
+            var result = new List<Recommendation>(generated.Count);
+
+            foreach (var r in generated.OrderByDescending(x => x.Score))
+            {
+                int? uniId = null;
+
+                if (r.UniversityProgramId.HasValue && upUniMap.TryGetValue(r.UniversityProgramId.Value, out var u1))
+                    uniId = u1;
+
+                if (!uniId.HasValue && r.BtecProgramId.HasValue && btecUniMap.TryGetValue(r.BtecProgramId.Value, out var u2))
+                    uniId = u2;
+
+                // If we can't infer university, just keep it.
+                if (!uniId.HasValue)
+                {
+                    result.Add(r);
+                    continue;
+                }
+
+                counts.TryGetValue(uniId.Value, out var c);
+                if (c >= maxPerUniversity) continue;
+
+                counts[uniId.Value] = c + 1;
+                result.Add(r);
+            }
+
+            return result;
+        }
+
+        // ==========================================================
+        // HELPERS
+        // ==========================================================
+        private static double NormalizeGpa(double gpa)
+        {
+            // If some students store GPA on 4.0 scale, normalize to 0..100
+            if (gpa <= 4.0) return gpa * 25.0;
+            return gpa;
+        }
+
+        private static List<string> ParseDesiredMajors(string? desiredMajors)
+        {
+            if (string.IsNullOrWhiteSpace(desiredMajors))
+                return new List<string>();
+
+            return desiredMajors
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
     }
 }
 

@@ -11,6 +11,7 @@ using Uni_Selector.ViewModels.Applications;
 namespace Uni_Selector.Controllers
 {
     [Authorize(Roles = UserRoles.Student)]
+    [Route("Applications")]
     public class ApplicationsController : Controller
     {
         private readonly AppDbContext _context;
@@ -28,7 +29,7 @@ namespace Uni_Selector.Controllers
         }
 
         // GET: /Applications
-        [HttpGet]
+        [HttpGet("")]
         public async Task<IActionResult> Index(string status, string searchTerm, string sortBy = "newest", int pageNumber = 1, int pageSize = 12)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -131,7 +132,7 @@ namespace Uni_Selector.Controllers
         }
 
         // GET: /Applications/Create?recommendationId={id}
-        [HttpGet]
+        [HttpGet("Create")]
         public async Task<IActionResult> Create(int? recommendationId)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -207,7 +208,7 @@ namespace Uni_Selector.Controllers
         }
 
         // POST: /Applications/Create
-        [HttpPost]
+        [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateApplicationViewModel model)
         {
@@ -302,7 +303,7 @@ namespace Uni_Selector.Controllers
                 message: $"Your application to {programName} at {universityName} has been submitted successfully. Application Number: {application.ApplicationNumber}",
                 category: NotificationCategory.ApplicationSubmitted,
                 channel: NotificationChannel.InApp,
-                actionUrl: $"/Applications/{application.Id}"
+                actionUrl: $"/Applications/{application.Id}/Details"
             );
 
             // Send notification to university representatives
@@ -314,19 +315,16 @@ namespace Uni_Selector.Controllers
                     message: $"A new application has been submitted by {student.User.FullName} for {programName}. Application Number: {application.ApplicationNumber}",
                     category: NotificationCategory.ApplicationSubmitted,
                     channel: NotificationChannel.InApp,
-                    actionUrl: $"/UniversityRep/Applications/{application.Id}"
+                    actionUrl: $"/UniversityRep/Applications/{application.Id}/Details"
                 );
             }
-
-            // TODO: Create discount grant (5% platform discount)
-            // TODO: Create commission record
 
             TempData["Success"] = $"Application submitted successfully! Your application number is: {application.ApplicationNumber}";
             return RedirectToAction(nameof(Details), new { id = application.Id });
         }
 
-        // GET: /Applications/{id}
-        [HttpGet]
+        // GET: /Applications/{id}/Details
+        [HttpGet("{id:int}/Details")]
         public async Task<IActionResult> Details(int id)
         {
             try
@@ -513,7 +511,7 @@ namespace Uni_Selector.Controllers
             }
         }
         // POST: /Applications/{id}/Cancel
-        [HttpPost]
+        [HttpPost("{id:int}/Cancel")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
         {

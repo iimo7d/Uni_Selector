@@ -34,11 +34,21 @@
                     </div>
                 </div>
 
-                @if (Model.Role == "Student")
+                @if (Model.ProfileCompleted == false || Model.ProfileCompleted == null)
+                {
+
+                    <div>
+                        <a href="@Url.Action("CompleteProfile", "Student")" class="text-size-15 text-whiteColor bg-secondaryColor px-25px py-10px border border-secondaryColor hover:text-secondaryColor hover:bg-whiteColor rounded group text-nowrap flex gap-1 items-center">
+                            Complete Profile
+                            <i class="icofont-arrow-right"></i>
+                        </a>
+                    </div>
+                }
+                else
                 {
                     <div>
-                        <a href="@Url.Action("Index", "Applications")" class="text-size-15 text-whiteColor bg-secondaryColor px-25px py-10px border border-secondaryColor hover:text-secondaryColor hover:bg-whiteColor rounded group text-nowrap flex gap-1 items-center">
-                            My Applications
+                        <a href="@Url.Action("Edit", "Student")" class="text-size-15 text-whiteColor bg-secondaryColor px-25px py-10px border border-secondaryColor hover:text-secondaryColor hover:bg-whiteColor rounded group text-nowrap flex gap-1 items-center">
+                            Edit Profile
                             <i class="icofont-arrow-right"></i>
                         </a>
                     </div>
@@ -48,191 +58,6 @@
     </section>
 
 
-    <div class="lg:col-start-1 lg:col-span-3">
-        <!-- navigation menu -->
-        <div class="p-30px pt-5 lg:p-5 2xl:p-30px 2xl:pt-5 rounded-lg2 shadow-accordion dark:shadow-accordion-dark bg-whiteColor dark:bg-whiteColor-dark">
-            <!-- greeting -->
-            <h5 class="text-sm leading-1 font-semibold uppercase text-contentColor dark:text-contentColor-dark bg-lightGrey5 dark:bg-whiteColor-dark p-10px pb-7px mt-5 mb-10px">
-                WELCOME, @Model.FullName.ToUpper()
-            </h5>
-
-
-                <ul>
-                    <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                        <a href="@Url.Action("Me", "Account")"
-                           class="text-primaryColor hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 width="16"
-                                 height="24"
-                                 viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-width="2"
-                                 stroke-linecap="round"
-                                 stroke-linejoin="round"
-                                 class="feather feather-user">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                            My Profile
-                        </a>
-                    </li>
-                @if (User.IsInRole("Student"))
-                {
-
-
-                    <li class="py-10px border-b border-borderColor dark:border-borderColor-dark flex justify-between items-center">
-                        <a href="@Url.Action("Index", "Application")"
-                        class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="feather feather-book-open">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                            </svg>
-                            My Applications
-                        </a>
-                        <span class="text-size-10 font-medium text-whiteColor px-9px bg-primaryColor leading-14px rounded-2xl">12</span>
-                    </li>
-                    <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                        <a href="@Url.Action("Index", "Recommendation")"
-                        class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="feather feather-star">
-                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                            </svg>
-                            Recommendations
-                        </a>
-                    </li>
-                }
-                else if (User.IsInRole("UniversityRep"))
-                {
-                    <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                        <a href="@Url.Action("Dashboard", "UniversityRep")"
-                        class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="feather feather-home">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                            </svg>
-                            Dashboard
-                        </a>
-                    </li>
-
-                    <li class="py-10px border-b border-borderColor dark:border-borderColor-dark flex justify-between items-center">
-                        <a href="@Url.Action("Applications", "UniversityRep")"
-                        class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="feather feather-bookmark">
-                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                            </svg>
-                            Applications
-                        </a>
-                        <span class="text-size-10 font-medium text-whiteColor px-9px bg-primaryColor leading-14px rounded-2xl">12</span>
-                    </li>
-                    <li class="py-10px border-b border-borderColor dark:border-borderColor-dark flex justify-between items-center">
-                        <a href="@Url.Action("Programs", "UniversityRep")"
-                        class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="feather feather-book-open">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                            </svg>
-                            Programs
-                        </a>
-                        <span class="text-size-10 font-medium text-whiteColor px-9px bg-primaryColor leading-14px rounded-2xl">12</span>
-                    </li>
-                }
-                else if (User.IsInRole("PlatformAdmin"))
-                {
-                    <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                        <a href="@Url.Action("Dashboard", "Admin")"
-                           class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 width="16"
-                                 height="24"
-                                 viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-width="2"
-                                 stroke-linecap="round"
-                                 stroke-linejoin="round"
-                                 class="feather feather-home">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                            </svg>
-                            Dashboard
-                        </a>
-                    </li>
-
-
-                }
-
-
-
-                    <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                        <a href="@Url.Action("Logout","Account")"
-                           class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 width="16"
-                                 height="24"
-                                 viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-width="2"
-                                 stroke-linecap="round"
-                                 stroke-linejoin="round"
-                                 class="feather feather-volume-1">
-                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                            </svg>
-                            Logout
-                        </a>
-                    </li>
-                </ul>
-
-            
-        </div>
-    </div>
 
 
 
@@ -250,12 +75,6 @@
                         <ul>
                             @if (Model.Role == "Student")
                             {
-                                <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                                    <a href="@Url.Action("Index", "Student")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
-                                        <i class="icofont-dashboard-web"></i>
-                                        Dashboard
-                                    </a>
-                                </li>
                                 <li class="py-10px border-b border-borderColor dark:border-borderColor-dark bg-lightGrey5">
                                     <a href="@Url.Action("Me", "Account")" class="text-primaryColor leading-1.8 flex gap-3 text-nowrap font-semibold">
                                         <i class="icofont-ui-user"></i>
@@ -269,16 +88,23 @@
                                     </a>
                                 </li>
                                 <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                                    <a href="@Url.Action("Recommendations", "Student")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
+                                    <a href="@Url.Action("Index", "Recommendations")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
                                         <i class="icofont-star"></i>
                                         Recommendations
                                     </a>
                                 </li>
+                                <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
+                                    <a href="@Url.Action("Index", "Discounts")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
+                                        <i class="icofont-sale-discount"></i>
+                                        Discounts
+                                    </a>
+                                </li>
+
                             }
                             else if (Model.Role == "UniversityRep")
                             {
                                 <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                                    <a href="@Url.Action("Index", "UniversityRep")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
+                                    <a href="@Url.Action("Dashboard", "UniversityRep")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
                                         <i class="icofont-dashboard-web"></i>
                                         Dashboard
                                     </a>
@@ -305,7 +131,7 @@
                             else if (Model.Role == "PlatformAdmin")
                             {
                                 <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                                    <a href="@Url.Action("Index", "Admin")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
+                                    <a href="@Url.Action("Dashboard", "Admin")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
                                         <i class="icofont-dashboard-web"></i>
                                         Dashboard
                                     </a>
@@ -317,13 +143,13 @@
                                     </a>
                                 </li>
                                 <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                                    <a href="@Url.Action("ManageUsers", "Admin")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
+                                    <a href="@Url.Action("Index", "UserManagement")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
                                         <i class="icofont-users"></i>
                                         Manage Users
                                     </a>
                                 </li>
                                 <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                                    <a href="@Url.Action("ManageUniversities", "Admin")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
+                                    <a href="@Url.Action("Index", "UniversityAdmin")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
                                         <i class="icofont-building"></i>
                                         Universities
                                     </a>
@@ -332,7 +158,7 @@
                             else if (Model.Role == "BtecAuthority")
                             {
                                 <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                                    <a href="@Url.Action("Index", "BtecAuthority")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
+                                    <a href="@Url.Action("Dashboard", "BTECAuthority")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
                                         <i class="icofont-dashboard-web"></i>
                                         Dashboard
                                     </a>
@@ -344,20 +170,12 @@
                                     </a>
                                 </li>
                                 <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                                    <a href="@Url.Action("PendingPrograms", "BtecAuthority")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
+                                    <a href="@Url.Action("Index", "BTECProgramReview")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
                                         <i class="icofont-verification-check"></i>
                                         Pending Approvals
                                     </a>
                                 </li>
                             }
-
-                            <li class="py-10px border-b border-borderColor dark:border-borderColor-dark">
-                                <a href="@Url.Action("Settings", "Account")" class="text-contentColor dark:text-contentColor-dark hover:text-primaryColor dark:hover:text-primaryColor leading-1.8 flex gap-3 text-nowrap">
-                                    <i class="icofont-settings"></i>
-                                    Settings
-                                </a>
-                            </li>
-
                             <li class="py-10px">
                                 <form asp-action="Logout" asp-controller="Account" method="post">
                                     <button type="submit" class="text-contentColor dark:text-contentColor-dark hover:text-red-600 dark:hover:text-red-600 leading-1.8 flex gap-3 text-nowrap w-full">
@@ -428,11 +246,11 @@
                                     <div class="md:col-start-5 md:col-span-8">
                                         @if (Model.IsActive)
                                         {
-                                            <span class="inline-block px-3 py-1 bg-green-500 text-white rounded">Active</span>
+                                            <span class="inline-block px-3 py-1 bg-green-500 text-success rounded">Active</span>
                                         }
                                         else
                                         {
-                                            <span class="inline-block px-3 py-1 bg-red-500 text-white rounded">Inactive</span>
+                                            <span class="inline-block px-3 py-1 bg-red-500 text-danger rounded">Inactive</span>
                                         }
                                     </div>
                                 </li>
@@ -772,11 +590,11 @@
                                             <div class="md:col-start-5 md:col-span-8">
                                                 @if (Model.ProfileCompleted == true)
                                                 {
-                                                    <span class="px-3 py-1 bg-green-500 text-white rounded">Complete ✓</span>
+                                                    <span class="px-3 py-1 bg-green-500 text-dark rounded">Complete ✓</span>
                                                 }
                                                 else
                                                 {
-                                                    <span class="px-3 py-1 bg-yellow-500 text-white rounded">Incomplete</span>
+                                                    <span class="px-3 py-1 bg-yellow-500 text-dark rounded">Incomplete</span>
                                                 }
                                             </div>
                                         </li>
@@ -836,11 +654,11 @@
                                             <div class="md:col-start-5 md:col-span-8">
                                                 @if (Model.RepIsActive == true)
                                                 {
-                                                    <span class="px-3 py-1 bg-green-500 text-white rounded">Active</span>
+                                                    <span class="px-3 py-1 bg-green-500 text-success rounded">Active</span>
                                                 }
                                                 else
                                                 {
-                                                    <span class="px-3 py-1 bg-red-500 text-white rounded">Inactive</span>
+                                                    <span class="px-3 py-1 bg-red-500 text-danger rounded">Inactive</span>
                                                 }
                                             </div>
                                         </li>
@@ -883,26 +701,26 @@
         // Show success/error messages using SweetAlert
         @if (TempData["Success"] != null)
         {
-                    <text>
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: '@TempData["SuccessMessage"]',
-                        confirmButtonColor: '#5F2DED'
-                    });
-                    </text>
+                        <text>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: '@TempData["SuccessMessage"]',
+                            confirmButtonColor: '#5F2DED'
+                        });
+                        </text>
         }
 
         @if (TempData["Error"] != null)
         {
-                    <text>
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: '@TempData["ErrorMessage"]',
-                        confirmButtonColor: '#5F2DED'
-                    });
-                    </text>
+                        <text>
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: '@TempData["ErrorMessage"]',
+                            confirmButtonColor: '#5F2DED'
+                        });
+                        </text>
         }
     </script>
 }

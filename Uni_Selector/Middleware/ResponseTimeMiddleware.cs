@@ -21,7 +21,6 @@ namespace Uni_Selector.Middleware
 
             try
             {
-                // Call the next middleware in the pipeline
                 await _next(context);
             }
             finally

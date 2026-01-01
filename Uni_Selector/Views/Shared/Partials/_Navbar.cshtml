@@ -222,92 +222,115 @@
                         </div>
                     </div>
                 </div><!-- Message dropdown end -->
-
                 <div class="dropdown">
-                    <button class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" type="button" data-bs-toggle="dropdown">
+                    <button class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center"
+                            type="button"
+                            id="notificationBell"
+                            data-bs-toggle="dropdown">
                         <iconify-icon icon="iconoir:bell" class="text-primary-light text-xl"></iconify-icon>
+                        <!-- Dynamic badge (hidden by default) -->
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                              id="notificationBadge"
+                              style="display: none; font-size: 10px; padding: 2px 6px;">
+                            0
+                        </span>
                     </button>
-                    <div class="dropdown-menu to-top dropdown-menu-lg p-0">
+
+                    <div class="dropdown-menu to-top dropdown-menu-lg p-0" id="notificationDropdown">
+                        <!-- Header with dynamic count -->
                         <div class="m-16 py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
                             <div>
                                 <h6 class="text-lg text-primary-light fw-semibold mb-0">Notifications</h6>
                             </div>
-                            <span class="text-primary-600 fw-semibold text-lg w-40-px h-40-px rounded-circle bg-base d-flex justify-content-center align-items-center">05</span>
+                            <span class="text-primary-600 fw-semibold text-lg w-40-px h-40-px rounded-circle bg-base d-flex justify-content-center align-items-center"
+                                  id="notificationCountBadge">
+                                0
+                            </span>
                         </div>
 
-                        <div class="max-h-400-px overflow-y-auto scroll-sm pe-4">
-                            <a href="javascript:void(0)" class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
-                                <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                                    <span class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                                        <iconify-icon icon="bitcoin-icons:verify-outline" class="icon text-xxl"></iconify-icon>
-                                    </span>
-                                    <div>
-                                        <h6 class="text-md fw-semibold mb-4">Congratulations</h6>
-                                        <p class="mb-0 text-sm text-secondary-light text-w-200-px">Your profile has been Verified. Your profile has been Verified</p>
-                                    </div>
+                        <!-- Notifications Container - Dynamically Loaded -->
+                        <div class="max-h-400-px overflow-y-auto scroll-sm pe-4" id="notificationsContainer">
+                            <!-- Loading State -->
+                            <div class="text-center py-4" id="notificationLoading">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
                                 </div>
-                                <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                            </a>
-
-                            <a href="javascript:void(0)" class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between bg-neutral-50">
-                                <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                                    <span class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                                        <img src="~/adminAssets/images/notification/profile-1.png" alt="">
-                                    </span>
-                                    <div>
-                                        <h6 class="text-md fw-semibold mb-4">Ronald Richards</h6>
-                                        <p class="mb-0 text-sm text-secondary-light text-w-200-px">You can stitch between artboards</p>
-                                    </div>
-                                </div>
-                                <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                            </a>
-
-                            <a href="javascript:void(0)" class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
-                                <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                                    <span class="w-44-px h-44-px bg-info-subtle text-info-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                                        AM
-                                    </span>
-                                    <div>
-                                        <h6 class="text-md fw-semibold mb-4">Arlene McCoy</h6>
-                                        <p class="mb-0 text-sm text-secondary-light text-w-200-px">Invite you to prototyping</p>
-                                    </div>
-                                </div>
-                                <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                            </a>
-
-                            <a href="javascript:void(0)" class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between bg-neutral-50">
-                                <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                                    <span class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                                        <img src="~/adminAssets/images/notification/profile-2.png" alt="">
-                                    </span>
-                                    <div>
-                                        <h6 class="text-md fw-semibold mb-4">Annette Black</h6>
-                                        <p class="mb-0 text-sm text-secondary-light text-w-200-px">Invite you to prototyping</p>
-                                    </div>
-                                </div>
-                                <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                            </a>
-
-                            <a href="javascript:void(0)" class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
-                                <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                                    <span class="w-44-px h-44-px bg-info-subtle text-info-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                                        DR
-                                    </span>
-                                    <div>
-                                        <h6 class="text-md fw-semibold mb-4">Darlene Robertson</h6>
-                                        <p class="mb-0 text-sm text-secondary-light text-w-200-px">Invite you to prototyping</p>
-                                    </div>
-                                </div>
-                                <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                            </a>
+                                <p class="text-sm text-secondary-light mt-2 mb-0">Loading notifications...</p>
+                            </div>
                         </div>
 
-                        <div class="text-center py-12 px-16">
-                            <a href="javascript:void(0)" class="text-primary-600 fw-semibold text-md">See All Notification</a>
+                        <!-- Footer -->
+                        <div class="text-center py-12 px-16 border-top">
+                            <a href="/Notifications" class="text-primary-600 fw-semibold text-md" id="viewAllNotificationsLink">
+                                See All Notification
+                            </a>
                         </div>
-
                     </div>
                 </div><!-- Notification dropdown end -->
+                <!-- ===================================
+                     REQUIRED: Add this style to handle badge positioning
+                     =================================== -->
+                <style>
+                    /* Badge positioning for notification bell */
+                    .has-indicator {
+                        position: relative;
+                    }
+
+                    /* Notification badge animation */
+                    #notificationBadge {
+                        animation: fadeIn 0.3s ease-in-out;
+                    }
+
+                    @@keyframes fadeIn {
+                        from {
+                            opacity: 0;
+                            transform: translate(-50%, -50%) scale(0.5);
+                        }
+
+                        to {
+                            opacity: 1;
+                            transform: translate(-50%, -50%) scale(1);
+                        }
+                    }
+
+                    /* Unread notification highlight */
+                    .notification-unread {
+                        background-color: rgba(99, 102, 241, 0.05) !important;
+                        border-left: 3px solid #6366f1 !important;
+                    }
+
+                    /* Notification item hover effect */
+                    .notification-item:hover {
+                        background-color: rgba(0, 0, 0, 0.02);
+                        transition: background-color 0.2s ease;
+                    }
+
+                    /* Delete button styling */
+                    .notification-delete-btn {
+                        opacity: 0;
+                        transition: opacity 0.2s ease;
+                    }
+
+                    .notification-item:hover .notification-delete-btn {
+                        opacity: 1;
+                    }
+
+                    /* Smooth transitions */
+                    .notification-item {
+                        transition: all 0.3s ease;
+                    }
+
+                    /* Mark all read button */
+                    .mark-all-read-btn {
+                        cursor: pointer;
+                        opacity: 0.8;
+                        transition: opacity 0.2s ease;
+                    }
+
+                        .mark-all-read-btn:hover {
+                            opacity: 1;
+                        }
+                </style><!-- Notification dropdown end -->
 
                 <div class="dropdown">
                     <button class="d-flex justify-content-center align-items-center rounded-circle" type="button" data-bs-toggle="dropdown">

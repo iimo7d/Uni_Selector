@@ -13,6 +13,8 @@ using Uni_Selector.ViewModels.Recommendations;
 
 namespace Uni_Selector.Controllers
 {
+    [Authorize(Roles =UserRoles.Student)]
+    [Route("Recommendations")]
     public class RecommendationsController : Controller
     {
         private readonly AppDbContext _context;
@@ -28,7 +30,7 @@ namespace Uni_Selector.Controllers
             _recommendationService = recommendationService;
         }
 
-        [HttpGet]
+        [HttpGet("")]
         public async Task<IActionResult> Index(string searchTerm, string universityFilter, string languageFilter,
               string sortBy = "score", int pageNumber = 1, int pageSize = 12)
         {
@@ -147,7 +149,7 @@ namespace Uni_Selector.Controllers
 
 
 
-        [HttpGet]
+        [HttpGet("Generate")]
         public async Task<IActionResult> Generate()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -177,7 +179,7 @@ namespace Uni_Selector.Controllers
             return View(model);
         }
 
-        [HttpPost]
+        [HttpPost("Generate")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Generate(bool regenerate = false)
         {
@@ -217,7 +219,7 @@ namespace Uni_Selector.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}/Details")]
         public async Task<IActionResult> Details(int id)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -370,7 +372,7 @@ namespace Uni_Selector.Controllers
             return Json(new { success = true });
         }
 
-        [HttpGet]
+        [HttpGet("Export")]
         public async Task<IActionResult> Export()
         {
             var user = await _userManager.GetUserAsync(User);

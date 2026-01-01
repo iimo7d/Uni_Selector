@@ -37,7 +37,7 @@ namespace Uni_Selector.Controllers
 
         // ENDPOINT 1: Login/Register Page (Unified)
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult Login(string returnUrl = null, string tab = "login")
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -45,6 +45,8 @@ namespace Uni_Selector.Controllers
             }
 
             ViewData["ReturnUrl"] = returnUrl;
+            ViewData["ActiveTab"] = tab.ToLower(); // "login" or "register"
+
             return View();
         }
 
@@ -114,6 +116,7 @@ namespace Uni_Selector.Controllers
                 return View("Login", model);
             }
 
+
             var user = new ApplicationUser
             {
                 UserName = model.Email,
@@ -136,6 +139,11 @@ namespace Uni_Selector.Controllers
 
                 // Assign default Student role
                 await _userManager.AddToRoleAsync(user, UserRoles.Student);
+
+
+
+                await _context.SaveChangesAsync();
+
 
                 // Generate email confirmation token
                 var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);

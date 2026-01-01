@@ -32,8 +32,6 @@ namespace Uni_Selector.Controllers
             _logger = logger;
         }
 
-
-        // GET: /Student/CompleteProfile
         [HttpGet]
         public async Task<IActionResult> CompleteProfile()
         {
@@ -41,9 +39,7 @@ namespace Uni_Selector.Controllers
             if (user == null)
                 return RedirectToAction("Login", "Account");
 
-            // Check if student record already exists
-            var existingStudent = await _context.Students
-                .FirstOrDefaultAsync(s => s.UserId == user.Id);
+            var existingStudent = await _context.Students.FirstOrDefaultAsync(s => s.UserId == user.Id);
 
             if (existingStudent != null && existingStudent.ProfileCompleted == true)
             {
@@ -54,9 +50,48 @@ namespace Uni_Selector.Controllers
             var model = new CompleteProfileViewModel
             {
                 FullName = user.FullName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber
+                Email = user.Email ?? "",
+                PhoneNumber = user.PhoneNumber ?? ""
             };
+
+            // If there is a partially saved student record, prefill to help resume
+            if (existingStudent != null)
+            {
+                model.NationalId = existingStudent.NationalId;
+                model.SeatNumber = existingStudent.SeatNumber;
+                model.Gender = existingStudent.Gender;
+                model.DateOfBirth = existingStudent.DateOfBirth;
+                model.Nationality = existingStudent.Nationality;
+
+                model.GuardianName = existingStudent.GuardianName;
+                model.GuardianPhone = existingStudent.GuardianPhone;
+                model.GuardianRelation = existingStudent.GuardianRelation;
+
+                model.Province = existingStudent.Province;
+                model.City = existingStudent.City;
+                model.Area = existingStudent.Area;
+
+                model.GPA = existingStudent.GPA;
+                model.Path = existingStudent.Path;
+                model.AcademicTrack = existingStudent.AcademicTrack;
+                model.VocationalBranch = existingStudent.VocationalBranch;
+                model.BtecLevel2Completed = existingStudent.BtecLevel2Completed;
+                model.BtecLevel3Completed = existingStudent.BtecLevel3Completed;
+                model.ExistingBtecCertificateUrl = existingStudent.BtecCertificateUrl;
+
+                model.RegistrationBudget = existingStudent.RegistrationBudget;
+                model.DesiredMajors = existingStudent.DesiredMajors;
+                model.PreferredCity = existingStudent.PreferredCity;
+                model.MaxDistanceKm = existingStudent.MaxDistanceKm;
+                model.PreferredLanguage = existingStudent.PreferredLanguage;
+
+                model.HasDisability = existingStudent.HasDisability;
+                model.DisabilityType = existingStudent.DisabilityType;
+                model.IsOrphan = existingStudent.IsOrphan;
+                model.IsEmployeeChild = existingStudent.IsEmployeeChild;
+                model.HasFamilyConnection = existingStudent.HasFamilyConnection;
+                model.FamilyConnectionUniversityId = existingStudent.FamilyConnectionUniversityId;
+            }
 
             await PopulateViewBagData();
             return View(model);
@@ -79,8 +114,7 @@ namespace Uni_Selector.Controllers
                 if (user == null)
                     throw new UnauthorizedAccessException();
 
-                var existingStudent = await _context.Students
-                    .FirstOrDefaultAsync(s => s.UserId == user.Id);
+                var existingStudent = await _context.Students.FirstOrDefaultAsync(s => s.UserId == user.Id);
 
                 if (existingStudent != null && existingStudent.ProfileCompleted == true)
                 {
@@ -88,19 +122,39 @@ namespace Uni_Selector.Controllers
                     return RedirectToAction(nameof(Edit));
                 }
 
-                string? btecCertificateUrl = null;
-                if (model.BtecCertificateFile != null)
-                {
+                var student = existingStudent ?? new Student();
+                student.UserId = user.Id;
+
+                // Preserve old BTEC url unless new one uploaded
+                var btecCertificateUrl = existingStudent?.BtecCertificateUrl;
+
+                if (model.Path == PathType.BTEC && model.BtecCertificateFile != null)
                     btecCertificateUrl = await SaveBtecCertificate(model.BtecCertificateFile, user.Id);
+
+                // If not BTEC, clear BTEC certificate + flags
+                if (model.Path != PathType.BTEC)
+                {
+                    btecCertificateUrl = null;
+                    student.BtecLevel2Completed = false;
+                    student.BtecLevel3Completed = false;
                 }
 
-                var student = existingStudent ?? new Student();
+                // Clear irrelevant fields based on Path to avoid stale data
+                if (model.Path == PathType.Academic)
+                    student.VocationalBranch = null;
+                if (model.Path == PathType.Vocational)
+                    student.AcademicTrack = null;
+                if (model.Path == PathType.BTEC)
+                {
+                    student.AcademicTrack = null;
+                    student.VocationalBranch = null;
+                }
 
-                student.UserId = user.Id;
+                // Map fields
                 student.NationalId = model.NationalId;
                 student.SeatNumber = model.SeatNumber;
-                student.Gender = model.Gender;
-                student.DateOfBirth = model.DateOfBirth;
+                student.Gender = model.Gender!.Value;
+                student.DateOfBirth = model.DateOfBirth!.Value;
                 student.Nationality = model.Nationality ?? "Jordanian";
 
                 student.GuardianName = model.GuardianName;
@@ -111,26 +165,28 @@ namespace Uni_Selector.Controllers
                 student.City = model.City;
                 student.Area = model.Area;
 
-                student.GPA = model.GPA;
-                student.Path = model.Path;
+                student.GPA = model.GPA!.Value;
+                student.Path = model.Path!.Value;
                 student.AcademicTrack = model.AcademicTrack;
                 student.VocationalBranch = model.VocationalBranch;
                 student.BtecLevel2Completed = model.BtecLevel2Completed;
                 student.BtecLevel3Completed = model.BtecLevel3Completed;
                 student.BtecCertificateUrl = btecCertificateUrl;
 
-                student.RegistrationBudget = model.RegistrationBudget;
+                student.RegistrationBudget = model.RegistrationBudget!.Value;
                 student.DesiredMajors = model.DesiredMajors;
                 student.PreferredCity = model.PreferredCity;
                 student.MaxDistanceKm = model.MaxDistanceKm;
                 student.PreferredLanguage = model.PreferredLanguage;
 
                 student.HasDisability = model.HasDisability;
-                student.DisabilityType = model.DisabilityType;
+                student.DisabilityType = model.HasDisability ? model.DisabilityType : null;
+
                 student.IsOrphan = model.IsOrphan;
                 student.IsEmployeeChild = model.IsEmployeeChild;
+
                 student.HasFamilyConnection = model.HasFamilyConnection;
-                student.FamilyConnectionUniversityId = model.FamilyConnectionUniversityId;
+                student.FamilyConnectionUniversityId = model.HasFamilyConnection ? model.FamilyConnectionUniversityId : null;
 
                 student.ProfileCompleted = true;
                 student.IsActive = true;
@@ -149,7 +205,7 @@ namespace Uni_Selector.Controllers
                 await _context.SaveChangesAsync();
 
                 TempData["Success"] = "Profile completed successfully!";
-                return RedirectToAction("Index", "Dashboard");
+                return RedirectToAction("Me", "Account");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -170,17 +226,16 @@ namespace Uni_Selector.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,
-                    "Unexpected error while completing profile. UserId: {UserId}");
-
+                _logger.LogError(ex, "Unexpected error while completing profile.");
                 TempData["Error"] = "Unexpected error occurred while saving your profile.";
             }
-
 
             await PopulateViewBagData();
             return View(model);
         }
-        
+
+
+
 
         // GET: /Student/Edit
         [HttpGet]
@@ -257,6 +312,29 @@ namespace Uni_Selector.Controllers
         {
             if (!ModelState.IsValid)
             {
+
+                var errors = ModelState
+           .Where(x => x.Value.Errors.Count > 0)
+           .Select(x => new
+           {
+               Field = x.Key,
+               Errors = x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+           })
+           .ToList();
+
+                // Log each error
+                foreach (var error in errors)
+                {
+                    _logger.LogWarning($"Field: {error.Field} | Errors: {string.Join(", ", error.Errors)}");
+                }
+
+                // Show in TempData for debugging
+                TempData["DebugErrors"] = string.Join(" | ", errors.Select(e =>
+                    $"{e.Field}: {string.Join(", ", e.Errors)}"));
+
+                await PopulateViewBagData();
+                return View(model);
+
                 await PopulateViewBagData();
                 return View(model);
             }
@@ -325,7 +403,7 @@ namespace Uni_Selector.Controllers
                 await _context.SaveChangesAsync();
 
                 TempData["Success"] = "Profile updated successfully!";
-                return RedirectToAction("Index", "Dashboard");
+                return RedirectToAction("Me", "Account");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -391,36 +469,34 @@ namespace Uni_Selector.Controllers
             };
         }
 
-        private async Task<string?> SaveBtecCertificate(IFormFile file, string userId)
+        private async Task<string> SaveBtecCertificate(IFormFile file, string userId)
         {
-            try
+            const long maxBytes = 5 * 1024 * 1024; // 5MB
+            if (file.Length > maxBytes)
+                throw new InvalidOperationException("File too large. Max 5MB.");
+
+            var allowed = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            { ".pdf", ".jpg", ".jpeg", ".png" };
+
+            var ext = Path.GetExtension(file.FileName);
+            if (!allowed.Contains(ext))
+                throw new InvalidOperationException("Invalid file type.");
+
+            var folder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "btec");
+            Directory.CreateDirectory(folder);
+
+            var safeName = $"{userId}_{DateTime.UtcNow:yyyyMMddHHmmss}{ext}";
+            var fullPath = Path.Combine(folder, safeName);
+
+            using (var stream = System.IO.File.Create(fullPath))
             {
-                var uploadsFolder = Path.Combine(
-                    _webHostEnvironment.WebRootPath,
-                    "uploads",
-                    "btec-certificates");
-
-                if (!Directory.Exists(uploadsFolder))
-                    Directory.CreateDirectory(uploadsFolder);
-
-                var uniqueFileName = $"{userId}_{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using var fileStream = new FileStream(filePath, FileMode.Create);
-                await file.CopyToAsync(fileStream);
-
-                return $"/uploads/btec-certificates/{uniqueFileName}";
+                await file.CopyToAsync(stream);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex,
-                    "Failed to save BTEC certificate. UserId: {UserId}, FileName: {FileName}",
-                    userId,
-                    file?.FileName);
 
-                return null;
-            }
+            return $"/uploads/btec/{safeName}";
         }
+    
+
 
 
         private void DeleteBtecCertificate(string fileUrl)

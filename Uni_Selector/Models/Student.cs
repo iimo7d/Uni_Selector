@@ -35,8 +35,8 @@ namespace Uni_Selector.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
-        public string NationalId { get; set; }  
-        public string SeatNumber { get; set; }  
+        public string NationalId { get; set; }
+        public string SeatNumber { get; set; }
         public Gender Gender { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Nationality { get; set; } = "Jordanian";
@@ -52,11 +52,10 @@ namespace Uni_Selector.Models
         public string? DisabilityType { get; set; }
         public bool IsOrphan { get; set; }
         public bool IsEmployeeChild { get; set; }
-        
+
         public bool? ProfileCompleted { get; set; } = false;
 
         public ICollection<Recommendation> Recommendations { get; set; }
         public ICollection<StudentApplication> Applications { get; set; }
     }
 }
-

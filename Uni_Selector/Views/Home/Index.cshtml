@@ -12,7 +12,8 @@
         </div>
 
         <!-- Hero Content -->
-        <div class="bg-[url('/assets/images/herobanner/university_1.jpg')] bg-cover bg-center bg-no-repeat relative z-0">
+        <div style="background-image:url('@Url.Content("~/assets/images/herobanner/university_1.jpg")')"
+             class="bg-cover bg-center bg-no-repeat relative z-0">
             <div class="bg-black bg-opacity-70 overflow-hidden pt-50px pb-100px md:pt-35 md:pb-170px lg:pt-100px lg:pb-150px 2xl:pt-35 2xl:pb-170px">
                 <div class="container 2xl:container-secondary-md relative overflow-hidden text-center">
                     <div data-aos="fade-up">
@@ -28,17 +29,17 @@
                         <div class="flex gap-5 justify-center flex-wrap">
                             @if (User.Identity?.IsAuthenticated == true)
                             {
-                                <a asp-area="" asp-controller="Student" asp-action="Recommendations" class="text-whiteColor bg-primaryColor border border-primaryColor px-10 py-15px hover:text-primaryColor hover:bg-whiteColor rounded-full inline-block dark:hover:bg-whiteColor-dark dark:hover:text-whiteColor">
+                                <a  asp-controller="Recommendations" asp-action="Generate" class="text-whiteColor bg-primaryColor border border-primaryColor px-10 py-15px hover:text-primaryColor hover:bg-whiteColor rounded-full inline-block dark:hover:bg-whiteColor-dark dark:hover:text-whiteColor">
                                     Get Recommendations
                                 </a>
                             }
                             else
                             {
-                                <a asp-area="" asp-controller="Account" asp-action="Register" class="text-whiteColor bg-primaryColor border border-primaryColor px-10 py-15px hover:text-primaryColor hover:bg-whiteColor rounded-full inline-block dark:hover:bg-whiteColor-dark dark:hover:text-whiteColor">
+                                <a asp-area="" asp-controller="Account" asp-action="Login" class="text-whiteColor bg-primaryColor border border-primaryColor px-10 py-15px hover:text-primaryColor hover:bg-whiteColor rounded-full inline-block dark:hover:bg-whiteColor-dark dark:hover:text-whiteColor">
                                     Get Started
                                 </a>
                             }
-                            <a asp-area="" asp-controller="University" asp-action="Index" class="text-primaryColor bg-whiteColor border border-whiteColor px-10 py-15px hover:text-whiteColor hover:bg-primaryColor rounded-full inline-block">
+                            <a asp-area="" asp-controller="Home" asp-action="Universities" class="text-primaryColor bg-whiteColor border border-whiteColor px-10 py-15px hover:text-whiteColor hover:bg-primaryColor rounded-full inline-block">
                                 Browse Universities
                             </a>
                         </div>
@@ -238,7 +239,7 @@
             <p class="text-xl text-whiteColor mb-10 max-w-2xl mx-auto">
                 Join thousands of students who have already found their ideal university match with Uni Selector.
             </p>
-            <a asp-area="" asp-controller="Account" asp-action="Register" class="text-primaryColor bg-whiteColor border border-whiteColor px-10 py-15px hover:text-whiteColor hover:bg-transparent hover:border-whiteColor rounded-full inline-block text-lg font-semibold">
+            <a asp-area="" asp-controller="Account" asp-action="Login" asp-route-tab="register" class="text-primaryColor bg-whiteColor border border-whiteColor px-10 py-15px hover:text-whiteColor hover:bg-transparent hover:border-whiteColor rounded-full inline-block text-lg font-semibold">
                 Get Started Now - It's Free!
             </a>
         </div>

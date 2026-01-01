@@ -1,6 +1,7 @@
 ﻿@model LoginViewModel
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = ViewData["ActiveTab"]?.ToString() ?? "login"; 
+    var activeTab = ViewData["ActiveTab"]?.ToString() ?? "login";
 }
 
 <!-- Banner Section -->
@@ -26,7 +27,7 @@
                         </a>
                     </li>
                     <li>
-                        <span class="text-lg text-blackColor2 dark:text-blackColor2-dark">Login</span>
+                        <span class="text-lg text-blackColor2 dark:text-blackColor2-dark">@(activeTab == "register" ? "Sign Up" : "Login")</span>
                     </li>
                 </ul>
             </div>
@@ -81,56 +82,14 @@
                 </div>
             }
 
-            @if (TempData["InfoMessage"] != null)
-            {
-                <div class="mb-6 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 border-l-4 border-blue-500 p-4 rounded-lg shadow-lg animate-fade-in" role="alert" data-aos="fade-down">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <i class="icofont-info-circle text-3xl text-blue-500"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-blue-800 dark:text-blue-200">
-                                @TempData["InfoMessage"]
-                            </p>
-                        </div>
-                        <div class="ml-auto pl-3">
-                            <button type="button" class="inline-flex text-blue-400 hover:text-blue-600 dark:hover:text-blue-300" onclick="this.parentElement.parentElement.parentElement.remove()">
-                                <i class="icofont-close text-xl"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            }
-
-            @if (TempData["WarningMessage"] != null)
-            {
-                <div class="mb-6 bg-yellow-50 dark:bg-yellow-900 dark:bg-opacity-20 border-l-4 border-yellow-500 p-4 rounded-lg shadow-lg animate-fade-in" role="alert" data-aos="fade-down">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <i class="icofont-warning-alt text-3xl text-yellow-500"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                                @TempData["WarningMessage"]
-                            </p>
-                        </div>
-                        <div class="ml-auto pl-3">
-                            <button type="button" class="inline-flex text-yellow-400 hover:text-yellow-600 dark:hover:text-yellow-300" onclick="this.parentElement.parentElement.parentElement.remove()">
-                                <i class="icofont-close text-xl"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            }
-
             <!-- Tab Controller -->
             <div class="tab-links grid grid-cols-2 gap-11px text-blackColor text-lg lg:text-size-22 font-semibold font-hind mb-43px mt-30px md:mt-0">
-                <button class="py-9px lg:py-6 hover:text-primaryColor dark:text-whiteColor dark:hover:text-primaryColor bg-white dark:bg-whiteColor-dark dark:hover:bg-whiteColor-dark hover:bg-white relative group/btn shadow-bottom hover:shadow-bottom dark:shadow-standard-dark disabled:cursor-pointer rounded-standard">
-                    <span class="absolute w-full h-1 bg-primaryColor top-0 left-0 group-hover/btn:w-full"></span>
+                <button data-tab="login" class="tab-button py-9px lg:py-6 hover:text-primaryColor dark:text-whiteColor dark:hover:text-primaryColor bg-white dark:bg-whiteColor-dark dark:hover:bg-whiteColor-dark hover:bg-white relative group/btn shadow-bottom hover:shadow-bottom dark:shadow-standard-dark rounded-standard transition-all duration-300 @(activeTab == "login" ? "active" : "")">
+                    <span class="tab-indicator absolute h-1 bg-primaryColor top-0 left-0 transition-all duration-300 @(activeTab == "login" ? "w-full" : "w-0")"></span>
                     Login
                 </button>
-                <button class="py-9px lg:py-6 hover:text-primaryColor dark:hover:text-primaryColor dark:text-whiteColor bg-lightGrey7 dark:bg-lightGrey7-dark hover:bg-white dark:hover:bg-whiteColor-dark relative group/btn hover:shadow-bottom dark:shadow-standard-dark disabled:cursor-pointer rounded-standard">
-                    <span class="absolute w-0 h-1 bg-primaryColor top-0 left-0 group-hover/btn:w-full"></span>
+                <button data-tab="register" class="tab-button py-9px lg:py-6 hover:text-primaryColor dark:hover:text-primaryColor dark:text-whiteColor bg-lightGrey7 dark:bg-lightGrey7-dark hover:bg-white dark:hover:bg-whiteColor-dark relative group/btn hover:shadow-bottom dark:shadow-standard-dark rounded-standard transition-all duration-300 @(activeTab == "register" ? "active" : "")">
+                    <span class="tab-indicator absolute h-1 bg-primaryColor top-0 left-0 transition-all duration-300 @(activeTab == "register" ? "w-full" : "w-0")"></span>
                     Sign Up
                 </button>
             </div>
@@ -139,7 +98,7 @@
             <div class="shadow-container bg-whiteColor dark:bg-whiteColor-dark pt-10px px-5 pb-10 md:p-50px md:pt-30px rounded-5px">
                 <div class="tab-contents">
                     <!-- Login Form -->
-                    <div class="block opacity-100 transition-opacity duration-150 ease-linear">
+                    <div id="login-form" class="tab-content @(activeTab == "login" ? "block opacity-100" : "hidden opacity-0") transition-opacity duration-300 ease-linear">
                         <!-- Heading -->
                         <div class="text-center">
                             <h3 class="text-size-32 font-bold text-blackColor dark:text-blackColor-dark mb-2 leading-normal">
@@ -147,7 +106,7 @@
                             </h3>
                             <p class="text-contentColor dark:text-contentColor-dark mb-15px">
                                 Don't have an account yet?
-                                <a href="#" class="hover:text-primaryColor relative after:absolute after:left-0 after:bottom-0.5 after:w-0 after:h-0.5 after:bg-primaryColor after:transition-all after:duration-300 hover:after:w-full">
+                                <a href="javascript:void(0)" data-switch-tab="register" class="hover:text-primaryColor relative after:absolute after:left-0 after:bottom-0.5 after:w-0 after:h-0.5 after:bg-primaryColor after:transition-all after:duration-300 hover:after:w-full">
                                     Sign up for free
                                 </a>
                             </p>
@@ -189,7 +148,7 @@
                     </div>
 
                     <!-- Register Form -->
-                    <div class="hidden opacity-0 transition-opacity duration-150 ease-linear">
+                    <div id="register-form" class="tab-content @(activeTab == "register" ? "block opacity-100" : "hidden opacity-0") transition-opacity duration-300 ease-linear">
                         <!-- Heading -->
                         <div class="text-center">
                             <h3 class="text-size-32 font-bold text-blackColor dark:text-blackColor-dark mb-2 leading-normal">
@@ -197,7 +156,7 @@
                             </h3>
                             <p class="text-contentColor dark:text-contentColor-dark mb-15px">
                                 Already have an account?
-                                <a href="#" class="hover:text-primaryColor relative after:absolute after:left-0 after:bottom-0.5 after:w-0 after:h-0.5 after:bg-primaryColor after:transition-all after:duration-300 hover:after:w-full">
+                                <a href="javascript:void(0)" data-switch-tab="login" class="hover:text-primaryColor relative after:absolute after:left-0 after:bottom-0.5 after:w-0 after:h-0.5 after:bg-primaryColor after:transition-all after:duration-300 hover:after:w-full">
                                     Log In
                                 </a>
                             </p>
@@ -263,6 +222,65 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const switchTabLinks = document.querySelectorAll('[data-switch-tab]');
+
+            function switchTab(targetTab) {
+                // Update buttons
+                tabButtons.forEach(btn => {
+                    const isActive = btn.dataset.tab === targetTab;
+                    const indicator = btn.querySelector('.tab-indicator');
+
+                    if (isActive) {
+                        btn.classList.add('active', 'bg-white', 'shadow-bottom');
+                        btn.classList.remove('bg-lightGrey7', 'dark:bg-lightGrey7-dark');
+                        indicator.classList.add('w-full');
+                        indicator.classList.remove('w-0');
+                    } else {
+                        btn.classList.remove('active', 'bg-white', 'shadow-bottom');
+                        btn.classList.add('bg-lightGrey7', 'dark:bg-lightGrey7-dark');
+                        indicator.classList.remove('w-full');
+                        indicator.classList.add('w-0');
+                    }
+                });
+
+                // Update content
+                tabContents.forEach(content => {
+                    if (content.id === `${targetTab}-form`) {
+                        content.classList.remove('hidden', 'opacity-0');
+                        content.classList.add('block', 'opacity-100');
+                    } else {
+                        content.classList.add('hidden', 'opacity-0');
+                        content.classList.remove('block', 'opacity-100');
+                    }
+                });
+
+                // Update URL without page reload
+                const url = new URL(window.location);
+                url.searchParams.set('tab', targetTab);
+                window.history.pushState({}, '', url);
+            }
+
+            // Tab button clicks
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchTab(this.dataset.tab);
+                });
+            });
+
+            // In-page "switch to" links
+            switchTabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchTab(this.dataset.switchTab);
+                });
+            });
+        });
+
         // Auto-hide alerts after 5 seconds
         setTimeout(function() {
             const alerts = document.querySelectorAll('[role="alert"]');

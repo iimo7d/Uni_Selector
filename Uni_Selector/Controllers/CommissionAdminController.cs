@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using Uni_Selector.ViewModels.AdminCommission;
 
 namespace Uni_Selector.Controllers
 {
+    [Authorize(Roles = UserRoles.PlatformAdmin)]
     public class CommissionAdminController : Controller
     {
         private readonly AppDbContext _context;

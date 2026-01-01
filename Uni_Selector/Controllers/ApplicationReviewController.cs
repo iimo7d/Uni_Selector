@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Uni_Selector.Data;
 using Uni_Selector.Models;
 using Uni_Selector.Models.Enums;
+using Uni_Selector.Service.Interface;
 using Uni_Selector.ViewModels.ApplicationReview;
 
 namespace Uni_Selector.Controllers
@@ -14,10 +15,17 @@ namespace Uni_Selector.Controllers
     public class ApplicationReviewController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly INotificationService _notificationService;
+        private readonly IEmailService _emailService;
 
-        public ApplicationReviewController(AppDbContext context)
+        public ApplicationReviewController(
+            AppDbContext context,
+            INotificationService notificationService,
+            IEmailService emailService)
         {
             _context = context;
+            _notificationService = notificationService;
+            _emailService = emailService;
         }
 
         // GET: /UniversityRep/Applications
@@ -102,8 +110,8 @@ namespace Uni_Selector.Controllers
             return View(viewModel);
         }
 
-        // GET: /UniversityRep/Applications/{id}
-        [HttpGet("{id}")]
+        // GET: /UniversityRep/Applications/{id}/Details
+        [HttpGet("{id}/Details")]
         public async Task<IActionResult> Details(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -254,6 +262,7 @@ namespace Uni_Selector.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var rep = await _context.UniversityRepresentatives
+                .Include(r => r.University)
                 .FirstOrDefaultAsync(r => r.UserId == userId && r.IsActive);
 
             if (rep == null || !rep.CanViewApplications)
@@ -262,7 +271,10 @@ namespace Uni_Selector.Controllers
             }
 
             var application = await _context.StudentApplications
+                .Include(sa => sa.Student)
+                .ThenInclude(s => s.User)
                 .Include(sa => sa.UniversityProgram)
+                .ThenInclude(up => up.Program)
                 .Include(sa => sa.BtecProgram)
                 .FirstOrDefaultAsync(sa => sa.Id == id);
 
@@ -285,7 +297,7 @@ namespace Uni_Selector.Controllers
             }
 
             // Get university for commission mode
-            var university = await _context.Universities.FindAsync(rep.UniversityId);
+            var university = rep.University;
             var isBtec = application.BtecProgramId.HasValue;
 
             // Update application status
@@ -340,6 +352,67 @@ namespace Uni_Selector.Controllers
 
             await _context.SaveChangesAsync();
 
+            // ===================================
+            // 🔔 SEND NOTIFICATIONS & EMAILS
+            // ===================================
+
+            try
+            {
+                var studentUserId = application.Student.UserId;
+                var studentEmail = application.Student.User.Email;
+                var studentName = application.Student.User.FullName;
+                var programName = isBtec
+                    ? application.BtecProgram.NameEnglish
+                    : application.UniversityProgram.Program.NameEnglish;
+                var applicationDetailsUrl = $"/Student/Applications/{application.Id}";
+
+                // 1️⃣ Notify Student: Application Approved (In-App + Email)
+                await _notificationService.SendNotificationAsync(
+                    userId: studentUserId,
+                    title: "🎉 Application Approved!",
+                    message: $"Congratulations! Your application for {programName} at {university.NameEnglish} has been approved. Admission Number: {application.AdmissionNumber}",
+                    category: NotificationCategory.ApplicationApproved,
+                    channel: NotificationChannel.InApp,
+                    actionUrl: applicationDetailsUrl
+                );
+
+                // Send Email: Application Approved
+                await _emailService.SendApplicationApprovedEmailAsync(
+                    studentEmail,
+                    studentName,
+                    programName,
+                    university.NameEnglish,
+                    application.AdmissionNumber,
+                    discountGrant.Code,
+                    discountGrant.AmountEstimated
+                );
+
+                // 2️⃣ Notify Student: Discount Code Generated
+                await _notificationService.SendNotificationAsync(
+                    userId: studentUserId,
+                    title: "💰 Discount Code Generated!",
+                    message: $"You have received a 5% discount! Use code: {discountGrant.Code}. Estimated savings: {discountGrant.AmountEstimated:N2} JOD.",
+                    category: NotificationCategory.PromoCodeGenerated,
+                    channel: NotificationChannel.InApp,
+                    actionUrl: applicationDetailsUrl
+                );
+
+                // 3️⃣ Notify University: Commission Generated
+                await _notificationService.SendNotificationToUniversityAsync(
+                    universityId: university.Id,
+                    title: "💵 Commission Generated",
+                    message: $"Commission of {commission.AmountEstimated:N2} JOD generated for {application.Student.User.FullName}'s application to {programName}.",
+                    category: NotificationCategory.CommissionGenerated,
+                    channel: NotificationChannel.InApp,
+                    actionUrl: $"/UniversityRep/Commissions/{commission.Id}"
+                );
+            }
+            catch (Exception ex)
+            {
+                // Log notification errors but don't fail the approval
+                Console.WriteLine($"Notification/Email error: {ex.Message}");
+            }
+
             TempData["Success"] = "Application approved successfully. Discount code and commission generated.";
             return Json(new { success = true, message = "Application approved successfully." });
         }
@@ -356,6 +429,7 @@ namespace Uni_Selector.Controllers
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var rep = await _context.UniversityRepresentatives
+                .Include(r => r.University)
                 .FirstOrDefaultAsync(r => r.UserId == userId && r.IsActive);
 
             if (rep == null || !rep.CanViewApplications)
@@ -364,7 +438,10 @@ namespace Uni_Selector.Controllers
             }
 
             var application = await _context.StudentApplications
+                .Include(sa => sa.Student)
+                .ThenInclude(s => s.User)
                 .Include(sa => sa.UniversityProgram)
+                .ThenInclude(up => up.Program)
                 .Include(sa => sa.BtecProgram)
                 .FirstOrDefaultAsync(sa => sa.Id == id);
 
@@ -392,6 +469,46 @@ namespace Uni_Selector.Controllers
 
             await _context.SaveChangesAsync();
 
+            // ===================================
+            // 🔔 SEND NOTIFICATION & EMAIL
+            // ===================================
+
+            try
+            {
+                var studentUserId = application.Student.UserId;
+                var studentEmail = application.Student.User.Email;
+                var studentName = application.Student.User.FullName;
+                var isBtec = application.BtecProgramId.HasValue;
+                var programName = isBtec
+                    ? application.BtecProgram.NameEnglish
+                    : application.UniversityProgram.Program.NameEnglish;
+                var applicationDetailsUrl = $"/Student/Applications/{application.Id}";
+
+                // Notify Student: Application Rejected (In-App)
+                await _notificationService.SendNotificationAsync(
+                    userId: studentUserId,
+                    title: "❌ Application Status Update",
+                    message: $"Your application for {programName} at {rep.University.NameEnglish} has been rejected. Reason: {model.RejectionReason}",
+                    category: NotificationCategory.ApplicationRejected,
+                    channel: NotificationChannel.InApp,
+                    actionUrl: applicationDetailsUrl
+                );
+
+                // Send Email: Application Rejected
+                await _emailService.SendApplicationRejectedEmailAsync(
+                    studentEmail,
+                    studentName,
+                    programName,
+                    rep.University.NameEnglish,
+                    model.RejectionReason
+                );
+            }
+            catch (Exception ex)
+            {
+                // Log notification errors but don't fail the rejection
+                Console.WriteLine($"Notification/Email error: {ex.Message}");
+            }
+
             TempData["Success"] = "Application rejected.";
             return Json(new { success = true, message = "Application rejected successfully." });
         }
@@ -408,6 +525,7 @@ namespace Uni_Selector.Controllers
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var rep = await _context.UniversityRepresentatives
+                .Include(r => r.University)
                 .FirstOrDefaultAsync(r => r.UserId == userId && r.IsActive);
 
             if (rep == null || !rep.CanViewApplications)
@@ -416,7 +534,10 @@ namespace Uni_Selector.Controllers
             }
 
             var application = await _context.StudentApplications
+                .Include(sa => sa.Student)
+                .ThenInclude(s => s.User)
                 .Include(sa => sa.UniversityProgram)
+                .ThenInclude(up => up.Program)
                 .Include(sa => sa.BtecProgram)
                 .FirstOrDefaultAsync(sa => sa.Id == id);
 
@@ -445,6 +566,46 @@ namespace Uni_Selector.Controllers
             application.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
+
+            // ===================================
+            // 🔔 SEND NOTIFICATION & EMAIL
+            // ===================================
+
+            try
+            {
+                var studentUserId = application.Student.UserId;
+                var studentEmail = application.Student.User.Email;
+                var studentName = application.Student.User.FullName;
+                var isBtec = application.BtecProgramId.HasValue;
+                var programName = isBtec
+                    ? application.BtecProgram.NameEnglish
+                    : application.UniversityProgram.Program.NameEnglish;
+                var applicationDetailsUrl = $"/Student/Applications/{application.Id}";
+
+                // Notify Student: Hour Discount Applied (In-App)
+                await _notificationService.SendNotificationAsync(
+                    userId: studentUserId,
+                    title: "🎁 Hour Discount Applied!",
+                    message: $"Great news! A {model.HourDiscountPercent}% hour discount has been applied to your {programName} application at {rep.University.NameEnglish}.",
+                    category: NotificationCategory.DiscountApplied,
+                    channel: NotificationChannel.InApp,
+                    actionUrl: applicationDetailsUrl
+                );
+
+                // Send Email: Hour Discount Applied
+                await _emailService.SendHourDiscountAppliedEmailAsync(
+                    studentEmail,
+                    studentName,
+                    programName,
+                    rep.University.NameEnglish,
+                    model.HourDiscountPercent
+                );
+            }
+            catch (Exception ex)
+            {
+                // Log notification errors but don't fail the operation
+                Console.WriteLine($"Notification/Email error: {ex.Message}");
+            }
 
             TempData["Success"] = $"Hour discount set to {model.HourDiscountPercent}%.";
             return Json(new { success = true, message = "Discount set successfully." });
