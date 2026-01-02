@@ -6,6 +6,8 @@
 }
 
 <div class="dashboard-main-body">
+    @Html.AntiForgeryToken()
+
     <!-- Breadcrumb -->
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-semibold mb-0">Application Details</h6>
@@ -442,6 +444,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="addNotesForm">
+                @Html.AntiForgeryToken()
+
                 <div class="modal-body">
                     <div class="mb-20">
                         <label for="notes" class="form-label fw-semibold text-primary-light text-sm mb-8">Notes <span class="text-danger-600">*</span></label>
@@ -470,6 +474,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="setDiscountForm">
+                @Html.AntiForgeryToken()
+
                 <div class="modal-body">
                     <div class="alert alert-info d-flex align-items-center mb-20" role="alert">
                         <iconify-icon icon="solar:info-circle-bold" class="text-info-main me-8 text-xl"></iconify-icon>

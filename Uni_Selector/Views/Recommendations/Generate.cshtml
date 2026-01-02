@@ -235,7 +235,7 @@
                                     You currently have <span class="font-bold text-primaryColor">@Model.ExistingRecommendationsCount</span>
                                     recommendation@(Model.ExistingRecommendationsCount != 1 ? "s" : "") in your profile.
                                 </p>
-                                <div class="flex items-center gap-2 text-sm text-contentColor dark:text-contentColor-dark">
+                                <div  class="flex items-center gap-2 text-sm text-contentColor dark:text-contentColor-dark">
                                     <i class="icofont-lightbulb text-primaryColor"></i>
                                     <span>Regenerating will replace your current recommendations</span>
                                 </div>
@@ -324,14 +324,14 @@
                 <!-- Quick Stats -->
                 <div class="grid grid-cols-2 gap-4">
                     <div class="recommendation-card bg-gradient-to-br from-primaryColor to-primaryColor/80 rounded-lg shadow-lg p-6 text-center" data-aos="fade-up" data-aos-delay="100">
-                        <i class="icofont-university text-4xl text-whiteColor mb-2"></i>
-                        <h3 class="text-3xl font-bold text-whiteColor mb-1">11+</h3>
-                        <p class="text-sm text-whiteColor text-opacity-90">Universities</p>
+                        <i class="icofont-university text-4xl mb-2"></i>
+                        <h3 class="text-3xl font-bold  mb-1">11+</h3>
+                        <p class="text-sm text-opacity-90">Universities</p>
                     </div>
                     <div class="recommendation-card bg-gradient-to-br from-secondaryColor to-secondaryColor/80 rounded-lg shadow-lg p-6 text-center" data-aos="fade-up" data-aos-delay="200">
-                        <i class="icofont-graduate text-4xl text-whiteColor mb-2"></i>
-                        <h3 class="text-3xl font-bold text-whiteColor mb-1">100+</h3>
-                        <p class="text-sm text-whiteColor text-opacity-90">Programs</p>
+                        <i class="icofont-graduate text-4xl  mb-2"></i>
+                        <h3 class="text-3xl font-bold mb-1">100+</h3>
+                        <p class="text-sm text-opacity-90">Programs</p>
                     </div>
                 </div>
             </div>
@@ -402,8 +402,8 @@
                         }
 
                         <!-- Generate Button -->
-                        <div class="space-y-4">
-                            <button type="submit" id="generateBtn"
+                        <div class="space-y-4"  >
+                            <button type="submit" style="background-color:darkorchid"  id="generateBtn"
                                     class="btn-generate w-full bg-gradient-to-r from-primaryColor to-secondaryColor hover:from-primaryColor/90 hover:to-secondaryColor/90 text-whiteColor text-lg font-bold py-4 px-8 rounded-lg shadow-lg transition-all duration-300 flex items-center justify-center gap-3">
                                 <i class="icofont-rocket text-2xl"></i>
                                 <span id="btnText">

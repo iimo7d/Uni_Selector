@@ -34,24 +34,29 @@
                     </div>
                 </div>
 
-                @if (Model.ProfileCompleted == false || Model.ProfileCompleted == null)
+                @if (User.IsInRole("Student"))
                 {
 
-                    <div>
-                        <a href="@Url.Action("CompleteProfile", "Student")" class="text-size-15 text-whiteColor bg-secondaryColor px-25px py-10px border border-secondaryColor hover:text-secondaryColor hover:bg-whiteColor rounded group text-nowrap flex gap-1 items-center">
-                            Complete Profile
-                            <i class="icofont-arrow-right"></i>
-                        </a>
-                    </div>
-                }
-                else
-                {
-                    <div>
-                        <a href="@Url.Action("Edit", "Student")" class="text-size-15 text-whiteColor bg-secondaryColor px-25px py-10px border border-secondaryColor hover:text-secondaryColor hover:bg-whiteColor rounded group text-nowrap flex gap-1 items-center">
-                            Edit Profile
-                            <i class="icofont-arrow-right"></i>
-                        </a>
-                    </div>
+                    @if (Model.ProfileCompleted == false || Model.ProfileCompleted == null)
+                    {
+
+                        <div>
+                            <a href="@Url.Action("CompleteProfile", "Student")" class="text-size-15 text-whiteColor bg-secondaryColor px-25px py-10px border border-secondaryColor hover:text-secondaryColor hover:bg-whiteColor rounded group text-nowrap flex gap-1 items-center">
+                                Complete Profile
+                                <i class="icofont-arrow-right"></i>
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div>
+                            <a href="@Url.Action("Edit", "Student")" class="text-size-15 text-whiteColor bg-secondaryColor px-25px py-10px border border-secondaryColor hover:text-secondaryColor hover:bg-whiteColor rounded group text-nowrap flex gap-1 items-center">
+                                Edit Profile
+                                <i class="icofont-arrow-right"></i>
+                            </a>
+                        </div>
+                    }
+
                 }
             </div>
         </div>

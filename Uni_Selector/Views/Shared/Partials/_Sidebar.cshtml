@@ -1,6 +1,6 @@
 ﻿@*
     Uni Selector - Sidebar Navigation
-    Includes: PlatformAdmin & UniversityRep Roles
+    Includes: PlatformAdmin, UniversityRep & BtecAuthority Roles
 *@
 
 <aside class="sidebar">
@@ -111,7 +111,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("History", "Notification")">
+                            <a href="@Url.Action("History", "NotificationAdmin")">
                                 <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Notification History
                             </a>
                         </li>
@@ -351,6 +351,101 @@
                         <li>
                             <a href="@Url.Action("ExportAnalytics", "UniversityRep")">
                                 <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> Export Report
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            }
+
+            @if (User.IsInRole("BtecAuthority"))
+            {
+                <!-- Dashboard -->
+                <li>
+                    <a href="@Url.Action("Dashboard", "BTECAuthority")">
+                        <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-menu-group-title">Management</li>
+
+                <!-- Program Review -->
+                <li class="dropdown">
+                    <a href="javascript:void(0)">
+                        <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
+                        <span>Program Review</span>
+                    </a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="@Url.Action("Index", "BTECProgramReview")">
+                                <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> All Programs
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "BTECProgramReview", new { approvalStatus = false })">
+                                <i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Pending Approval
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "BTECProgramReview", new { approvalStatus = true })">
+                                <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> Approved
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Standards -->
+                <li class="dropdown">
+                    <a href="javascript:void(0)">
+                        <iconify-icon icon="solar:shield-check-outline" class="menu-icon"></iconify-icon>
+                        <span>Standards</span>
+                    </a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="@Url.Action("Index", "BTECStandards")">
+                                <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> View Standards
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Manage", "BTECStandards")">
+                                <i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Manage Standards
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-menu-group-title">Reports</li>
+
+                <!-- Reports -->
+                <li class="dropdown">
+                    <a href="javascript:void(0)">
+                        <iconify-icon icon="solar:chart-2-outline" class="menu-icon"></iconify-icon>
+                        <span>Reports</span>
+                    </a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="@Url.Action("Index", "BTECReports")">
+                                <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Overview
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Programs", "BTECReports")">
+                                <i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Program Compliance
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Students", "BTECReports")">
+                                <i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Student Statistics
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Universities", "BTECReports")">
+                                <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> Universities
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Export", "BTECReports")">
+                                <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Export Data
                             </a>
                         </li>
                     </ul>

@@ -259,6 +259,11 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+
+                function getAntiForgeryToken() {
+          return document.querySelector('#antiForgeryForm input[name="__RequestVerificationToken"]')?.value;
+        }
+
         const discountId = @Model.DiscountId;
 
         async function redeemDiscount(id) {
@@ -352,3 +357,8 @@
         }
     </script>
 }
+
+
+<form id="antiForgeryForm" method="post">
+    @Html.AntiForgeryToken()
+</form>

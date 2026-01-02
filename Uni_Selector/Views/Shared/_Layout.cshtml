@@ -1,8 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Uni_Selector.Models
-@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -307,9 +304,9 @@
                                             Dashboard
                                         </a>
                                     }
-                                    else if (User.IsInRole("BTECAuthority") && SignInManager.IsSignedIn(User))
+                                    else if (User.IsInRole("BtecAuthority") && SignInManager.IsSignedIn(User))
                                     {
-                                        <a asp-action="Dashboard" asp-controller="BTECAuthority" asp-route="BTECAuthority"
+                                        <a asp-action="Dashboard" asp-controller="BTECAuthority"
                                            class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
                                             Dashboard
                                         </a>
@@ -507,11 +504,11 @@
                                        asp-action="Dashboard" asp-controller="UniversityRep">Dahboard</a>
                                 </div>
                             }
-                            else if (User.IsInRole("BTECAuthority") && SignInManager.IsSignedIn(User))
+                            else if (User.IsInRole("BtecAuthority") && SignInManager.IsSignedIn(User))
                             {
                                 <div class="flex items-center justify-between">
                                     <a class="leading-1 py-11px text-darkdeep1 font-medium hover:text-secondaryColor dark:text-whiteColor dark:hover:text-secondaryColor"
-                                       asp-action="Dashboard" asp-controller="BTECAuthority" asp-route="BTECAuthority">Dahboard</a>
+                                       asp-action="Dashboard" asp-controller="BTECAuthority" >Dahboard</a>
                                 </div>
 
                             }
