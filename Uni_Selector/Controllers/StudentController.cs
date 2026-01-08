@@ -335,8 +335,7 @@ namespace Uni_Selector.Controllers
                 await PopulateViewBagData();
                 return View(model);
 
-                await PopulateViewBagData();
-                return View(model);
+         
             }
 
             try

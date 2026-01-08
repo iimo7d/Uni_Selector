@@ -56,6 +56,7 @@ namespace Uni_Selector.Data
             SeedRoles(modelBuilder);
             SeedUsers(modelBuilder);
             SeedUniversities(modelBuilder);
+            SeedUniRep(modelBuilder);
             SeedPrograms(modelBuilder);
             SeedUniversityPrograms(modelBuilder);
             SeedBtecPrograms(modelBuilder);
@@ -735,7 +736,35 @@ namespace Uni_Selector.Data
                 }
             );
         }
-
+        private void SeedUniRep(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UniversityRepresentative>().HasData(
+                new UniversityRepresentative
+                {
+                    Id = 1,
+                    UserId = "rep-001",
+                    UniversityId = 1,
+                    Position = "Admissions Officer",
+                    IsActive = true,
+                    CanManageFees = true,
+                    CanManagePrograms = true,
+                    CanViewApplications = true,
+                    AssignedAt = SeedNow
+                },
+                new UniversityRepresentative
+                {
+                    Id = 2,
+                    UserId = "rep-002",
+                    UniversityId = 2,
+                    Position = "Admissions Officer",
+                    IsActive = true,
+                    CanManageFees = true,
+                    CanManagePrograms = true,
+                    CanViewApplications = true,
+                    AssignedAt = SeedNow
+                }
+            );
+        }
         private void SeedPrograms(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProgramEntity>().HasData(

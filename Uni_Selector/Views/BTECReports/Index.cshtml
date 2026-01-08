@@ -1,4 +1,4 @@
-﻿@model Uni_Selector.ViewModels.BTECAuthority.BTECReportsDashboardViewModel
+@model Uni_Selector.ViewModels.BTECAuthority.BTECReportsDashboardViewModel
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewData["Title"] = "BTEC Reports Dashboard";
@@ -42,7 +42,6 @@
             </div>
         </div>
     </div>
-
     <!-- Active Programs -->
     <div class="col">
         <div class="card shadow-none border bg-gradient-start-2">
@@ -120,7 +119,6 @@
         </div>
     </div>
 </div>
-
 <!-- Charts Row -->
 <div class="row gy-4 mb-4">
     <!-- Monthly Trends Chart -->
@@ -209,40 +207,38 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
         // Monthly Trends Chart
         var monthlyTrendsOptions = {
             series: [
                 {
-                    name: 'Applications',
-                    data: [@string.Join(",", Model.MonthlyTrends.Select(m => m.Applications))]
+                    name: "Applications",
+                    data: @Json.Serialize(Model.MonthlyTrends.Select(m => m.Applications))
                 },
                 {
-                    name: 'Approvals',
-                    data: [@string.Join(",", Model.MonthlyTrends.Select(m => m.Approvals))]
+                    name: "Approvals",
+                    data: @Json.Serialize(Model.MonthlyTrends.Select(m => m.Approvals))
                 },
                 {
-                    name: 'Enrollments',
-                    data: [@string.Join(",", Model.MonthlyTrends.Select(m => m.Enrollments))]
+                    name: "Enrollments",
+                    data: @Json.Serialize(Model.MonthlyTrends.Select(m => m.Enrollments))
                 }
             ],
             chart: {
-                type: 'line',
+                type: "line",
                 height: 350,
                 toolbar: { show: false }
             },
-            colors: ['#667eea', '#28a745', '#17a2b8'],
+            colors: ["#667eea", "#28a745", "#17a2b8"],
             dataLabels: { enabled: false },
-            stroke: { curve: 'smooth', width: 3 },
+            stroke: { curve: "smooth", width: 3 },
             xaxis: {
-                categories: [@string.Join(",", Model.MonthlyTrends.Select(m => $"'{m.Month}'"))]
+                categories: @Json.Serialize(Model.MonthlyTrends.Select(m => m.Month))
             },
             legend: {
-                position: 'top',
-                horizontalAlign: 'left'
+                position: "top",
+                horizontalAlign: "left"
             },
             markers: {
                 size: 5,
@@ -258,27 +254,27 @@
 
         // Compliance by Level Chart
         var complianceOptions = {
-            series: [@string.Join(",", Model.ComplianceByLevel.Select(c => c.ActiveStudents))],
+            series: @Json.Serialize(Model.ComplianceByLevel.Select(c => c.ActiveStudents)),
             chart: {
-                type: 'donut',
+                type: "donut",
                 height: 350
             },
-            labels: [@string.Join(",", Model.ComplianceByLevel.Select(c => $"'{c.Level}'"))],
-            colors: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe', '#43e97b', '#38f9d7'],
+            labels: @Json.Serialize(Model.ComplianceByLevel.Select(c => c.Level.ToString())),
+            colors: ["#667eea", "#764ba2", "#f093fb", "#4facfe", "#00f2fe", "#43e97b", "#38f9d7"],
             legend: {
-                position: 'bottom'
+                position: "bottom"
             },
             responsive: [{
                 breakpoint: 480,
                 options: {
                     chart: { height: 300 },
-                    legend: { position: 'bottom' }
+                    legend: { position: "bottom" }
                 }
             }],
             plotOptions: {
                 pie: {
                     donut: {
-                        size: '70%'
+                        size: "70%"
                     }
                 }
             }
@@ -289,38 +285,38 @@
         // Programs by Field Chart
         var fieldOptions = {
             series: [{
-                name: 'Programs',
-                data: [@string.Join(",", Model.ProgramsByField.Select(f => f.ProgramCount))]
+                name: "Programs",
+                data: @Json.Serialize(Model.ProgramsByField.Select(f => f.ProgramCount))
             }],
             chart: {
-                type: 'bar',
+                type: "bar",
                 height: 350,
                 toolbar: { show: false }
             },
-            colors: ['#764ba2'],
+            colors: ["#764ba2"],
             plotOptions: {
                 bar: {
                     borderRadius: 4,
-                    dataLabels: { position: 'top' }
+                    dataLabels: { position: "top" }
                 }
             },
             dataLabels: {
                 enabled: true,
                 offsetY: -20,
-                style: { fontSize: '12px', colors: ["#304758"] }
+                style: { fontSize: "12px", colors: ["#304758"] }
             },
             xaxis: {
-                categories: [@string.Join(",", Model.ProgramsByField.Select(f => $"'{f.TechnicalField}'"))],
+                categories: @Json.Serialize(Model.ProgramsByField.Select(f => f.TechnicalField)),
                 labels: {
                     rotate: -45,
-                    style: { fontSize: '11px' }
+                    style: { fontSize: "11px" }
                 }
             },
             fill: {
-                type: 'gradient',
+                type: "gradient",
                 gradient: {
-                    shade: 'light',
-                    type: 'vertical',
+                    shade: "light",
+                    type: "vertical",
                     shadeIntensity: 0.5,
                     opacityFrom: 0.9,
                     opacityTo: 0.7

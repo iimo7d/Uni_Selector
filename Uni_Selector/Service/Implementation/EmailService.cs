@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System.Net.Mail;
 using Uni_Selector.Models;
 using Uni_Selector.Models.Enums;
 using Uni_Selector.Service.Interface;
@@ -26,54 +29,69 @@ namespace Uni_Selector.Service.Implementation
         {
             try
             {
-                var smtpServer = _configuration["EmailSettings:SmtpServer"];
-                var smtpPort = int.Parse(_configuration["EmailSettings:SmtpPort"]);
+                // Retrieve SendGrid settings from configuration
+                var apiKey = _configuration["EmailSettings:SendGridApiKey"];
                 var senderEmail = _configuration["EmailSettings:SenderEmail"];
                 var senderName = _configuration["EmailSettings:SenderName"];
-                var username = _configuration["EmailSettings:Username"];
-                var password = _configuration["EmailSettings:Password"];
 
-                using var client = new MailKit.Net.Smtp.SmtpClient();
-                await client.ConnectAsync(smtpServer, smtpPort, MailKit.Security.SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(username, password);
+                // Initialize SendGrid Client
+                var client = new SendGridClient(apiKey);
+                var from = new EmailAddress(senderEmail, senderName);
+                var toAddress = new EmailAddress(to);
 
-                var message = new MimeKit.MimeMessage();
-                message.From.Add(new MimeKit.MailboxAddress(senderName, senderEmail));
-                message.To.Add(new MimeKit.MailboxAddress(to, to));
-                message.Subject = subject;
+                // Create the message
+                var msg = new SendGridMessage
+                {
+                    From = from,
+                    Subject = subject
+                };
+                msg.AddTo(toAddress);
 
-                var bodyBuilder = new MimeKit.BodyBuilder();
+                // Set content based on isHtml flag
                 if (isHtml)
                 {
-                    bodyBuilder.HtmlBody = body;
+                    msg.HtmlContent = body;
                 }
                 else
                 {
-                    bodyBuilder.TextBody = body;
+                    msg.PlainTextContent = body;
                 }
 
-                message.Body = bodyBuilder.ToMessageBody();
+                // Send the email
+                var response = await client.SendEmailAsync(msg);
 
-                await client.SendAsync(message);
-                await client.DisconnectAsync(true);
-
-                _logger.LogInformation($"Email sent successfully to {to}");
+                // Check for success status codes (Accepted or OK)
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation($"Email sent successfully to {to}. Status: {response.StatusCode}");
+                }
+                else
+                {
+                    // Read the error body if available for debugging
+                    var errorBody = await response.Body.ReadAsStringAsync();
+                    _logger.LogError($"Failed to send email to {to}. Status: {response.StatusCode}, Body: {errorBody}");
+                    throw new Exception($"SendGrid API Error: {response.StatusCode}");
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed to send email to {to}");
+                _logger.LogError(ex, $"Exception occurred while sending email to {to}");
                 throw;
             }
         }
 
         public async Task SendBulkEmailAsync(List<string> recipients, string subject, string body)
         {
+            // Note: SendGrid supports true bulk sending (Personalizations), 
+            // but for simplicity and to match your previous logic, we can loop.
+            // Be aware of SendGrid rate limits if this list is very large.
             foreach (var recipient in recipients)
             {
                 try
                 {
                     await SendEmailAsync(recipient, subject, body);
-                    await Task.Delay(100);
+                    // Minimal delay not strictly necessary for SendGrid API, but keeps pace even
+                    await Task.Delay(50);
                 }
                 catch (Exception ex)
                 {
@@ -127,6 +145,7 @@ namespace Uni_Selector.Service.Implementation
         #endregion
 
         #region Email Template Builders
+        // ... (The template methods below remain exactly the same as your original code) ...
 
         private string GetEmailConfirmationTemplate(string fullName, string confirmationUrl)
         {
@@ -841,5 +860,4 @@ namespace Uni_Selector.Service.Implementation
 
         #endregion
     }
-
 }

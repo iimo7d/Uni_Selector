@@ -1,4 +1,4 @@
-﻿@model Uni_Selector.ViewModels.BTECAuthority.BTECStudentStatisticsViewModel
+@model Uni_Selector.ViewModels.BTECAuthority.BTECStudentStatisticsViewModel
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewData["Title"] = "BTEC Student Statistics";
@@ -42,7 +42,6 @@
             </div>
         </div>
     </div>
-
     <!-- Active Students -->
     <div class="col">
         <div class="card shadow-none border bg-gradient-start-2">
@@ -120,7 +119,6 @@
         </div>
     </div>
 </div>
-
 <!-- Charts Row -->
 <div class="row gy-4 mb-4">
     <!-- Gender Distribution -->
@@ -179,7 +177,7 @@
                                         @province.Province
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-primary-focus text-primary-main">@province.Count</span>
+                                        <span class="badge bg-primary-focus text-primary">@province.Count</span>
                                     </td>
                                     <td class="text-end">
                                         <div class="progress" style="height: 8px; width: 100px; float: right;">
@@ -217,7 +215,7 @@
                             {
                                 <tr>
                                     <td>
-                                        <span class="badge bg-primary-focus text-primary-main">@level.Level</span>
+                                        <span class="badge bg-primary-focus text-primary">@level.Level</span>
                                     </td>
                                     <td class="text-center">
                                         <span class="badge bg-info-focus text-info-main">@level.EnrolledCount</span>
@@ -232,23 +230,22 @@
                 </div>
             </div>
         </div>
+
     </div>
 </div>
-
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
         // Gender Distribution Chart
         var genderOptions = {
-            series: [@string.Join(",", Model.GenderDistribution.Select(g => g.Count))],
+            series: @Json.Serialize(Model.GenderDistribution.Select(g => g.Count)),
             chart: {
-                type: 'pie',
+                type: "pie",
                 height: 300
             },
-            labels: [@string.Join(",", Model.GenderDistribution.Select(g => $"'{g.Gender}'"))],
-            colors: ['#667eea', '#f093fb'],
+            labels: @Json.Serialize(Model.GenderDistribution.Select(g => g.Gender)),
+            colors: ["#667eea", "#f093fb"],
             legend: {
-                position: 'bottom'
+                position: "bottom"
             },
             dataLabels: {
                 enabled: true,
@@ -263,35 +260,35 @@
         // GPA Distribution Chart
         var gpaOptions = {
             series: [{
-                name: 'Students',
-                data: [@string.Join(",", Model.GPADistribution.Select(g => g.Count))]
+                name: "Students",
+                data: @Json.Serialize(Model.GPADistribution.Select(g => g.Count))
             }],
             chart: {
-                type: 'bar',
+                type: "bar",
                 height: 280,
                 toolbar: { show: false }
             },
-            colors: ['#667eea'],
+            colors: ["#667eea"],
             plotOptions: {
                 bar: {
                     borderRadius: 4,
-                    dataLabels: { position: 'top' }
+                    dataLabels: { position: "top" }
                 }
             },
             dataLabels: {
                 enabled: true,
                 offsetY: -20,
-                style: { fontSize: '12px', colors: ["#304758"] }
+                style: { fontSize: "12px", colors: ["#304758"] }
             },
             xaxis: {
-                categories: [@string.Join(",", Model.GPADistribution.Select(g => $"'{g.Range}'"))],
-                labels: { style: { fontSize: '11px' } }
+                categories: @Json.Serialize(Model.GPADistribution.Select(g => g.Range)),
+                labels: { style: { fontSize: "11px" } }
             },
             fill: {
-                type: 'gradient',
+                type: "gradient",
                 gradient: {
-                    shade: 'light',
-                    type: 'vertical',
+                    shade: "light",
+                    type: "vertical",
                     shadeIntensity: 0.5,
                     opacityFrom: 0.9,
                     opacityTo: 0.7

@@ -116,12 +116,12 @@
                                     </a>
                                 </li>
                                 <li class="nav-item group">
-                                    <a asp-controller="Programs" asp-action="Index" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
+                                    <a asp-controller="Home" asp-action="Universities" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
                                         البرامج
                                     </a>
                                 </li>
                                 <li class="nav-item group">
-                                    <a asp-controller="Contact" asp-action="Index" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
+                                    <a asp-controller="Home" asp-action="Faq" class="px-5 lg:px-10px 2xl:px-15px 3xl:px-5 py-10 lg:py-5 2xl:py-30px 3xl:py-10 leading-sm 2xl:leading-lg text-base lg:text-sm 2xl:text-base font-semibold block group-hover:text-primaryColor dark:text-whiteColor">
                                         اتصل بنا
                                     </a>
                                 </li>
@@ -153,13 +153,13 @@
                                     <div class="bg-whiteColor dark:bg-whiteColor-dark shadow-lg rounded-lg p-3 min-w-[200px]">
                                         <ul>
                                             <li class="border-b border-borderColor dark:border-borderColor-dark pb-2 mb-2">
-                                                <a asp-controller="Student" asp-action="Dashboard" class="flex items-center gap-2 py-2 px-3 rounded hover:bg-lightGrey5 dark:hover:bg-lightGrey10-dark text-contentColor dark:text-contentColor-dark hover:text-primaryColor">
+                                                <a asp-controller="Account" asp-action="Me" class="flex items-center gap-2 py-2 px-3 rounded hover:bg-lightGrey5 dark:hover:bg-lightGrey10-dark text-contentColor dark:text-contentColor-dark hover:text-primaryColor">
                                                     <i class="icofont-dashboard"></i>
                                                     لوحة التحكم
                                                 </a>
                                             </li>
                                             <li class="border-b border-borderColor dark:border-borderColor-dark pb-2 mb-2">
-                                                <a asp-controller="Student" asp-action="EditProfile" class="flex items-center gap-2 py-2 px-3 rounded hover:bg-lightGrey5 dark:hover:bg-lightGrey10-dark text-contentColor dark:text-contentColor-dark hover:text-primaryColor">
+                                                <a asp-controller="Student" asp-action="Edit" class="flex items-center gap-2 py-2 px-3 rounded hover:bg-lightGrey5 dark:hover:bg-lightGrey10-dark text-contentColor dark:text-contentColor-dark hover:text-primaryColor">
                                                     <i class="icofont-ui-user"></i>
                                                     الملف الشخصي
                                                 </a>
@@ -238,8 +238,8 @@
                     <ul class="flex flex-col gap-y-3">
                         <li><a asp-controller="Home" asp-action="Index" class="text-darkgray hover:text-primaryColor">الرئيسية</a></li>
                         <li><a asp-controller="Universities" asp-action="Index" class="text-darkgray hover:text-primaryColor">الجامعات</a></li>
-                        <li><a asp-controller="Programs" asp-action="Index" class="text-darkgray hover:text-primaryColor">البرامج</a></li>
-                        <li><a asp-controller="Contact" asp-action="Index" class="text-darkgray hover:text-primaryColor">اتصل بنا</a></li>
+                        <li><a asp-controller="Home" asp-action="Universities" class="text-darkgray hover:text-primaryColor">البرامج</a></li>
+                        <li><a asp-controller="Home" asp-action="Faq" class="text-darkgray hover:text-primaryColor">اتصل بنا</a></li>
                     </ul>
                 </div>
 

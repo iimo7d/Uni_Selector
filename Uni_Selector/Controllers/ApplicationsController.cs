@@ -343,6 +343,8 @@ namespace Uni_Selector.Controllers
                     .Include(a => a.Commission)
                     .FirstOrDefaultAsync(a => a.Id == id);
 
+
+
                 if (application == null)
                 {
                     TempData["Error"] = "Application not found.";
@@ -589,7 +591,7 @@ namespace Uni_Selector.Controllers
                 message: $"Your application to {programName} at {universityName} (Application #{application.ApplicationNumber}) has been cancelled.",
                 category: NotificationCategory.SystemAlert,
                 channel: NotificationChannel.InApp,
-                actionUrl: $"/Applications/{application.Id}"
+                actionUrl: $"/Applications/{application.Id}/Details"
             );
 
             // Send notification to university
@@ -601,7 +603,7 @@ namespace Uni_Selector.Controllers
                     message: $"Application #{application.ApplicationNumber} for {programName} has been cancelled by the student.",
                     category: NotificationCategory.SystemAlert,
                     channel: NotificationChannel.InApp,
-                    actionUrl: $"/UniversityRep/Applications/{application.Id}"
+                    actionUrl: $"/UniversityRep/Applications/{application.Id}/Details"
                 );
             }
 

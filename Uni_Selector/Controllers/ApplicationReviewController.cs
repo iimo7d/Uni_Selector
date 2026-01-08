@@ -364,7 +364,7 @@ namespace Uni_Selector.Controllers
                 var programName = isBtec
                     ? application.BtecProgram.NameEnglish
                     : application.UniversityProgram.Program.NameEnglish;
-                var applicationDetailsUrl = $"/Student/Applications/{application.Id}";
+                var applicationDetailsUrl = $"/Applications/{application.Id}/Details";
 
                 // 1️⃣ Notify Student: Application Approved (In-App + Email)
                 await _notificationService.SendNotificationAsync(
@@ -482,7 +482,7 @@ namespace Uni_Selector.Controllers
                 var programName = isBtec
                     ? application.BtecProgram.NameEnglish
                     : application.UniversityProgram.Program.NameEnglish;
-                var applicationDetailsUrl = $"/Student/Applications/{application.Id}";
+                var applicationDetailsUrl = $"/Applications/{application.Id}/Details";
 
                 // Notify Student: Application Rejected (In-App)
                 await _notificationService.SendNotificationAsync(
@@ -580,7 +580,7 @@ namespace Uni_Selector.Controllers
                 var programName = isBtec
                     ? application.BtecProgram.NameEnglish
                     : application.UniversityProgram.Program.NameEnglish;
-                var applicationDetailsUrl = $"/Student/Applications/{application.Id}";
+                var applicationDetailsUrl = $"/Applications/{application.Id}/Details";
 
                 // Notify Student: Hour Discount Applied (In-App)
                 await _notificationService.SendNotificationAsync(

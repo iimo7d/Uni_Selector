@@ -84,6 +84,8 @@ namespace Uni_Selector.Controllers
                 );
             }
 
+// Linq 
+
             // Apply sorting
             query = sortBy?.ToLower() switch
             {

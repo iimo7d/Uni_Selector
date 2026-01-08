@@ -45,7 +45,7 @@ namespace Uni_Selector.Controllers
             }
 
             ViewData["ReturnUrl"] = returnUrl;
-            ViewData["ActiveTab"] = tab.ToLower(); // "login" or "register"
+            ViewData["ActiveTab"] = tab.ToLower(); 
 
             return View();
         }

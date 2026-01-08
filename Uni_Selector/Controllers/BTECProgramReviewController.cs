@@ -297,7 +297,7 @@ namespace Uni_Selector.Controllers
                         message: $"Your BTEC program '{programName}' ({level}) has been approved by BTEC Authority!",
                         category: NotificationCategory.ApplicationApproved,
                         channel: NotificationChannel.InApp,
-                        actionUrl: $"/UniversityRep/BTECPrograms/{program.Id}"
+                        actionUrl: $"/UniversityRep/BTECPrograms/{program.Id}/Details"
                     );
 
                     // 📧 Email Notification
